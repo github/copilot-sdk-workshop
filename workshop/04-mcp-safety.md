@@ -329,7 +329,7 @@ export function permissionForTarget(target: URL): PermissionHandler {
       (request.toolName === "browser_navigate" ||
         request.toolName === "playwright-browser_navigate") &&
       typeof request.args?.url === "string" &&
-      sameUrl(new URL(request.args.url), target)
+      sameUrl(request.args.url, target)
     ) {
       return { kind: "approve-once" };
     }
@@ -341,17 +341,22 @@ export function permissionForTarget(target: URL): PermissionHandler {
   };
 }
 
-function sameUrl(requested: URL, allowed: URL): boolean {
-  return (
-    requested.protocol.toLowerCase() === allowed.protocol.toLowerCase() &&
-    requested.hostname.toLowerCase() === allowed.hostname.toLowerCase() &&
-    requested.port === allowed.port &&
-    requested.username === allowed.username &&
-    requested.password === allowed.password &&
-    requested.pathname === allowed.pathname &&
-    requested.search === allowed.search &&
-    requested.hash === allowed.hash
-  );
+function sameUrl(requested: string, allowed: URL): boolean {
+  try {
+    const parsed = new URL(requested);
+    return (
+      parsed.protocol.toLowerCase() === allowed.protocol.toLowerCase() &&
+      parsed.hostname.toLowerCase() === allowed.hostname.toLowerCase() &&
+      parsed.port === allowed.port &&
+      parsed.username === allowed.username &&
+      parsed.password === allowed.password &&
+      parsed.pathname === allowed.pathname &&
+      parsed.search === allowed.search &&
+      parsed.hash === allowed.hash
+    );
+  } catch {
+    return false;
+  }
 }
 ```
 
@@ -578,26 +583,29 @@ def permission_for_target(target: str):
 
 
 def _same_url(requested: str, allowed: str) -> bool:
-    left, right = urlsplit(requested), urlsplit(allowed)
-    return (
-        left.scheme.lower(),
-        left.hostname.lower() if left.hostname else "",
-        left.port,
-        left.username,
-        left.password,
-        left.path,
-        left.query,
-        left.fragment,
-    ) == (
-        right.scheme.lower(),
-        right.hostname.lower() if right.hostname else "",
-        right.port,
-        right.username,
-        right.password,
-        right.path,
-        right.query,
-        right.fragment,
-    )
+    try:
+        left, right = urlsplit(requested), urlsplit(allowed)
+        return (
+            left.scheme.lower(),
+            left.hostname.lower() if left.hostname else "",
+            left.port,
+            left.username,
+            left.password,
+            left.path,
+            left.query,
+            left.fragment,
+        ) == (
+            right.scheme.lower(),
+            right.hostname.lower() if right.hostname else "",
+            right.port,
+            right.username,
+            right.password,
+            right.path,
+            right.query,
+            right.fragment,
+        )
+    except ValueError:
+        return False
 ```
 
 ### 3. Inspect the prebuilt snapshot-reader boundary

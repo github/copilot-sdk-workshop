@@ -26,7 +26,7 @@
             id: 'java',
             displayName: 'Java',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/java',
-            installCommand: 'mvn dependency:get -Dartifact=com.github:copilot-sdk:latest',
+            installCommand: 'mvn dependency:get -Dartifact=com.github:copilot-sdk-java:1.0.11',
             runtimeNote: 'Requires a supported JDK and a Maven or Gradle project.'
         },
         {

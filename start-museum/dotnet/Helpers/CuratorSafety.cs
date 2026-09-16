@@ -130,7 +130,10 @@ public static class CuratorSafety
             ? Path.GetFullPath(fileName)
             : Path.GetFullPath(Path.Combine(workingDirectory, fileName));
 
-        return requestedPath.Equals(allowedPath, StringComparison.OrdinalIgnoreCase);
+        var pathComparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+        return requestedPath.Equals(allowedPath, pathComparison);
     }
 }
 

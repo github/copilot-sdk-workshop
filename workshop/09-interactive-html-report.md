@@ -107,7 +107,7 @@ export function permissionForTarget(target: URL, workingDirectory: string): Perm
   return (request) => {
     if (request.kind === "mcp" && request.serverName === "playwright" &&
       (request.toolName === "browser_navigate" || request.toolName === "playwright-browser_navigate") &&
-      typeof request.args?.url === "string" && sameUrl(new URL(request.args.url), target)) {
+      typeof request.args?.url === "string" && sameUrl(request.args.url, target)) {
       return { kind: "approve-once" };
     }
     if (request.kind === "write" && typeof request.fileName === "string" &&
@@ -295,7 +295,8 @@ its rejecting `else`:
 let file_name = permission_payload(&request.extra)
     .and_then(|payload| payload.get("fileName"))
     .and_then(serde_json::Value::as_str);
-let report_write = file_name.is_some_and(|name| {
+let report_write = request.kind == Some(PermissionRequestKind::Write)
+    && file_name.is_some_and(|name| {
     let candidate = Path::new(name);
     let candidate = if candidate.is_absolute() {
         candidate.to_path_buf()
@@ -303,7 +304,7 @@ let report_write = file_name.is_some_and(|name| {
         self.report_path.parent().unwrap_or(Path::new("")).join(candidate)
     };
     candidate == self.report_path
-});
+    });
 
 if report_write {
     PermissionResult::approve_once()

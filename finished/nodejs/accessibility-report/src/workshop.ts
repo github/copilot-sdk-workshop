@@ -52,18 +52,23 @@ export function permissionForTarget(target: URL): PermissionHandler {
       const args = request.args;
       const requestedUrl = args !== null && typeof args === "object" && !Array.isArray(args) &&
         typeof args.url === "string" ? args.url : undefined;
-      if (requestedUrl && sameUrl(new URL(requestedUrl), target)) return { kind: "approve-once" };
+      if (requestedUrl && sameUrl(requestedUrl, target)) return { kind: "approve-once" };
     }
     return { kind: "reject", feedback: "This workshop allows Playwright to navigate only to the exact requested target." };
   };
 }
 
-function sameUrl(requested: URL, allowed: URL): boolean {
-  return requested.protocol.toLowerCase() === allowed.protocol.toLowerCase() &&
-    requested.hostname.toLowerCase() === allowed.hostname.toLowerCase() &&
-    requested.port === allowed.port && requested.username === allowed.username &&
-    requested.password === allowed.password && requested.pathname === allowed.pathname &&
-    requested.search === allowed.search && requested.hash === allowed.hash;
+function sameUrl(requested: string, allowed: URL): boolean {
+  try {
+    const parsed = new URL(requested);
+    return parsed.protocol.toLowerCase() === allowed.protocol.toLowerCase() &&
+      parsed.hostname.toLowerCase() === allowed.hostname.toLowerCase() &&
+      parsed.port === allowed.port && parsed.username === allowed.username &&
+      parsed.password === allowed.password && parsed.pathname === allowed.pathname &&
+      parsed.search === allowed.search && parsed.hash === allowed.hash;
+  } catch {
+    return false;
+  }
 }
 
 export async function streamResponse(session: CopilotSession, prompt: string): Promise<void> {
