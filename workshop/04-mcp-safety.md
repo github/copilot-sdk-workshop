@@ -1266,8 +1266,8 @@ client.stop().await?;
 
 Add the imports used by the new helpers, including
 `github_copilot_sdk::handler::{PermissionHandler, PermissionResult}`,
-`McpServerConfig`, `McpStdioServerConfig`, `PermissionRequestData`, `RequestId`, `SessionId`,
-`indexmap::IndexMap`, and `url::Url`.
+`McpServerConfig`, `McpStdioServerConfig`, `PermissionRequestData`, `PermissionRequestKind`,
+`RequestId`, `SessionId`, `indexmap::IndexMap`, and `url::Url`.
 
 ## Run it
 
