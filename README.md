@@ -124,6 +124,15 @@ After validation passes, push to `main`. The
 Enable GitHub Pages in repository settings and choose **GitHub Actions** as the source. The
 deployment job reports the canonical workshop URL in its environment.
 
+The deployment workflow verifies every published HTML page, site asset, and Markdown lesson. It
+checks the URL returned by GitHub Pages by default. To validate a future public or custom domain
+instead, set the repository Actions variable `WORKSHOP_SITE_URL` to that site's base URL. You can
+run the same check manually:
+
+```bash
+WORKSHOP_SITE_URL=https://workshop.example.com/ python3 scripts/validate_deployment.py
+```
+
 ## References
 
 - [GitHub Copilot SDK for .NET](https://github.com/github/copilot-sdk/tree/main/dotnet)
