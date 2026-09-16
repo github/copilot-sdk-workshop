@@ -6,7 +6,8 @@ const {
     firstLessonUrl,
     homeUrl,
     lessonUrl,
-    resolveLanguage
+    resolveLanguage,
+    siteRootUrl
 } = require('../language-navigation.js');
 const { preprocessLanguageDirectives } = require('../markdown-language-preprocessor.js');
 
@@ -37,6 +38,14 @@ assert.equal(firstLessonUrl('python', 'museum'), 'workshop/step.html?step=museum
 assert.equal(homeUrl('python'), '../index.html?lang=python');
 assert.equal(homeUrl('python', 'museum'), '../index.html?lang=python&workshop=museum');
 assert.equal(homeUrl(), '../index.html');
+assert.equal(
+    siteRootUrl('https://expert-adventure-l67eo16.pages.github.io/workshop/step.html?step=00-preflight').href,
+    'https://expert-adventure-l67eo16.pages.github.io/'
+);
+assert.equal(
+    siteRootUrl('https://github.github.io/copilot-sdk-workshop/workshop/step.html').href,
+    'https://github.github.io/copilot-sdk-workshop/'
+);
 assert.equal(resolveLanguage('?lang=go', 'rust', getLanguage).id, 'go');
 assert.equal(resolveLanguage('', 'rust', getLanguage).id, 'rust');
 assert.equal(resolveLanguage('?lang=unknown', 'rust', getLanguage), null);

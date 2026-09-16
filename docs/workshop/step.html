@@ -331,14 +331,7 @@
         }
 
         function getSiteRootUrl() {
-            const segments = getPathSegments();
-            if (isGitHubPages() && segments.length > 0) {
-                return new URL(`/${segments[0]}/`, window.location.origin);
-            }
-            if (segments[0] === 'docs') {
-                return new URL('/docs/', window.location.origin);
-            }
-            return new URL('/', window.location.origin);
+            return WorkshopLanguageNavigation.siteRootUrl(window.location.href);
         }
 
         function getMarkdownUrl(file) {

@@ -42,5 +42,9 @@
         return `workshop/step.html${lessonUrl(firstStep, languageId)}`;
     }
 
-    return Object.freeze({ resolveLanguage, lessonUrl, homeUrl, firstLessonUrl });
+    function siteRootUrl(lessonPageUrl) {
+        return new URL('../', lessonPageUrl);
+    }
+
+    return Object.freeze({ resolveLanguage, lessonUrl, homeUrl, firstLessonUrl, siteRootUrl });
 }));
