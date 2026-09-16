@@ -52,6 +52,8 @@ def check_url(url: str, timeout: float) -> str | None:
         return f"HTTP {error.code}"
     except URLError as error:
         return str(error.reason)
+    except TimeoutError as error:
+        return str(error) or "timed out"
     return None
 
 
