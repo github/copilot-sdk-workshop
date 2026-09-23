@@ -1,5 +1,7 @@
 # GitHub Copilot SDK Workshops
 
+Start today: http://github.github.com/copilot-sdk-workshop/
+
 Choose one of two hands-on GitHub Copilot SDK workshops in .NET, Node.js/TypeScript, Python, Go,
 Rust, or Maven Java:
 
