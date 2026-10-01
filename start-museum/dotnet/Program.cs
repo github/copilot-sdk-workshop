@@ -28,8 +28,8 @@
 //                                          plus CuratorSafety.WikipediaPermissionHandler(), run it
 //                                          through RunSessionAsync, and print sources after the
 //                                          exhibit. Research never joins the approved facts.
-// Step 7  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch"
-//                                          allowlist and CuratorSafety.ExhibitWritePermission(...).
+// Step 7  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch" and
+//                                          "builtin:create" allowlist and CuratorSafety.ExhibitWritePermission(...).
 
 // Your `using` directives go here, and grow as the lessons progress.
 

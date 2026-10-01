@@ -103,8 +103,6 @@ public final class CuratorSafety {
     }
 
     private static boolean isExhibitWrite(Map<String, Object> request, Path workingDirectory) {
-        // Current Java SDK releases may not surface write-request fields; see
-        // https://github.com/github/copilot-sdk/issues/2273. Missing fields stay denied.
         if (request == null || !(request.get("fileName") instanceof String fileName)) {
             return false;
         }

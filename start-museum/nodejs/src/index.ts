@@ -24,8 +24,8 @@
 //                                          server plus wikipediaPermissionHandler(), run it
 //                                          through runSession(), and print sources after the
 //                                          exhibit. Research never joins the approved facts.
-// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
-//                                          allowlist and exhibitWritePermission(process.cwd()).
+// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
+//                                          "builtin:create" allowlist and exhibitWritePermission(process.cwd()).
 
 // Your SDK and "./curator.js" imports go here, and grow as the lessons progress.
 

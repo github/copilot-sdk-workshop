@@ -15,7 +15,7 @@ local tool, MCP server, or report until the corresponding step.
 | Python | [Python 3.11+](https://www.python.org/downloads/) | `cd start-accessibility/python && python -m pip install -r requirements.txt && python -m py_compile *.py` |
 | Go | [Go 1.24+](https://go.dev/dl/) | `cd start-accessibility/go && go build -mod=readonly ./...` |
 | Rust | [Rust 1.94+](https://rustup.rs/) | `cd start-accessibility/rust && cargo check --locked` |
-| Java | [Java 17+](https://adoptium.net/) and [Maven](https://maven.apache.org/install.html) | `cd start-accessibility/java && mvn compile` |
+| Java | [Java 17+](https://adoptium.net/) (Maven Wrapper included) | `cd start-accessibility/java && ./mvnw compile` |
 
 Because you edit these files in place, your work shows up in `git status`. That is expected. Run
 `git checkout -- .` from the repository root to restore a clean starter. Go, Rust, and Java tracks

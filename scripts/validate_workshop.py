@@ -97,7 +97,7 @@ LESSON_TRACK_MARKERS = {
     ),
     "java": (
         "src/main/java/",
-        "mvn compile",
+        "./mvnw compile",
         "```java",
         "finished/java/",
     ),
@@ -108,7 +108,7 @@ STEP_3_TRACK_MARKERS = {
     "python": ("workshop.py", '@define_tool(', "python main.py"),
     "go": ("main.go", "copilot.DefineTool(", "go run ."),
     "rust": ("src/main.rs", 'Tool::new("accessibility_rule_lookup")', "cargo run"),
-    "java": ("AccessibilityReport.java", "ToolDefinition.from(", "mvn compile exec:java"),
+    "java": ("AccessibilityReport.java", "ToolDefinition.from(", "./mvnw compile exec:java"),
 }
 # Every command runs from inside the starter directory the learner already sits in.
 # No lesson may reintroduce a copied sibling project.
@@ -118,7 +118,7 @@ RUN_COMMAND_MARKERS = {
     "python": "python main.py",
     "go": "go run .",
     "rust": "cargo run",
-    "java": "mvn compile exec:java",
+    "java": "./mvnw compile exec:java",
 }
 STEP_9_RUN_COMMAND_MARKERS = {
     "dotnet": "dotnet run",
@@ -126,7 +126,7 @@ STEP_9_RUN_COMMAND_MARKERS = {
     "python": "python main.py",
     "go": "go run .",
     "rust": "cargo run --",
-    "java": "mvn compile exec:java",
+    "java": "./mvnw compile exec:java",
 }
 MUSEUM_COMMAND_MARKERS = {
     "dotnet": (
@@ -145,7 +145,7 @@ MUSEUM_COMMAND_MARKERS = {
         "cargo run",
     ),
     "java": (
-        "mvn compile exec:java",
+        "./mvnw compile exec:java",
     ),
 }
 MUSEUM_ENTRYPOINTS = {
@@ -165,6 +165,7 @@ SECOND_PROJECT_MARKERS = (
     "go mod init",
     "npm init ",
     "mvn archetype:generate",
+    "./mvnw archetype:generate",
 )
 IN_PLACE_FORBIDDEN_MARKERS = (
     "workshop-app",
@@ -177,6 +178,7 @@ MUSEUM_FORBIDDEN_LESSON_MARKERS = (
     "go test",
     "cargo test",
     "mvn test",
+    "./mvnw test",
     "python -m unittest",
     "unittest",
     "mock-wikipedia",
@@ -1033,14 +1035,50 @@ MUSEUM_TOOL_REGISTRATION = {
     "java": (r"settools\(list\.of\(curatorfacts\.approvedfactlookup\(",),
 }
 MUSEUM_SESSION_RUNNER_MARKERS = {
-    "dotnet": ("static async Task<string> RunSessionAsync",
-               "CuratorStreamer.StreamExhibitAsync(session, prompt, timeout)"),
-    "nodejs": ("async function runSession", "streamExhibit(session, prompt, timeout)"),
-    "python": ("async def run_session", "stream_exhibit(session, prompt, timeout)"),
-    "go": ("func runSession(", "StreamExhibit(session, prompt, timeout)"),
-    "rust": ("async fn run_session", "stream_exhibit(&session, prompt, timeout)"),
-    "java": ("private static String runSession",
-             "CuratorStreamer.streamExhibit(session, prompt, timeout)"),
+    "dotnet": (
+        "static async Task<string> RunSessionAsync",
+        "CuratorStreamer.StreamExhibitAsync(session, prompt, timeout)",
+        "await using var session",
+        "await client.StopAsync();",
+    ),
+    "nodejs": (
+        "async function runSession",
+        "streamExhibit(session, prompt, timeout)",
+        "await session.disconnect();",
+        "await client.stop();",
+    ),
+    "python": (
+        "async def run_session",
+        "stream_exhibit(session, prompt, timeout)",
+        "await session.disconnect()",
+        "await client.stop()",
+    ),
+    "go": (
+        "func runSession(",
+        "StreamExhibit(session, prompt, timeout)",
+        "defer func() { _ = session.Disconnect() }()",
+        "defer func() { _ = client.Stop() }()",
+    ),
+    "rust": (
+        "async fn run_session",
+        "stream_exhibit(&session, prompt, timeout)",
+        "session.disconnect().await",
+        "client.stop().await",
+    ),
+    "java": (
+        "private static String runSession",
+        "CuratorStreamer.streamExhibit(session, prompt, timeout)",
+        "session.close();",
+        "client.stop().get();",
+    ),
+}
+MUSEUM_TIMEOUT_REPORTERS = {
+    "dotnet": r'Console\.Error\.WriteLine\("The curator did not respond in time\. Try again\."\)',
+    "nodejs": r'console\.error\([^;]*"The curator did not respond in time\. Try again\."[^;]*\)',
+    "python": r'print\("The curator did not respond in time\. Try again\.",\s*file=sys\.stderr\)',
+    "go": r'fmt\.Fprintln\(os\.Stderr,\s*"The curator did not respond in time\. Try again\."\)',
+    "rust": r'eprintln!\("The curator did not respond in time\. Try again\."\)',
+    "java": r'System\.err\.println\("The curator did not respond in time\. Try again\."\)',
 }
 MUSEUM_GENERATION_RUN_CALLS = {
     "dotnet": r"RunSessionAsync\(\s*GenerationConfig\(approvedFacts\),\s*"
@@ -1410,6 +1448,68 @@ def validate_security_invariants() -> None:
     )
 
 
+def validate_file_creation_tools() -> None:
+    write_tools = ("builtin:apply_patch", "builtin:create")
+    report_tools = (
+        "accessibility_rule_lookup",
+        "read_latest_accessibility_snapshot",
+        "playwright-browser_navigate",
+        *write_tools,
+    )
+    allowlist_patterns = {
+        "dotnet": r"AvailableTools=\[([^\]]*)\]",
+        "nodejs": r"availableTools:\[([^\]]*)\]",
+        "python": r"""(?:["']available_tools["']:|available_tools=)\[([^\]]*)\]""",
+        "go": r"AvailableTools:\[\]string\{([^}]*)\}",
+        "rust": r"config\.available_tools=Some\(vec!\[([^\]]*)\]\)",
+        "java": r"\.setAvailableTools\(List\.of\((.*?)\)\)",
+    }
+    for language in LANGUAGES:
+        finished = ROOT / "finished" / language / "museum-exhibit-studio"
+        entrypoint = finished / MUSEUM_ENTRYPOINTS[language]
+        sources = [
+            (read(entrypoint), str(entrypoint.relative_to(ROOT)), write_tools),
+            *(
+                (
+                    render_language_markdown(WORKSHOP / lesson, language),
+                    f"workshop/{lesson} ({language})",
+                    expected_tools,
+                )
+                for lesson, expected_tools in (
+                    ("museum-08-interactive-exhibit-page.md", write_tools),
+                    ("09-interactive-html-report.md", report_tools),
+                )
+            ),
+        ]
+        for text, label, expected_tools in sources:
+            compact = re.sub(r"\s+", "", strip_line_comments(text))
+            literal = r'"[^"\\]*"'
+            if language == "rust":
+                literal += r"\.to_owned\(\)"
+            literal_list = rf"{literal}(?:,{literal})*,?"
+            allowlists = [
+                tuple(re.findall(r'"([^"\\]*)"', entries))
+                for entries in re.findall(allowlist_patterns[language], compact)
+                if re.fullmatch(literal_list, entries) is not None
+            ]
+            require(
+                expected_tools in allowlists,
+                f"{label} must allowlist exactly {', '.join(expected_tools)} for file creation",
+            )
+        if language == "java":
+            lesson = WORKSHOP / "museum-08-interactive-exhibit-page.md"
+            for text, label in (
+                (read(entrypoint), str(entrypoint.relative_to(ROOT))),
+                (render_language_markdown(lesson, language), str(lesson.relative_to(ROOT))),
+            ):
+                require(
+                    ".setOnPermissionRequest(CuratorSafety.exhibitWritePermission(workingDirectory))"
+                    in re.sub(r"\s+", "", text)
+                    and "--allow-local-demo-write" not in text,
+                    f"{label} must use the strict exhibit path permission handler without a write fallback",
+                )
+
+
 def validate_playwright_file_output(text: str, label: Path) -> None:
     configurations = text.split(PLAYWRIGHT_MCP_PACKAGE)[1:]
     for index, configuration in enumerate(configurations, start=1):
@@ -1768,7 +1868,8 @@ def validate_documentation() -> None:
     for language in LANGUAGES:
         lesson_name = "museum-04-approved-facts.md"
         rendered = render_language_markdown(WORKSHOP / lesson_name, language)
-        tokens = museum_tokens(rendered)
+        code = "\n".join(lesson_code_blocks(rendered, language))
+        tokens = museum_tokens(code)
         require(
             any(re.search(pattern, tokens) for pattern in MUSEUM_TOOL_REGISTRATION[language]),
             f"workshop/{lesson_name} ({language}) must register the approved_fact_lookup "
@@ -1781,21 +1882,21 @@ def validate_documentation() -> None:
         )
         for marker in MUSEUM_SESSION_RUNNER_MARKERS[language]:
             require(
-                marker in rendered,
+                marker in code,
                 f"workshop/{lesson_name} ({language}) must supply the reusable session runner "
-                f"and forward its timeout to the streamer: {marker}",
+                f"with timeout forwarding and session/client cleanup: {marker}",
             )
         require(
-            re.search(MUSEUM_GENERATION_RUN_CALLS[language], rendered) is not None,
+            re.search(MUSEUM_GENERATION_RUN_CALLS[language], code) is not None,
             f"workshop/{lesson_name} ({language}) must call the runner with its explicit generation timeout",
         )
         require(
-            "The curator returned no exhibit content." in rendered,
+            "The curator returned no exhibit content." in code,
             f"workshop/{lesson_name} ({language}) must reject blank exhibit output",
         )
         require(
-            "The curator did not respond in time. Try again." in rendered,
-            f"workshop/{lesson_name} ({language}) must report timeout failures",
+            re.search(MUSEUM_TIMEOUT_REPORTERS[language], code) is not None,
+            f"workshop/{lesson_name} ({language}) must report timeout failures in its error handler",
         )
     require(
         "Continue to [Prove the structure](museum-06-prove-the-structure.md)." in facts_lesson,
@@ -1934,10 +2035,10 @@ def validate_museum_permission_handlers() -> None:
         )
 
 
-def rust_lesson_code_blocks(markdown_file: Path) -> list[str]:
-    """Return the Rust fenced blocks a learner is told to type in one lesson."""
-    rendered = render_language_markdown(markdown_file, "rust")
-    return re.findall(r"^```rust\n(.*?)^```$", rendered, re.S | re.M)
+def lesson_code_blocks(rendered: str, language: str) -> list[str]:
+    """Return language code fences without prose, shell commands, or sample output."""
+    fence = {"dotnet": "csharp", "nodejs": "typescript"}.get(language, language)
+    return re.findall(rf"^```{fence}\n(.*?)^```$", rendered, re.S | re.M)
 
 
 def rust_result_error_type(returns: str) -> str | None:
@@ -1969,7 +2070,7 @@ def validate_museum_rust_error_types() -> None:
         f"`{MUSEUM_RUST_ERROR_ALIAS_DEFINITION}` as the error type every helper returns",
     )
     for lesson_name in MUSEUM_LESSONS:
-        blocks = rust_lesson_code_blocks(WORKSHOP / lesson_name)
+        blocks = lesson_code_blocks(render_language_markdown(WORKSHOP / lesson_name, "rust"), "rust")
         lesson_source = "\n".join(blocks)
         imported = {
             name.strip()
@@ -2064,6 +2165,18 @@ def validate_configuration_explainers() -> None:
                 )
 
 
+def workflow_uses(workflow: str, reference: str) -> bool:
+    """Match `action@ref` either directly or pinned to a commit SHA with a `# ref` comment."""
+    if "@" not in reference:
+        return reference in workflow
+    action, ref = reference.split("@", 1)
+    pattern = (
+        rf"uses:\s*{re.escape(action)}@(?:{re.escape(ref)}\b"
+        rf"|[0-9a-f]{{40}}\s+#\s*{re.escape(ref)}(?:[.\s]|$))"
+    )
+    return re.search(pattern, workflow, re.MULTILINE) is not None
+
+
 def validate_workflows() -> None:
     required_setup = (
         ("actions/setup-dotnet@v6", "dotnet-version: 10.0.x"),
@@ -2077,7 +2190,7 @@ def validate_workflows() -> None:
     validation_workflow = read(ROOT / ".github" / "workflows" / "validate.yml")
     for expected in required_setup:
         for value in expected:
-            require(value in validation_workflow, f"validate.yml is missing required validation setup: {value}")
+            require(workflow_uses(validation_workflow, value), f"validate.yml is missing required validation setup: {value}")
 
     deployment_workflow = read(ROOT / ".github" / "workflows" / "deploy.yml")
     for forbidden in (
@@ -2099,7 +2212,7 @@ def validate_workflows() -> None:
         "actions/upload-pages-artifact@v5",
         "actions/deploy-pages@v5",
     ):
-        require(required in deployment_workflow, f"deploy.yml is missing deployment step: {required}")
+        require(workflow_uses(deployment_workflow, required), f"deploy.yml is missing deployment step: {required}")
 
 
 validate_language_registry()
@@ -2117,6 +2230,7 @@ validate_layout()
 validate_museum_projects()
 validate_python_dependencies()
 validate_security_invariants()
+validate_file_creation_tools()
 validate_playwright_output_configuration()
 validate_project_behavior()
 validate_site_behavior()

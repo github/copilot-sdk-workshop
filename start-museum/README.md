@@ -23,7 +23,7 @@ step's code goes. Start at [`workshop/museum-00-preflight.md`](../workshop/museu
 | Python | `curator.py` | `cd start-museum/python && python -m venv .venv && .venv/bin/python -m pip install -r requirements.txt && .venv/bin/python main.py` |
 | Go | `curator.go` | `cd start-museum/go && go build -mod=readonly ./... && go run .` |
 | Rust | `src/lib.rs` | `cd start-museum/rust && cargo check --locked && cargo run --locked` |
-| Java | `src/main/java/workshop/Curator*.java` | `cd start-museum/java && mvn compile && mvn exec:java` |
+| Java | `src/main/java/workshop/Curator*.java` | `cd start-museum/java && ./mvnw compile && ./mvnw exec:java` |
 
 Running the starter prints its identity and does not start Copilot or require authentication.
 Because you edit these files in place, your work shows up in `git status`. That is expected. Run

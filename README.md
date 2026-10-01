@@ -3,7 +3,7 @@
 Start today: http://github.github.com/copilot-sdk-workshop/
 
 Choose one of two hands-on GitHub Copilot SDK workshops in .NET, Node.js/TypeScript, Python, Go,
-Rust, or Maven Java:
+Rust, or Java:
 
 - **Accessibility Reviewer:** build an SDLC developer tool that inspects a web page, consults
   application-owned WCAG guidance, and produces an evidence-based report.
@@ -45,7 +45,7 @@ the Markdown requests used by the lesson viewer.
 - [Python 3.11 or newer](https://www.python.org/downloads/)
 - [Go 1.24 or newer](https://go.dev/dl/)
 - [Rust 1.94 or newer](https://rustup.rs/)
-- [Java 17 or newer](https://adoptium.net/) and [Maven](https://maven.apache.org/install.html)
+- [Java 17 or newer](https://adoptium.net/)
 - [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli)
 - GitHub Copilot subscription or trial
 - Microsoft Edge (the workshop default) or Google Chrome

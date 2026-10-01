@@ -894,7 +894,7 @@ completed response when the turn finishes.
 ## Run it
 
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 The response should use the lookup result for WCAG 4.1.2:

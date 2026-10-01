@@ -44,7 +44,7 @@ length, `## Visitor questions`, exactly three numbered questions, question marks
 vocabulary. These structural checks do not prove factual grounding, so human review remains
 required.
 
-The optional capstone creates `exhibit.html` with `builtin:apply_patch`.
+The optional capstone creates `exhibit.html` with `builtin:apply_patch` or `builtin:create`.
 `CuratorSafety.ExhibitWritePermission` allows only that single file in the application working
 directory and rejects every other write, shell, or MCP request.
 

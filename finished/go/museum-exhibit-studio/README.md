@@ -41,7 +41,7 @@ After generation, deterministic validation checks one H1, required sections, a 1
 narrative, exactly three numbered visitor questions ending in `?`, and prohibited software terms.
 The consulted Wikipedia sources are printed after the exhibit, outside the generated copy.
 
-Optionally, the app can ask Copilot to create `exhibit.html` with `builtin:apply_patch`. That session
+Optionally, the app can ask Copilot to create `exhibit.html` with `builtin:apply_patch` or `builtin:create`. That session
 allows only a single normalized write to `exhibit.html` in the application working directory and
 rejects every other file, shell, or MCP permission request. The HTML prompt requires a standalone
 semantic document with embedded CSS and JavaScript, a human-review caveat, and an accessible question

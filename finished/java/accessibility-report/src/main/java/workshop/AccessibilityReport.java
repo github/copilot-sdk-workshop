@@ -123,7 +123,7 @@ public final class AccessibilityReport {
     }
 
     private static String usage() {
-        return "Usage: mvn compile exec:java -Dexec.args=\"["
+        return "Usage: ./mvnw compile exec:java -Dexec.args=\"["
                 + LOCAL_DEMO_MCP_FLAG + "] <http-or-https-url>\"";
     }
 

@@ -29,8 +29,8 @@ import "fmt"
 //                                          WikipediaPermissionHandler(), run it through
 //                                          runSession, and print sources after the exhibit.
 //                                          Research never joins the approved facts.
-// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
-//                                          allowlist and ExhibitWritePermission(...).
+// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
+//                                          "builtin:create" allowlist and ExhibitWritePermission(...).
 
 // Your system message (Step 3) goes here.
 

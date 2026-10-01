@@ -161,13 +161,14 @@ every lesson change in `src/main.rs`.
 :::
 
 :::language java
-Change into the Maven starter, resolve SDK 1.0.11, compile, and run it:
+Change into the Maven starter, resolve SDK 1.0.11, compile, and run it with the included
+Maven Wrapper (no separate Maven install needed; on Windows, use `mvnw.cmd` instead of `./mvnw`):
 
 ```bash
 cd start-museum/java
-mvn dependency:go-offline
-mvn compile
-mvn exec:java
+./mvnw dependency:go-offline
+./mvnw compile
+./mvnw exec:java
 ```
 
 Pass condition: Maven succeeds and the program prints `=== Museum Exhibit Studio starter ===`

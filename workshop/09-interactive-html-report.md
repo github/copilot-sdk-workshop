@@ -13,7 +13,8 @@ open it locally and filter its findings.
 ## Add a narrow write capability
 
 The previous application-owned tools are read-only, and Playwright can navigate only to one exact
-URL. This extension adds one runtime built-in tool: `builtin:apply_patch`.
+URL. This extension adds two runtime built-in tools: `builtin:apply_patch` and `builtin:create`.
+Either tool can create the report file.
 
 That does **not** mean approving every file change. Keep the existing browser-navigation rule and
 approve a write only when it targets `accessibility-report.html` directly in the application working
@@ -57,7 +58,7 @@ public static Func<PermissionRequest, PermissionInvocation, Task<PermissionDecis
 ```
 
 Keep the existing helper methods. In `Program.cs`, pass the existing `workingDirectory` and add the
-source-qualified built-in tool:
+source-qualified built-in tools:
 
 ```csharp
 OnPermissionRequest = WorkshopPermissionHandler.CreateForTarget(targetUri, workingDirectory),
@@ -66,7 +67,8 @@ AvailableTools =
     "accessibility_rule_lookup",
     "read_latest_accessibility_snapshot",
     "playwright-browser_navigate",
-    "builtin:apply_patch"
+    "builtin:apply_patch",
+    "builtin:create"
 ],
 ```
 
@@ -80,7 +82,7 @@ public static string CreateReportPrompt(Uri targetUri) => $"""
     2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
     3. Identify three to five high-confidence issues supported by the snapshot.
     4. Call accessibility_rule_lookup for each issue before recommending a fix.
-    5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+    5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
     Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
     JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -120,7 +122,7 @@ export function permissionForTarget(target: URL, workingDirectory: string): Perm
 ```
 
 In `src/report.ts`, pass the working directory to the handler and append the built-in
-tool to `availableTools`:
+tools to `availableTools`:
 
 ```typescript
 onPermissionRequest: permissionForTarget(target, process.cwd()),
@@ -129,6 +131,7 @@ availableTools: [
   "read_latest_accessibility_snapshot",
   "playwright-browser_navigate",
   "builtin:apply_patch",
+  "builtin:create",
 ],
 ```
 
@@ -141,7 +144,7 @@ export function reportPrompt(target: URL): string {
 2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
 3. Identify three to five high-confidence issues supported by the snapshot.
 4. Call accessibility_rule_lookup for each issue before recommending a fix.
-5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
 Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
 JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -180,7 +183,7 @@ def permission_for_target(target: str, working_directory: str):
 ```
 
 In `report.py`, pass the current directory to the permission handler and append the
-source-qualified built-in tool:
+source-qualified built-in tools:
 
 ```python
 on_permission_request=permission_for_target(target, "."),
@@ -189,6 +192,7 @@ available_tools=[
     "read_latest_accessibility_snapshot",
     "playwright-browser_navigate",
     "builtin:apply_patch",
+    "builtin:create",
 ],
 ```
 
@@ -201,7 +205,7 @@ def report_prompt(target: str) -> str:
 2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
 3. Identify three to five high-confidence issues supported by the snapshot.
 4. Call accessibility_rule_lookup for each issue before recommending a fix.
-5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
 Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
 JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -252,10 +256,10 @@ func permissionForTarget(target, workingDirectory string) copilot.PermissionHand
 }
 ```
 
-Pass `workingDirectory` to the helper and append the source-qualified built-in tool:
+Pass `workingDirectory` to the helper and append the source-qualified built-in tools:
 
 ```go
-AvailableTools:      []string{"accessibility_rule_lookup", "read_latest_accessibility_snapshot", "playwright-browser_navigate", "builtin:apply_patch"},
+AvailableTools:      []string{"accessibility_rule_lookup", "read_latest_accessibility_snapshot", "playwright-browser_navigate", "builtin:apply_patch", "builtin:create"},
 OnPermissionRequest: permissionForTarget(target, workingDirectory),
 ```
 
@@ -268,7 +272,7 @@ func reportPrompt(target string) string {
 2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
 3. Identify three to five high-confidence issues supported by the snapshot.
 4. Call accessibility_rule_lookup for each issue before recommending a fix.
-5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
 Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
 JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -321,7 +325,7 @@ if report_write {
 }
 ```
 
-When creating the permission handler, set the new field and append the built-in tool:
+When creating the permission handler, set the new field and append the built-in tools:
 
 ```rust
 config.available_tools = Some(vec![
@@ -329,6 +333,7 @@ config.available_tools = Some(vec![
     "read_latest_accessibility_snapshot".to_owned(),
     "playwright-browser_navigate".to_owned(),
     "builtin:apply_patch".to_owned(),
+    "builtin:create".to_owned(),
 ]);
 let config = config.with_permission_handler(Arc::new(ScopedPermissions {
     target: target.clone(),
@@ -346,7 +351,7 @@ fn report_prompt(target: &Url) -> String {
 2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
 3. Identify three to five high-confidence issues supported by the snapshot.
 4. Call accessibility_rule_lookup for each issue before recommending a fix.
-5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
 Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
 JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -387,7 +392,8 @@ private static boolean isReportWrite(Map<String, Object> request, Path workingDi
 > permission request fields ([github/copilot-sdk#2273](https://github.com/github/copilot-sdk/issues/2273)).
 > The existing `--allow-local-demo-mcp` flag is limited to the `mcp` kind. Step 9 additionally
 > requires `--allow-local-demo-write`, which is limited to the `write` kind and the
-> `builtin:apply_patch` tool allowlist but **cannot enforce the output path**. Enable both flags
+> `builtin:apply_patch` / `builtin:create` tool allowlist but **cannot enforce the output path**.
+> Enable both flags
 > only for this disposable, controlled local workshop target. Never use either fallback for
 > production, shared, or untrusted worktrees.
 
@@ -439,7 +445,8 @@ Extend the existing `setAvailableTools` call and permission callback:
         "accessibility_rule_lookup",
         "read_latest_accessibility_snapshot",
         "playwright-browser_navigate",
-        "builtin:apply_patch"))
+        "builtin:apply_patch",
+        "builtin:create"))
 // Keep the existing MCP server configuration.
 .setOnPermissionRequest((request, ignored) -> {
     if ("mcp".equals(request.getKind())
@@ -478,7 +485,7 @@ private static String reportPrompt(URI target) {
             2. Call read_latest_accessibility_snapshot to inspect its accessibility tree.
             3. Identify three to five high-confidence issues supported by the snapshot.
             4. Call accessibility_rule_lookup for each issue before recommending a fix.
-            5. Use apply_patch to create exactly accessibility-report.html in the current working directory.
+            5. Use apply_patch or create to create exactly accessibility-report.html in the current working directory.
 
             Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
             JavaScript only; do not use external assets, URLs, or libraries. Include a title, target URL,
@@ -522,7 +529,7 @@ cargo run -- "{{TARGET_APP_URL}}"
 :::
 :::language java
 ```bash
-mvn compile exec:java -Dexec.args="--allow-local-demo-mcp --allow-local-demo-write {{TARGET_APP_URL}}"
+./mvnw compile exec:java -Dexec.args="--allow-local-demo-mcp --allow-local-demo-write {{TARGET_APP_URL}}"
 ```
 :::
 
@@ -532,8 +539,8 @@ Use the workshop target:
 {{TARGET_APP_URL}}
 ```
 
-The tool transcript should include the existing navigation, snapshot, and catalog calls plus an
-`apply_patch` write. Open `accessibility-report.html` in a browser. Type a word from a
+The tool transcript should include the existing navigation, snapshot, and catalog calls plus a
+write using `apply_patch` or `create`. Open `accessibility-report.html` in a browser. Type a word from a
 finding, WCAG criterion, or evidence line into the filter and confirm the visible cards and result
 count update.
 
@@ -543,7 +550,7 @@ count update.
 | Symptom | Fix |
 |---|---|
 | The write is rejected | The default handler requires the exact `accessibility-report.html` path. If Java SDK payload fields are unavailable, use `--allow-local-demo-write` only for the controlled local demo; it approves the `write` kind but cannot prove the path. |
-| More than one file is requested | Keep only `builtin:apply_patch` in the new built-in capability. The default handler rejects other paths; the Java local-demo write fallback cannot make that guarantee. |
+| More than one file is requested | Keep only `builtin:apply_patch` and `builtin:create` in the new built-in capability. The default handler rejects other paths; the Java local-demo write fallback cannot make that guarantee. |
 | The filter does not work | The generated document must include embedded JavaScript that filters cards and updates its live result count. Rerun once if the agent omitted a required element. |
 | The report loads without styling | Keep CSS and JavaScript embedded in the one HTML file; the prompt intentionally disallows external assets and libraries. |
 
@@ -555,13 +562,14 @@ count update.
 
 ## Check your understanding
 
-Why is allowing one named built-in write tool safer than broadly approving filesystem access?
+Why is allowing two named built-in write tools safer than broadly approving filesystem access?
 
 <details>
 <summary>Check your answer</summary>
 
-`builtin:apply_patch` exposes only the required editing capability, and the default permission
-callback binds that capability to one normalized output path. The model cannot use shell commands
+`builtin:apply_patch` and `builtin:create` expose only the required file-writing capabilities.
+The default permission callback binds both capabilities to one normalized output path.
+The model cannot use shell commands
 or write another file, while the existing local tools and scoped Playwright navigation remain
 unchanged. The Java local-demo fallback is an explicit exception while the SDK omits permission
 payload fields, so it must remain limited to a controlled local target.

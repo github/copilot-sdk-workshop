@@ -88,7 +88,7 @@ the exhibit. End with a "## Sources" section listing each consulted article as
 
 
 def build_html_prompt(exhibit: str) -> str:
-    return f"""Use builtin:apply_patch to create exactly exhibit.html in the current working directory.
+    return f"""Use builtin:apply_patch or builtin:create to create exactly exhibit.html in the current working directory.
 Do not write any other file.
 
 Write one complete, standalone document using semantic HTML, embedded CSS, and embedded
@@ -144,7 +144,7 @@ def research_config() -> dict[str, Any]:
 def html_config(working_directory: str) -> dict[str, Any]:
     config: dict[str, Any] = {
         "client_name": "museum-exhibit-studio-html",
-        "available_tools": ["builtin:apply_patch"],
+        "available_tools": ["builtin:apply_patch", "builtin:create"],
         "on_permission_request": exhibit_write_permission(working_directory),
         "streaming": True,
     }
