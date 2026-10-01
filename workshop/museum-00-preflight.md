@@ -22,7 +22,11 @@ step adds one idea and ends with a real run, so the curator comes together in fr
 | 4 | The approved-fact tool, prompt, and bounded session runner | Copy that tracks your facts |
 | 5 | The pre-built validator | A PASS/FAIL structural report |
 | 6 | A scoped Wikipedia research session | Cited background, kept out of the exhibit |
-| 7 | An optional interactive page | `exhibit.html` in your browser |
+| 7 | An interactive page | `exhibit.html` in your browser |
+| 8 | A celebration and resources | Your next project starts here |
+
+The seven hands-on steps take about 90 minutes. Complete them in order, then celebrate what
+you built and explore the resources in the final step.
 
 The starter already ships the plumbing you should never have to write: the approved fact sets and
 their bounds, a streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server

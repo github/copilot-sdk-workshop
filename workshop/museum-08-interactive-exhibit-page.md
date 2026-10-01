@@ -1,4 +1,4 @@
-# Step 7 (optional): Publish an interactive exhibit page
+# Step 7: Publish an interactive exhibit page
 
 > **Time:** 15 minutes
 
@@ -469,7 +469,7 @@ changed that outcome. Put the prompt back.
 - Your application now has three sessions with three different capability profiles. Describe each in
   one sentence, and say why they are not one session with the union of their permissions.
 
-You have finished Museum Exhibit Studio. Your starter project now matches
+You have built Museum Exhibit Studio. Your starter project now matches
 `finished/<language>/museum-exhibit-studio`: an educator picks approved facts, optionally researches
 them under a narrow allowlist, and gets grounded, structurally checked exhibit copy plus a
 publishable page — with every capability decided by your code rather than by a prompt.
@@ -482,3 +482,5 @@ publishable page — with every capability decided by your code rather than by a
   every hook the SDK exposes, and the input each one receives.
 - [Local CLI setup](https://github.com/github/copilot-sdk/blob/main/docs/setup/local-cli.md):
   controlling which CLI the SDK starts, which is what decides where a written file lands.
+
+Continue to [Step 8: You did it!](museum-09-complete.md) for a celebration and resources to keep building.

@@ -37,6 +37,7 @@ run_system_python() {
 validate_content() {
     run_system_python scripts/validate_workshop.py
     node docs/tests/markdown-language-preprocessor.test.js
+    node --test docs/tests/workshop-completion.test.js
 }
 
 validate_dotnet() {

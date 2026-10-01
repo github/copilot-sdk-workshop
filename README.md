@@ -19,8 +19,9 @@ Across the workshops, you'll:
 4. Enforce capability, input, timeout, validation, and lifecycle boundaries in application code.
 5. Explain what the model can infer and what the application must prove.
 
-Plan on about 90 minutes for Accessibility Reviewer or 75 minutes for Museum Exhibit Studio.
+Plan on about 115 minutes for Accessibility Reviewer or 90 minutes for Museum Exhibit Studio.
 Machine setup happens separately in an untimed preflight for each workshop.
+Each workshop includes its interactive HTML lesson and ends with a celebration and resources.
 
 ## Start the workshop
 
@@ -59,7 +60,7 @@ output, and troubleshooting.
 ```text
 copilot-sdk-workshop/
 |-- docs/                         GitHub Pages site and controlled target page
-|-- workshop/                     Two complete workshop tracks and optional extensions
+|-- workshop/                     Two complete workshop tracks and completion resources
 |-- start-accessibility/          Accessibility Reviewer starters in all six languages
 |-- start-museum/                 Museum Exhibit Studio starters in all six languages
 |-- finished/dotnet/
@@ -83,7 +84,7 @@ bash scripts/validate-workshop.sh
 ```
 
 The command checks lesson structure, internal links, site behavior hooks, and project coverage.
-It then runs browser-independent language-selection tests and restores, builds, or syntax-checks every
+It then runs browser-independent language-selection and completion tests and restores, builds, or syntax-checks every
 accessibility and museum starter, every finished project, and the Blazor target without authenticating
 Copilot, launching a browser, or sending a prompt. The museum projects ship no tests, mocks, or
 fixtures, so their targets only restore and build.
@@ -111,9 +112,10 @@ system messages, the prompt builders, one session runner that owns the lifecycle
 `main`. The finished sample is what a learner ends up with, not a separate reference architecture.
 
 The learner-facing track begins at
-[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through six core
+[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through seven
 steps — first session, streaming, curator voice, approved facts, structural checks, and
-Wikipedia MCP research — plus an optional interactive `exhibit.html` capstone.
+Wikipedia MCP research, followed by an interactive `exhibit.html` capstone — and finishes with
+[celebration and resources](workshop/museum-09-complete.md).
 
 When usable cited research exists, the curator calls `approved_fact_lookup` and the read-only
 `approved_wikipedia_fact_lookup` before writing the narrative and visitor questions. The second

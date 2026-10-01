@@ -36,7 +36,9 @@ MUSEUM_LESSONS = (
     "museum-07-wikipedia-research.md",
     "museum-08-interactive-exhibit-page.md",
 )
-LESSONS = SDLC_LESSONS + MUSEUM_LESSONS
+INSTRUCTIONAL_LESSONS = SDLC_LESSONS + MUSEUM_LESSONS
+COMPLETION_LESSONS = ("10-complete.md", "museum-09-complete.md")
+LESSONS = INSTRUCTIONAL_LESSONS + COMPLETION_LESSONS
 OFFICIAL_SDK_URLS = {
     "dotnet": "https://github.com/github/copilot-sdk/tree/main/dotnet",
     "nodejs": "https://github.com/github/copilot-sdk/tree/main/nodejs",
@@ -850,7 +852,7 @@ def validate_rendered_language_content(markdown_file: Path) -> None:
                     f"Step 3 guidance: {marker}",
                 )
 
-        if markdown_file.name not in {"00-preflight.md", "museum-00-preflight.md"}:
+        if markdown_file.name not in {"00-preflight.md", "museum-00-preflight.md", *COMPLETION_LESSONS}:
             run_section = markdown_section(rendered, "## Run it")
             if markdown_file.name == "09-interactive-html-report.md":
                 run_markers = STEP_9_RUN_COMMAND_MARKERS
@@ -1853,7 +1855,9 @@ def validate_documentation() -> None:
 
     lesson_viewer = read(DOCS / "workshop" / "step.html")
     for step_id in (
+        "08-model-selection",
         "09-interactive-html-report",
+        "10-complete",
         "museum-00-preflight",
         "museum-01-first-curator-session",
         "museum-02-stream-the-curator",
@@ -1862,6 +1866,7 @@ def validate_documentation() -> None:
         "museum-06-prove-the-structure",
         "museum-07-wikipedia-research",
         "museum-08-interactive-exhibit-page",
+        "museum-09-complete",
     ):
         require(
             f"id: '{step_id}'" in lesson_viewer,
@@ -1931,27 +1936,65 @@ def validate_documentation() -> None:
     ):
         require(
             required_step in html_lesson,
-            f"Optional exhibit page lesson is missing required guidance: {required_step}",
+            f"Exhibit page lesson is missing required guidance: {required_step}",
         )
     require(
         "id: 'museum-08-interactive-exhibit-page'" in lesson_viewer
-        and "kind: 'optional',\n                number: 7,\n                time: '15 min'" in lesson_viewer,
-        "The interactive exhibit page must be registered as optional 15-minute museum step 7",
+        and "kind: 'core',\n                number: 7,\n                time: '15 min'" in lesson_viewer,
+        "The interactive exhibit page must be registered as required 15-minute museum step 7",
     )
 
     landing_page = read(DOCS / "index.html")
-    require(
-        "Non-SDLC tool · 75 minutes" in landing_page
-        and "75 minutes for Museum Exhibit Studio" in read(ROOT / "README.md"),
-        "Museum workshop duration must match the six timed core steps",
-    )
-    museum_navigation = re.search(r"const museumSteps = \[(.*?)\];", lesson_viewer, re.DOTALL)
-    require(museum_navigation is not None, "Lesson viewer must declare museumSteps")
-    if museum_navigation is not None:
-        numbers = re.findall(r"number: (\d+)", museum_navigation.group(1))
+    for variable, lessons, completion, label in (
+        ("sdlcSteps", SDLC_LESSONS, COMPLETION_LESSONS[0], "Developer tool"),
+        ("museumSteps", MUSEUM_LESSONS, COMPLETION_LESSONS[1], "Non-SDLC tool"),
+    ):
+        navigation = re.search(rf"const {variable} = \[(.*?)\];", lesson_viewer, re.DOTALL)
+        require(navigation is not None, f"Lesson viewer must declare {variable}")
+        if navigation is None:
+            continue
+        files = re.findall(r"file: 'workshop/([^']+)'", navigation.group(1))
         require(
-            numbers == [str(number) for number in range(1, 8)],
-            "Museum navigation must have six consecutively numbered core steps and optional step 7",
+            files == [*lessons, completion],
+            f"{variable} must place all required lessons in order followed by completion",
+        )
+        numbers = re.findall(r"number: (\d+)", navigation.group(1))
+        require(
+            numbers == [str(number) for number in range(1, len(lessons) + 1)],
+            f"{variable} must have consecutive numbers including the final completion step",
+        )
+        kinds = re.findall(r"kind: '([^']+)'", navigation.group(1))
+        require(
+            kinds == ["preflight", *(["core"] * (len(lessons) - 1)), "completion"],
+            f"{variable} must have no optional lessons and exactly one final completion",
+        )
+        duration = sum(int(value) for value in re.findall(r"time: '(\d+) min'", navigation.group(1)))
+        track_name = "Accessibility Reviewer" if variable == "sdlcSteps" else "Museum Exhibit Studio"
+        require(
+            f"{label} · {duration} minutes" in landing_page
+            and f"{duration} minutes for {track_name}" in read(ROOT / "README.md")
+            and f"{duration}-minute workshop" in read(DOCS / "homepage.js"),
+            f"{track_name} duration must include every hands-on step",
+        )
+    require(
+        "kind: 'optional'" not in lesson_viewer and "Optional extension" not in lesson_viewer,
+        "Workshop navigation and progress must not retain optional extensions",
+    )
+    for number, lesson_name in enumerate(SDLC_LESSONS[1:], start=1):
+        require(
+            read(WORKSHOP / lesson_name).startswith(f"# Step {number}"),
+            f"{lesson_name} must display required step {number}",
+        )
+    for previous, following in (
+        ("07-run-explain.md", "08-model-selection.md"),
+        ("08-model-selection.md", "09-interactive-html-report.md"),
+        ("09-interactive-html-report.md", "10-complete.md"),
+        ("museum-07-wikipedia-research.md", "museum-08-interactive-exhibit-page.md"),
+        ("museum-08-interactive-exhibit-page.md", "museum-09-complete.md"),
+    ):
+        require(
+            re.search(rf"Continue to .*?\]\({re.escape(following)}\)", read(WORKSHOP / previous)) is not None,
+            f"{previous} must continue directly to {following}",
         )
     for number, lesson_name in enumerate(MUSEUM_LESSONS[1:], start=1):
         require(
@@ -2287,6 +2330,38 @@ def validate_learn_more_sections() -> None:
             )
 
 
+def validate_completion_pages() -> None:
+    for lesson, project in (
+        (COMPLETION_LESSONS[0], "accessibility-report"),
+        (COMPLETION_LESSONS[1], "museum-exhibit-studio"),
+    ):
+        path = WORKSHOP / lesson
+        if not path.exists():
+            continue
+        require(read(path).startswith("# You did it!"), f"{lesson} must lead with a celebration")
+        for language in LANGUAGES:
+            rendered = render_language_markdown(path, language)
+            require(
+                OFFICIAL_SDK_URLS[language] in rendered
+                and f"https://github.com/github/copilot-sdk-workshop/tree/main/finished/{language}/{project}" in rendered,
+                f"{lesson} must include SDK and finished-project resources for {language}",
+            )
+            for heading in ("## What you brought together", "## Your project and SDK", "## Learn more", "## Keep building"):
+                require(heading in rendered, f"{lesson} ({language}) is missing {heading}")
+    viewer = read(DOCS / "workshop" / "step.html")
+    render_position = viewer.find("prepareRenderedLesson();")
+    celebrate_position = viewer.find("celebration.show(step);")
+    require(
+        "workshop-completion.js" in viewer
+        and 0 <= render_position < celebrate_position,
+        "Completion celebration must run only after the lesson successfully renders",
+    )
+    require(
+        "Back to workshop hub" in viewer and "homeUrl(getSelectedLanguage())" in viewer,
+        "Final pagination must offer a language-preserving workshop hub exit",
+    )
+
+
 SYSTEM_MESSAGE_MODE_EXPLAINER_LESSONS = ("01-first-session.md", "museum-03-curator-voice.md")
 SYSTEM_MESSAGE_MODES = ("`append`", "`replace`", "`customize`")
 PERMISSION_DECISION_EXPLAINER_LESSONS = ("04-mcp-safety.md", "museum-07-wikipedia-research.md")
@@ -2386,7 +2461,7 @@ for lesson in LESSONS:
         validate_shared_language_content(lesson_path)
         validate_rendered_language_content(lesson_path)
         for section in ("## Run it", "## Check your understanding"):
-            if lesson not in {"00-preflight.md", "museum-00-preflight.md"}:
+            if lesson not in {"00-preflight.md", "museum-00-preflight.md", *COMPLETION_LESSONS}:
                 require(section in read(lesson_path), f"{lesson} is missing required section: {section}")
 validate_layout()
 validate_museum_projects()
@@ -2401,6 +2476,7 @@ validate_editor_open_guidance()
 validate_museum_permission_handlers()
 validate_museum_rust_error_types()
 validate_learn_more_sections()
+validate_completion_pages()
 validate_configuration_explainers()
 validate_workflows()
 
@@ -2413,5 +2489,5 @@ if errors:
 print(
     f"Workshop content validation passed: {len(LANGUAGES)} languages, "
     f"{len(SDLC_LESSONS)} SDLC lessons, {len(MUSEUM_LESSONS)} museum lessons, "
-    "all repository projects, and local site assets."
+    f"{len(COMPLETION_LESSONS)} completion pages, all repository projects, and local site assets."
 )

@@ -1222,5 +1222,4 @@ input rather than returning a misleading success result.
 - [Plugin directories](https://github.com/github/copilot-sdk/blob/main/docs/features/plugin-directories.md):
   bundling MCP servers with skills and hooks so a session loads a capability profile as one unit.
 
-Continue to the optional [Publish an interactive exhibit page](museum-08-interactive-exhibit-page.md),
-or stop here with a complete, grounded curator.
+Continue to [Step 7: Publish an interactive exhibit page](museum-08-interactive-exhibit-page.md).

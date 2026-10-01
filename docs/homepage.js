@@ -29,7 +29,7 @@
 
 Finding
 The name input has no accessible name.`,
-            guidance: 'Build an SDLC developer tool in a 90-minute core workshop.'
+            guidance: 'Build an SDLC developer tool in a 115-minute workshop, then celebrate and keep building.'
         },
         museum: {
             name: 'Museum Exhibit Studio',
@@ -44,7 +44,7 @@ System message: replace
 # Journey to the Moon
 ## Narrative
 ## Visitor questions`,
-            guidance: 'Build a non-SDLC curator tool in a 90-minute core workshop.'
+            guidance: 'Build a non-SDLC curator tool in a 90-minute workshop, then celebrate and keep building.'
         }
     };
 

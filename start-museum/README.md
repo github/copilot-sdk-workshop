@@ -15,7 +15,7 @@ The starters do **not** include the curator system message, the exhibit prompt, 
 configuration, tool registration, or any orchestration. You write those during the lessons: one
 session, then streaming, then the curator voice, the fact tool registration and its prompt with a
 bounded session runner, the validation report, scoped Wikipedia research, and an
-optional `exhibit.html` page. Each starter entrypoint carries comments marking exactly where each
+interactive `exhibit.html` page. Each starter entrypoint carries comments marking exactly where each
 step's code goes. Start at [`workshop/museum-00-preflight.md`](../workshop/museum-00-preflight.md).
 
 Step 6 conditionally registers the Wikipedia lookup alongside the approved-fact lookup and asks
