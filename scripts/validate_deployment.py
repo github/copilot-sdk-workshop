@@ -27,7 +27,11 @@ def public_paths() -> list[str]:
         f"workshop/{path.name}"
         for path in WORKSHOP.glob("*.md")
     )
-    return ["", *sorted(site_files), *sorted(lessons)]
+    demo_guides = (
+        path.relative_to(ROOT).as_posix()
+        for path in (ROOT / "start-intro").glob("*/LIVE_DEMO.md")
+    )
+    return ["", *sorted(site_files), *sorted(lessons), *sorted(demo_guides)]
 
 
 def normalize_base_url(value: str) -> str:

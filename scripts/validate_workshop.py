@@ -14,6 +14,53 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKSHOP = ROOT / "workshop"
 DOCS = ROOT / "docs"
 LANGUAGES = ("dotnet", "go", "java", "nodejs", "python", "rust")
+INTRO_LESSONS = (
+    "intro-00-preflight.md",
+    "intro-01-sdk-basics.md",
+    "intro-02-hello-world.md",
+    "intro-03-podcast-agent.md",
+    "intro-04-wrap-up.md",
+)
+INTRO_REPOSITORY_URL = "https://github.com/github/copilot-sdk-workshop"
+INTRO_STARTER_URL = f"{INTRO_REPOSITORY_URL}/blob/main/start-intro"
+INTRO_DEMO_HEADINGS = {
+    "intro-02-hello-world.md": "## Act One: Hello World",
+    "intro-03-podcast-agent.md": "## Act Two: Turn It Into A Podcast Agent",
+}
+INTRO_HELPERS = {
+    "dotnet": (
+        "Helpers/EpisodeSelector.cs",
+        "Helpers/ModelSelector.cs",
+        "Helpers/PermissionPrompt.cs",
+        "Helpers/SelectionPrompt.cs",
+        "Tools/GitHubPodcastEpisodeTool.cs",
+    ),
+    "nodejs": ("src/github-podcast-tools.ts", "src/model-selector.ts", "src/permission-prompt.ts"),
+    "python": ("github_podcast_tools.py", "model_selector.py", "permission_prompt.py"),
+    "go": ("helpers.go", "permission_prompt.go"),
+    "java": (
+        "src/main/java/demo/GitHubPodcastEpisodeTool.java",
+        "src/main/java/demo/ModelSelector.java",
+        "src/main/java/demo/PermissionPrompt.java",
+    ),
+    "rust": ("src/workshop.rs",),
+}
+INTRO_ENTRYPOINTS = {
+    "dotnet": "Program.cs",
+    "nodejs": "src/index.ts",
+    "python": "main.py",
+    "go": "main.go",
+    "java": "src/main/java/demo/CopilotSdkLiveDemo.java",
+    "rust": "src/main.rs",
+}
+INTRO_RUN_COMMANDS = {
+    "dotnet": ("dotnet run",),
+    "nodejs": ("npm start",),
+    "python": (r".\.venv\Scripts\python.exe main.py", ".venv/bin/python main.py"),
+    "go": ("go run .",),
+    "java": ("mvn compile exec:java",),
+    "rust": ("cargo run --locked",),
+}
 SDLC_LESSONS = (
     "00-preflight.md",
     "01-first-session.md",
@@ -36,7 +83,7 @@ MUSEUM_LESSONS = (
     "museum-07-wikipedia-research.md",
     "museum-08-interactive-exhibit-page.md",
 )
-LESSONS = SDLC_LESSONS + MUSEUM_LESSONS
+LESSONS = INTRO_LESSONS + SDLC_LESSONS + MUSEUM_LESSONS
 OFFICIAL_SDK_URLS = {
     "dotnet": "https://github.com/github/copilot-sdk/tree/main/dotnet",
     "nodejs": "https://github.com/github/copilot-sdk/tree/main/nodejs",
@@ -371,6 +418,8 @@ def has_manifest(directory: Path, language: str) -> bool:
 
 
 def entrypoint_path(directory: Path, language: str) -> Path:
+    if directory.parent.name == "start-intro":
+        return Path(INTRO_ENTRYPOINTS[language])
     if language == "java" and directory.name == "hello-copilot-sdk":
         return Path("src/main/java/workshop/AccessibilityGuidance.java")
     if language == "java" and directory.name == "museum-exhibit-studio":
@@ -736,6 +785,7 @@ def validate_html_assets(html_file: Path) -> None:
 def validate_markdown_links(markdown_file: Path) -> None:
     for target_text in re.findall(r"!?\[[^\]]*\]\(([^)]+)\)", read(markdown_file)):
         target_value = target_text.split(maxsplit=1)[0].strip("<>")
+        parsed = urlsplit(target_value)
         prefixes = (
             "https://github.com/github/copilot-sdk-workshop/tree/main/",
             "https://github.com/github/copilot-sdk-workshop/blob/main/",
@@ -743,11 +793,10 @@ def validate_markdown_links(markdown_file: Path) -> None:
         prefix = next((candidate for candidate in prefixes if target_value.startswith(candidate)), None)
         if prefix:
             require(
-                (ROOT / target_value.removeprefix(prefix)).exists(),
+                (ROOT / parsed.path.removeprefix(urlsplit(prefix).path)).exists(),
                 f"{markdown_file.relative_to(ROOT)} links to missing repository path {target_value}",
             )
             continue
-        parsed = urlsplit(target_value)
         if parsed.scheme or target_value.startswith(("#", "mailto:")):
             continue
         require(
@@ -808,7 +857,17 @@ def render_language_markdown(markdown_file: Path, selected_language: str) -> str
             active_language = None
         elif active_language is None or active_language == selected_language:
             rendered.append(line)
-    return "\n".join(rendered)
+    result = "\n".join(rendered)
+    if markdown_file.name in INTRO_DEMO_HEADINGS:
+        guide = ROOT / "start-intro" / selected_language / "LIVE_DEMO.md"
+        require(guide.exists(), f"Missing {selected_language} LIVE_DEMO.md")
+        require(result.count("<!-- LIVE_DEMO -->") == 1,
+                f"{markdown_file.name} must include its canonical demo act exactly once")
+        if guide.exists():
+            section = markdown_section(read(guide), INTRO_DEMO_HEADINGS[markdown_file.name])
+            require(bool(section), f"{guide.relative_to(ROOT)} is missing its demo act")
+            result = result.replace("<!-- LIVE_DEMO -->", "\n".join(section.splitlines()[1:]))
+    return result
 
 
 def markdown_section(markdown: str, heading: str) -> str:
@@ -837,6 +896,9 @@ def validate_rendered_language_content(markdown_file: Path) -> None:
                     f"{markdown_file.relative_to(ROOT)} shows {other_language} content "
                     f"for the {selected_language} track: {marker}",
                 )
+
+        if markdown_file.name in INTRO_LESSONS:
+            continue
 
         if markdown_file.name == "03-local-tool.md":
             for marker in (
@@ -927,6 +989,7 @@ def validate_language_registry() -> None:
 def validate_layout() -> None:
     for language in LANGUAGES:
         directories = [
+            ROOT / "start-intro" / language,
             ROOT / "start-accessibility" / language,
             ROOT / "start-museum" / language,
             *(ROOT / "finished" / language / project for project in (
@@ -942,6 +1005,7 @@ def validate_layout() -> None:
                     f"Missing {language} executable entrypoint in {directory.relative_to(ROOT)}")
     for language in ("nodejs", "go", "rust"):
         for directory in [
+            ROOT / "start-intro" / language,
             ROOT / "start-accessibility" / language,
             ROOT / "start-museum" / language,
             *(ROOT / "finished" / language / project for project in (
@@ -1482,6 +1546,7 @@ def validate_museum_projects() -> None:
 
 def validate_python_dependencies() -> None:
     directories = [
+        ROOT / "start-intro" / "python",
         ROOT / "start-accessibility" / "python",
         ROOT / "start-museum" / "python",
         *(ROOT / "finished" / "python" / project for project in (
@@ -1747,9 +1812,9 @@ def validate_site_behavior() -> None:
     step = read(DOCS / "workshop" / "step.html")
     navigation = read(DOCS / "language-navigation.js")
     require(index.count('class="primary-action"') == 1, "Homepage must have exactly one primary action")
-    require(index.count('name="workshop"') == 2, "Homepage must offer exactly two workshop choices")
-    require('value="sdlc"' in index and 'value="museum"' in index,
-            "Homepage must offer SDLC and museum workshop choices")
+    require(index.count('name="workshop"') == 3, "Homepage must offer exactly three workshop choices")
+    require(all(f'value="{track}"' in index for track in ("intro", "sdlc", "museum")),
+            "Homepage must offer intro, SDLC, and museum workshop choices")
     require(index.count('name="language"') == len(LANGUAGES),
             "Homepage must offer exactly six language choices")
     require('name="language" value="dotnet" required' in index and "checked" not in index,
@@ -1764,19 +1829,147 @@ def validate_site_behavior() -> None:
             "Lesson viewer must scope navigation to the active workshop")
     require("museum-00-preflight" in navigation,
             "Language navigation must route the museum workshop to its own preflight")
+    require("intro-00-preflight" in navigation,
+            "Language navigation must route the intro workshop to its own preflight")
     for hook in ("event.key === 'Escape'", "trapNavigationFocus", "toggleAttribute('inert'", "initializeTabs", 'id="lessonStatus"', 'id="progressTrack"'):
         require(hook in step, f"Lesson viewer is missing behavior hook: {hook}")
     for html_file in (DOCS / "index.html", DOCS / "workshop" / "step.html", DOCS / "target-app" / "index.html"):
         validate_html_assets(html_file)
 
 
+def validate_intro_workshop() -> None:
+    viewer = read(DOCS / "workshop" / "step.html")
+    navigation = re.search(r"const introSteps = \[(.*?)\];", viewer, re.DOTALL)
+    require(navigation is not None, "Lesson viewer must declare introSteps")
+    if navigation is not None:
+        blocks = re.findall(r"\{([^{}]+)\}", navigation.group(1))
+        require(len(blocks) == len(INTRO_LESSONS), "Intro navigation must register exactly five lessons")
+        total_minutes = 0
+        core_numbers: list[int] = []
+        for block, lesson in zip(blocks, INTRO_LESSONS):
+            step_id = Path(lesson).stem
+            require(f"id: '{step_id}'" in block, f"Intro navigation must register {step_id} in order")
+            require(f"file: 'workshop/{lesson}'" in block, f"Intro navigation has the wrong file for {step_id}")
+            if lesson == INTRO_LESSONS[0]:
+                require("kind: 'preflight'" in block and "time: 'Untimed'" in block,
+                        "Intro preflight must be untimed advance preparation")
+                continue
+            require("kind: 'core'" in block, f"{step_id} must be a required core lesson")
+            duration = re.search(r"time: '(\d+) min'", block)
+            number = re.search(r"number: (\d+)", block)
+            require(duration is not None and number is not None, f"{step_id} needs a duration and step number")
+            if duration is not None:
+                minutes = int(duration.group(1))
+                total_minutes += minutes
+                require(f"> **Time:** {minutes} minutes" in read(WORKSHOP / lesson),
+                        f"{lesson} duration must agree with navigation")
+            if number is not None:
+                core_numbers.append(int(number.group(1)))
+                require(read(WORKSHOP / lesson).startswith(f"# Step {number.group(1)}:"),
+                        f"{lesson} heading must agree with navigation")
+        require(core_numbers == [1, 2, 3, 4], "Intro core lessons must be numbered 1 through 4")
+        require(total_minutes == 30, f"Intro core lessons must total exactly 30 minutes, not {total_minutes}")
+
+    require("Beginner intro · 30 minutes" in read(DOCS / "index.html"),
+            "Homepage must identify the introductory 30-minute workshop")
+    require("SDK 101 has exactly 30 minutes" in read(ROOT / "README.md"),
+            "README must state the introductory 30-minute budget")
+    preflight = WORKSHOP / INTRO_LESSONS[0]
+    require(f"git clone {INTRO_REPOSITORY_URL}.git" in read(preflight),
+            "Intro preflight must clone this workshop repository")
+    require(read(preflight).count("git clone ") == 1,
+            "Intro preflight must require only one repository clone")
+    require("before the 30-minute workshop" in read(preflight),
+            "Intro setup must be separate from the timed workshop")
+    workflow = read(ROOT / ".github" / "workflows" / "validate.yml")
+    for cached_input in (
+        "start-intro/nodejs/package-lock.json",
+        "start-intro/python/requirements.txt",
+        "start-intro/go/go.sum",
+        "start-intro/rust -> ../../.cargo-target",
+    ):
+        require(cached_input in workflow, f"CI must include the intro cache input: {cached_input}")
+    deployment = read(ROOT / ".github" / "workflows" / "deploy.yml")
+    require('cp "start-intro/$language/LIVE_DEMO.md"' in deployment,
+            "Pages must deploy the six canonical LIVE_DEMO.md files")
+    for language in LANGUAGES:
+        prepared = render_language_markdown(preflight, language)
+        require(f"cd start-intro/{language}" in prepared and "code ." in prepared,
+                f"Intro preflight must open the {language} starter folder in an editor")
+        require(f"{INTRO_STARTER_URL}/{language}/README.md" in prepared,
+                f"Intro preflight must link the included {language} README")
+        starter = ROOT / "start-intro" / language
+        require((starter / "README.md").exists(), f"Missing {language} intro starter notes")
+        guide = starter / "LIVE_DEMO.md"
+        require(guide.exists(), f"Missing {language} LIVE_DEMO.md")
+        if guide.exists():
+            hello_act = markdown_section(read(guide), INTRO_DEMO_HEADINGS["intro-02-hello-world.md"])
+            podcast_act = markdown_section(read(guide), INTRO_DEMO_HEADINGS["intro-03-podcast-agent.md"])
+            require(re.findall(r"^### (\d+)\.", hello_act, re.MULTILINE) == ["1", "2", "3", "4"],
+                    f"{language} hello world must follow the source guide's four edits")
+            require(re.findall(r"^### (\d+)\.", podcast_act, re.MULTILINE) == ["1", "2", "3"],
+                    f"{language} podcast act must follow the source guide's three edits")
+            require("Replace" in hello_act and INTRO_ENTRYPOINTS[language].replace("/", "\\") in read(guide),
+                    f"{language} demo must edit its included entrypoint")
+            require("LIVE_DEMO.md" in read(starter / "README.md"),
+                    f"{language} starter notes must direct learners to the demo guide")
+        for helper in INTRO_HELPERS[language]:
+            require((starter / helper).exists(),
+                    f"Missing included {language} intro helper: {helper}")
+        require(f"start-intro/{language}" in read(ROOT / "scripts" / "validate-workshop.sh"),
+                f"Smoke builds must include the {language} intro starter")
+        for lesson in INTRO_LESSONS:
+            rendered = render_language_markdown(WORKSHOP / lesson, language)
+            require(INTRO_ENTRYPOINTS[language] in rendered,
+                    f"{lesson} must identify the {language} entrypoint")
+            require("copilot-sdk-intro" not in rendered,
+                    f"{lesson} must use the included starter, not the external repository")
+        for lesson in ("intro-01-sdk-basics.md", "intro-04-wrap-up.md"):
+            require(f"start-intro/{language}" in render_language_markdown(WORKSHOP / lesson, language),
+                    f"{lesson} must identify the included {language} starter folder")
+        for lesson in INTRO_LESSONS[2:4]:
+            rendered = render_language_markdown(WORKSHOP / lesson, language)
+            for command in INTRO_RUN_COMMANDS[language]:
+                require(command in rendered, f"{lesson} must show the {language} run command: {command}")
+            require(f"{INTRO_STARTER_URL}/{language}/LIVE_DEMO.md" in rendered,
+                    f"{lesson} must link the included {language} demo guide")
+            require("replace its contents" not in rendered.casefold(),
+                    f"{lesson} must teach incremental edits, not whole-file replacement")
+
+    hello = re.sub(r"\s+", " ", read(WORKSHOP / "intro-02-hello-world.md")).casefold()
+    podcast = re.sub(r"\s+", " ", read(WORKSHOP / "intro-03-podcast-agent.md"))
+    for language in LANGUAGES:
+        permission_member = {
+            "dotnet": "OnPermissionRequest",
+            "nodejs": "onPermissionRequest",
+            "python": "on_permission_request",
+            "go": "OnPermissionRequest",
+            "java": "setOnPermissionRequest",
+            "rust": "permission_handler",
+        }[language]
+        for lesson in (INTRO_LESSONS[2], INTRO_LESSONS[3]):
+            require(permission_member in render_language_markdown(WORKSHOP / lesson, language),
+                    f"{lesson} must answer {language} permission requests")
+        rendered_podcast = render_language_markdown(WORKSHOP / INTRO_LESSONS[3], language)
+        for tool in ("get_github_podcast_episode", "get_latest_github_podcast_episodes"):
+            require(tool in rendered_podcast, f"Podcast lesson must register {tool} for {language}")
+    require("empty tool allowlist" in hello and "approve-all is not itself a safety boundary" in hello,
+            "Intro hello world must explain its permission boundary")
+    require("does not enforce the limit in code" in podcast and "before publishing" in podcast,
+            "Intro podcast lesson must distinguish prompt guidance from output guarantees")
+
+
 def validate_documentation() -> None:
-    for markdown in [
+    markdown_files = [
         ROOT / "README.md",
+        ROOT / "start-intro" / "README.md",
+        *(ROOT / "start-intro" / language / "README.md" for language in LANGUAGES),
+        *(ROOT / "start-intro" / language / "LIVE_DEMO.md" for language in LANGUAGES),
         ROOT / "start-accessibility" / "README.md",
         ROOT / "start-museum" / "README.md",
         *WORKSHOP.glob("*.md"),
-    ]:
+    ]
+    for markdown in markdown_files:
         validate_markdown_links(markdown)
     published = "\n".join(read(path) for path in [ROOT / "README.md", *WORKSHOP.glob("*.md"), *DOCS.rglob("*.html")])
     for forbidden in ("jamesmontemagno.github.io", "codemillmatt.github.io", "](../start-accessibility/", "](../finished/"):
@@ -1784,12 +1977,7 @@ def validate_documentation() -> None:
     for url in OFFICIAL_SDK_URLS.values():
         require(url in read(ROOT / "README.md"), f"README is missing official SDK link {url}")
     require("https://github.com/github/copilot-sdk/tree/main/cookbook" in read(ROOT / "README.md"), "README is missing the official cookbook link")
-    all_markdown = "\n".join(read(path) for path in [
-        ROOT / "README.md",
-        ROOT / "start-accessibility" / "README.md",
-        ROOT / "start-museum" / "README.md",
-        *WORKSHOP.glob("*.md"),
-    ])
+    all_markdown = "\n".join(read(path) for path in markdown_files)
     require("go run ./finished/" not in all_markdown and "go run finished/" not in all_markdown,
             "Documentation runs Go modules from the repository root instead of their module directory")
     starters = read(ROOT / "start-accessibility" / "README.md")
@@ -1803,8 +1991,7 @@ def validate_documentation() -> None:
         require("python main.py" in read(WORKSHOP / lesson),
                 f"{lesson} must run the Python project through main.py")
 
-    # Learners clone the repository and work in place inside start-accessibility/<language> or
-    # start-museum/<language>. No copied sibling project may reappear anywhere.
+    # Learners work in place inside the selected starter. No copied sibling project is needed.
     for lesson in LESSONS:
         lesson_text = read(WORKSHOP / lesson)
         for forbidden in IN_PLACE_FORBIDDEN_MARKERS:
@@ -1820,6 +2007,7 @@ def validate_documentation() -> None:
             )
     for documentation in (
         ROOT / "README.md",
+        ROOT / "start-intro" / "README.md",
         ROOT / "start-accessibility" / "README.md",
         ROOT / "start-museum" / "README.md",
     ):
@@ -2110,6 +2298,7 @@ def validate_editor_open_guidance() -> None:
     # fenced command the learner is expected to run.
     fence = "`code .`"
     for lesson_name, starter_root in (
+        ("intro-00-preflight.md", "start-intro"),
         ("00-preflight.md", "start-accessibility"),
         ("museum-00-preflight.md", "start-museum"),
     ):
@@ -2146,6 +2335,7 @@ def validate_editor_open_guidance() -> None:
                 f"{starter_directory} in an editor, not only run `code .`",
             )
     for starter_readme in (
+        ROOT / "start-intro" / "README.md",
         ROOT / "start-accessibility" / "README.md",
         ROOT / "start-museum" / "README.md",
     ):
@@ -2385,9 +2575,11 @@ for lesson in LESSONS:
         validate_language_directives(lesson_path)
         validate_shared_language_content(lesson_path)
         validate_rendered_language_content(lesson_path)
-        for section in ("## Run it", "## Check your understanding"):
-            if lesson not in {"00-preflight.md", "museum-00-preflight.md"}:
-                require(section in read(lesson_path), f"{lesson} is missing required section: {section}")
+        if lesson not in {"00-preflight.md", "museum-00-preflight.md", "intro-00-preflight.md"}:
+            require("## Check your understanding" in read(lesson_path),
+                    f"{lesson} is missing required section: ## Check your understanding")
+            if lesson not in {"intro-01-sdk-basics.md", "intro-04-wrap-up.md"}:
+                require("## Run it" in read(lesson_path), f"{lesson} is missing required section: ## Run it")
 validate_layout()
 validate_museum_projects()
 validate_python_dependencies()
@@ -2396,6 +2588,7 @@ validate_file_creation_tools()
 validate_playwright_output_configuration()
 validate_project_behavior()
 validate_site_behavior()
+validate_intro_workshop()
 validate_documentation()
 validate_editor_open_guidance()
 validate_museum_permission_handlers()
@@ -2412,6 +2605,7 @@ if errors:
 
 print(
     f"Workshop content validation passed: {len(LANGUAGES)} languages, "
+    f"{len(INTRO_LESSONS)} intro lessons (30 minutes), "
     f"{len(SDLC_LESSONS)} SDLC lessons, {len(MUSEUM_LESSONS)} museum lessons, "
     "all repository projects, and local site assets."
 )

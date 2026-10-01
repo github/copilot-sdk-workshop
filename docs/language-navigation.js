@@ -36,7 +36,9 @@
     }
 
     function firstLessonUrl(languageId, workshopId = 'sdlc') {
-        const firstStep = workshopId === 'museum'
+        const firstStep = workshopId === 'intro'
+            ? 'intro-00-preflight'
+            : workshopId === 'museum'
             ? 'museum-00-preflight'
             : '00-preflight';
         return `workshop/step.html${lessonUrl(firstStep, languageId)}`;
