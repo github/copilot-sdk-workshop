@@ -25,7 +25,9 @@
 // Step 6  Wikipedia research ............. add research_config() with wikipedia_server() plus
 //                                          wikipedia_permission_handler(), run it through
 //                                          run_session, and print sources after the exhibit.
-//                                          Research never joins the approved facts.
+//                                          Retain the body and citations, conditionally register
+//                                          approved_wikipedia_fact_lookup, and request both
+//                                          lookups before generation. Approved facts win.
 // Step 7  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
 //                                          "builtin:create" allowlist and exhibit_write_permission(...).
 

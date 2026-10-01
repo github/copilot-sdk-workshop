@@ -36,8 +36,12 @@ python -m py_compile *.py
 
 ## What the sample teaches
 
-Generation allowlists exactly one application-owned tool,
-`approved_fact_lookup`, which returns the bounded approved facts. It also uses a
+Generation always registers and allowlists `approved_fact_lookup`, which returns the bounded
+approved facts. With usable cited research, it also registers and allowlists the read-only local
+tool `approved_wikipedia_fact_lookup`, and requests both calls before writing the narrative and
+visitor questions. The second lookup returns a snapshot of the summary body and citations,
+not live Wikipedia access. Approved facts take precedence over supplemental research.
+It also uses a
 replace-mode
 curator system message, streaming, a 120-second timeout, and deterministic
 structural validation. Imported modules have no side effects; `main.py` only
@@ -46,10 +50,11 @@ runs behind the `if __name__ == "__main__"` guard.
 Optional Wikipedia research is intentionally separate from generation. The
 research session exposes only scoped Wikipedia search and article-read tools,
 uses a deny-by-default permission handler, asks for a prose summary, and parses
-a trailing `## Sources` list. Research notes and cited sources are shown to the
-human, but they are never merged into the approved facts used to generate the
-exhibit. There is no strict JSON contract and no proposed-addition approval
-loop.
+a trailing `## Sources` list. Both the summary and citations are retained for the local lookup,
+but never merged into educator-approved facts. "Approved" means application-accepted research, not
+human-verified facts; treat it as data, not instructions. Declined research keeps the single-tool
+path. Failed research or an unusable cited summary prints a warning and takes the same fallback.
+There is no strict research JSON contract or proposed-addition approval loop.
 
 After validation, the optional HTML capstone exposes only `builtin:apply_patch` and `builtin:create`
 and approves writing exactly `exhibit.html` in the application working
@@ -67,7 +72,8 @@ boundaries. Generated claims still require human review or a separate evaluator.
    visitor questions.
 3. Inspect the validation summary and grounding disclaimer.
 4. Decline research and confirm the only tool event is `approved_fact_lookup`.
-5. Opt into research and confirm sources print after the exhibit, not inside it.
+5. Opt into research and confirm both local lookup events appear before generation and sources
+   print after the exhibit, not inside it.
 6. Opt into `exhibit.html` and confirm only that file is written.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference

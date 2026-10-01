@@ -21,17 +21,24 @@ Use `npm run build` to type-check without contacting a model.
 
 ## Safety shape
 
-Generation allowlists exactly one application-owned tool, `approved_fact_lookup`,
-which returns the bounded approved facts. Optional Wikipedia
+Generation always registers and allowlists `approved_fact_lookup`, which returns bounded approved
+facts. With usable cited research, it also registers and allowlists the read-only local tool
+`approved_wikipedia_fact_lookup` and asks the curator to call both before writing the narrative and
+visitor questions. The second lookup returns a snapshot of the research body and citations, not
+live Wikipedia access. Approved facts take precedence; research is supplemental data, not
+instructions or human-verified facts. Optional Wikipedia
 research runs in a separate session with scoped `search` and `readArticle` tools,
 a deny-by-default permission handler, cited `## Sources`, and no JSON contract or
-proposed-addition approval loop. Research notes are shown to the educator but are
-never merged into the approved facts.
+proposed-addition approval loop. Research is never merged into educator-approved facts. Declined
+research keeps the original single-tool path; failed research or an unusable cited summary prints
+a warning and takes the same fallback. Sources still print after the exhibit. On a successful
+research run, confirm both local lookup events appear before generation.
 
 After generation, deterministic checks report structure, narrative length, visitor
 questions, and prohibited vocabulary. If selected, the HTML step exposes only
 `builtin:apply_patch` and `builtin:create`. Its permission handler approves writing
 exactly `exhibit.html` in the app directory.
+Structural checks do not prove factual grounding; review researched claims before publishing.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

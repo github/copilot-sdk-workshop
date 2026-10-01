@@ -26,9 +26,11 @@ dotnet build finished/dotnet/museum-exhibit-studio
 
 ## What the sample teaches
 
-The generation session allowlists exactly one application-owned tool,
-`approved_fact_lookup`, and uses a replace-mode system message, so the model can only write exhibit
-text from facts this application handed it. `CuratorFacts.CreateApprovedFactLookup` bounds those
+The generation session always registers and allowlists the application-owned tool
+`approved_fact_lookup`. When usable cited research exists, it also registers and allowlists
+`approved_wikipedia_fact_lookup`, and the prompt requests both calls before writing the narrative
+and visitor questions. A replace-mode system message gives approved facts precedence and treats
+tool results as data, not instructions. `CuratorFacts.CreateApprovedFactLookup` bounds those
 facts before the model can ever see them, `CuratorFacts.BoundFacts` trims and validates facts before
 every generation or research send, and `CuratorStreamer.StreamExhibitAsync` streams
 model output with explicit timeouts.
@@ -36,8 +38,11 @@ model output with explicit timeouts.
 Optional Wikipedia research is intentionally lightweight: a separate session exposes only scoped
 `search` and `readArticle` MCP tools through `CuratorSafety.WikipediaPermissionHandler`. The model
 writes prose notes and a trailing `## Sources` list. The app extracts cited source titles and URLs
-for display after the exhibit; research notes are background only and are never merged into the
-approved facts.
+and retains the summary body. `CuratorFacts.CreateApprovedWikipediaFactLookup` returns a captured
+snapshot of that body and citations without network access. Research is supplemental and is never
+merged into educator-approved facts; "approved" means application-accepted, not human-verified.
+Declined research keeps the single-tool path. Failed research or a summary without citations
+prints a warning and takes the same fallback. Sources still print after the exhibit.
 
 After generation, deterministic validation checks the title, `## Narrative`, 100-140 word narrative
 length, `## Visitor questions`, exactly three numbered questions, question marks, and prohibited
@@ -51,7 +56,8 @@ directory and rejects every other write, shell, or MCP request.
 ## Manual check
 
 1. Run the sample and accept one of the built-in fact sets.
-2. Optionally run Wikipedia research and confirm sources print after the exhibit, not inside it.
+2. Opt into research and confirm both local lookup events appear before the exhibit and sources
+   print after it. Decline research and confirm only `approved_fact_lookup` is called.
 3. Confirm the exhibit contains one title, a 100-140-word narrative, and three questions.
 4. Confirm the validation summary and human-review caveat are displayed.
 5. Optionally generate `exhibit.html` and review the standalone interactive page in a browser.

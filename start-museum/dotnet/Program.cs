@@ -27,7 +27,9 @@
 // Step 6  Wikipedia research ............. add ResearchConfig() with CuratorSafety.WikipediaServer()
 //                                          plus CuratorSafety.WikipediaPermissionHandler(), run it
 //                                          through RunSessionAsync, and print sources after the
-//                                          exhibit. Research never joins the approved facts.
+//                                          exhibit. Retain the body and citations, conditionally
+//                                          register approved_wikipedia_fact_lookup, and request
+//                                          both lookups before generation. Approved facts win.
 // Step 7  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch" and
 //                                          "builtin:create" allowlist and CuratorSafety.ExhibitWritePermission(...).
 
