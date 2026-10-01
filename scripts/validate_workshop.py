@@ -1432,14 +1432,31 @@ def validate_file_creation_tools() -> None:
         ]
         for text, label, expected_tools in sources:
             compact = re.sub(r"\s+", "", strip_line_comments(text))
+            literal = r'"[^"\\]*"'
+            if language == "rust":
+                literal += r"\.to_owned\(\)"
+            literal_list = rf"{literal}(?:,{literal})*,?"
             allowlists = [
-                tuple(re.findall(r'"([^"]+)"', entries))
+                tuple(re.findall(r'"([^"\\]*)"', entries))
                 for entries in re.findall(allowlist_patterns[language], compact)
+                if re.fullmatch(literal_list, entries) is not None
             ]
             require(
                 expected_tools in allowlists,
                 f"{label} must allowlist exactly {', '.join(expected_tools)} for file creation",
             )
+        if language == "java":
+            lesson = WORKSHOP / "museum-08-interactive-exhibit-page.md"
+            for text, label in (
+                (read(entrypoint), str(entrypoint.relative_to(ROOT))),
+                (render_language_markdown(lesson, language), str(lesson.relative_to(ROOT))),
+            ):
+                require(
+                    ".setOnPermissionRequest(CuratorSafety.exhibitWritePermission(workingDirectory))"
+                    in re.sub(r"\s+", "", text)
+                    and "--allow-local-demo-write" not in text,
+                    f"{label} must use the strict exhibit path permission handler without a write fallback",
+                )
 
 
 def validate_playwright_file_output(text: str, label: Path) -> None:

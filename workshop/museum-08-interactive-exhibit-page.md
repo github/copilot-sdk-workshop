@@ -332,48 +332,27 @@ request, an MCP request — takes the `PermissionResult::reject` branch with fee
 :::
 
 :::language java
-Open `src/main/java/workshop/MuseumExhibitStudio.java`. Add these imports:
+Open `src/main/java/workshop/MuseumExhibitStudio.java`. Add this import:
 
 ```java
-import com.github.copilot.rpc.PermissionHandler;
-import com.github.copilot.rpc.PermissionRequestResult;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
 ```
 
-Current Java SDK releases may not expose the file name on a write permission request
-([github/copilot-sdk#2273](https://github.com/github/copilot-sdk/issues/2273)). The strict handler
-is still the default; an explicit, documented opt-in flag is the only way to run the demo when the
-field is missing, and it cannot enforce the output path. Add the flag, the HTML configuration, and
-the prompt builder:
+The pinned Java SDK 1.0.11 preserves permission fields such as `fileName`, so use the strict
+path-checking handler directly. Add the HTML configuration and the prompt builder:
 
 ```java
-    private static final String LOCAL_DEMO_WRITE_FLAG = "--allow-local-demo-write";
-
-    private static SessionConfig htmlConfig(Path workingDirectory, boolean allowLocalDemoWrite) {
+    private static SessionConfig htmlConfig(Path workingDirectory) {
         SessionConfig config = new SessionConfig()
                 .setClientName("museum-exhibit-studio-html")
                 .setAvailableTools(List.of("builtin:apply_patch", "builtin:create"))
-                .setOnPermissionRequest(exhibitPermission(workingDirectory, allowLocalDemoWrite))
+                .setOnPermissionRequest(CuratorSafety.exhibitWritePermission(workingDirectory))
                 .setStreaming(true);
         String model = System.getenv("COPILOT_MODEL");
         if (model != null && !model.isBlank()) {
             config.setModel(model.trim());
         }
         return config;
-    }
-
-    private static PermissionHandler exhibitPermission(Path workingDirectory, boolean allowLocalDemoWrite) {
-        PermissionHandler strict = CuratorSafety.exhibitWritePermission(workingDirectory);
-        if (!allowLocalDemoWrite) {
-            return strict;
-        }
-        return (request, invocation) -> {
-            if (request != null && "write".equals(request.getKind())) {
-                return CompletableFuture.completedFuture(PermissionRequestResult.approveOnce());
-            }
-            return strict.handle(request, invocation);
-        };
     }
 
     public static String buildHtmlPrompt(String exhibit) {
@@ -395,34 +374,28 @@ the prompt builder:
     }
 ```
 
-Read the flag at the top of `main`, warn loudly when it is on, and offer the page after the sources:
+Resolve the working directory at the top of `main`, then offer the page after the sources:
 
 ```java
-            boolean allowLocalDemoWrite = List.of(args).contains(LOCAL_DEMO_WRITE_FLAG);
             Path workingDirectory = Path.of("").toAbsolutePath().normalize();
-            if (allowLocalDemoWrite) {
-                System.err.println("WARNING: Local demo write fallback enabled. This run approves write "
-                        + "requests when only builtin:apply_patch and builtin:create are available but cannot enforce the "
-                        + "output path. Use only in a disposable, controlled local workshop worktree.");
-            }
 ```
 
 ```java
             System.out.println();
             if (CuratorTerminal.askYesNo("Generate an interactive exhibit.html?", false)) {
                 runSession(
-                        htmlConfig(workingDirectory, allowLocalDemoWrite),
+                        htmlConfig(workingDirectory),
                         buildHtmlPrompt(exhibit),
                         CuratorStreamer.GENERATION_TIMEOUT);
                 System.out.println("Wrote exhibit.html. Open it in a browser to review the exhibit.");
             }
 ```
 
-**Look inside:** `CuratorSafety.java` holds `exhibitWritePermission`, the strict handler your
-`exhibitPermission` wraps. It normalizes `<workingDirectory>/exhibit.html` once, then approves a
+**Look inside:** `CuratorSafety.java` holds `exhibitWritePermission`, the strict handler the
+HTML session uses directly. It normalizes `<workingDirectory>/exhibit.html` once, then approves a
 request only when the kind is `"write"` and `isExhibitWrite` resolves the requested `fileName` to
-exactly that path. A missing `fileName` field stays denied rather than defaulting to allowed, which
-is why the opt-in demo flag above exists and why it is off unless you ask for it.
+exactly that path. A missing `fileName` field stays denied rather than defaulting to allowed.
+There is no broad write fallback.
 :::
 
 ## Run it
