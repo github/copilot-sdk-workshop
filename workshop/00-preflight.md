@@ -145,7 +145,6 @@ See the official
 | Requirement | Why the workshop needs it | Verify |
 |---|---|---|
 | [Java 17 or newer](https://adoptium.net/) (JDK) | Compiles and runs the Maven workshop app | `java -version` |
-| [Apache Maven 3.9+](https://maven.apache.org/install.html) | Builds the project and launches `exec:java` | `mvn -version` |
 | [Node.js 22 or newer](https://nodejs.org/) | Runs the Playwright MCP server | `node --version` |
 | [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli) | Required on `PATH` for the Java SDK runtime | `copilot --version` |
 | [GitHub Copilot access](https://github.com/features/copilot) | Authorizes Copilot requests | `copilot login` |
@@ -156,15 +155,15 @@ Your commands should return output in this shape:
 ```text
 $ java -version
 openjdk version "17.x.x" ...
-$ mvn -version
-Apache Maven 3.9.x
 $ node --version
 v22.x.x
 $ copilot --version
 GitHub Copilot CLI ...
 ```
 
-Use Maven for this track. Do not substitute JBang or Gradle. See the official
+No separate Maven install is needed: each Java project includes the Maven Wrapper (`./mvnw`),
+which downloads the right Maven version on first use. On Windows, run `mvnw.cmd` instead of
+`./mvnw`. Use Maven for this track. Do not substitute JBang or Gradle. See the official
 [Java SDK installation guide](https://github.com/github/copilot-sdk/tree/main/java).
 :::
 
@@ -535,7 +534,7 @@ Change into the Java starter and compile with Maven. Stay in this directory for 
 
 ```bash
 cd start-accessibility/java
-mvn compile
+./mvnw compile
 ```
 
 A successful compile ends with:
@@ -561,9 +560,10 @@ Open the controlled target page once to make sure you can reach it:
 
 | Symptom | Fix |
 |---|---|
-| `java` or `mvn` is not recognized | Install JDK 17+ and Maven, then restart the terminal. |
+| `java` is not recognized | Install JDK 17+, then restart the terminal. |
+| `./mvnw: Permission denied` | Run `chmod +x mvnw`, or use `sh mvnw` instead. On Windows, use `mvnw.cmd`. |
 | Compiler release errors | Confirm `java -version` reports 17 or newer; the POM sets `maven.compiler.release` to 17. |
-| Dependency download fails | Check Maven Central / proxy settings, then rerun `mvn compile`. |
+| Dependency download fails | Check Maven Central / proxy settings, then rerun `./mvnw compile`. |
 | Tempted to switch tools | Do not replace Maven with JBang or Gradle for this workshop. |
 | `copilot` is not recognized | Install the CLI, restart the terminal, and verify `copilot --version`. |
 | Copilot asks you to authenticate | Run `copilot login`, finish the browser flow, then retry. |
@@ -572,7 +572,7 @@ Open the controlled target page once to make sure you can reach it:
 
 </details>
 
-> **Start Step 1 when:** `mvn compile` prints `BUILD SUCCESS`, `copilot login` is complete, and the
+> **Start Step 1 when:** `./mvnw compile` prints `BUILD SUCCESS`, `copilot login` is complete, and the
 > target page opens.
 
 Compare with

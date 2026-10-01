@@ -1438,7 +1438,7 @@ private static RunOptions parseRunOptions(String[] args) throws URISyntaxExcepti
 }
 
 private static String usage() {
-    return "Usage: mvn compile exec:java -Dexec.args=\"["
+    return "Usage: ./mvnw compile exec:java -Dexec.args=\"["
             + LOCAL_DEMO_MCP_FLAG + "] <http-or-https-url>\"";
 }
 
@@ -1628,7 +1628,7 @@ import com.github.copilot.rpc.PermissionRequestResult;
 ## Run it
 
 ```bash
-mvn compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
+./mvnw compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
 ```
 
 The first run may take longer while `npx` starts Playwright. This command intentionally opts into

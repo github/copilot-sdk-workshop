@@ -7,7 +7,7 @@ This Maven CLI sample uses the GitHub Copilot SDK as a focused museum-curation a
 From this directory:
 
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 Set `COPILOT_MODEL` to select a model; otherwise the Copilot runtime chooses its default. The sample requires an authenticated GitHub Copilot CLI.
@@ -15,7 +15,7 @@ Set `COPILOT_MODEL` to select a model; otherwise the Copilot runtime chooses its
 Compile without contacting a model:
 
 ```bash
-mvn compile
+./mvnw compile
 ```
 
 ## What it demonstrates

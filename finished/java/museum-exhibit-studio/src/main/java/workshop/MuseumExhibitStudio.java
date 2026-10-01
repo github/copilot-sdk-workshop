@@ -50,7 +50,7 @@ public final class MuseumExhibitStudio {
         int exitCode = 0;
         try {
             if (args.length != 0) {
-                throw new IllegalArgumentException("Usage: mvn compile exec:java");
+                throw new IllegalArgumentException("Usage: ./mvnw compile exec:java");
             }
             Path workingDirectory = Path.of("").toAbsolutePath().normalize();
 

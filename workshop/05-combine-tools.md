@@ -449,7 +449,7 @@ cargo run -- "{{TARGET_APP_URL}}"
 :::
 :::language java
 ```bash
-mvn compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
+./mvnw compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
 ```
 :::
 
@@ -1427,7 +1427,7 @@ public final class AccessibilityReport {
     }
 
     private static String usage() {
-        return "Usage: mvn compile exec:java -Dexec.args=\"["
+        return "Usage: ./mvnw compile exec:java -Dexec.args=\"["
                 + LOCAL_DEMO_MCP_FLAG + "] <http-or-https-url>\"";
     }
 

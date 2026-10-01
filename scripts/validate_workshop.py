@@ -98,7 +98,7 @@ LESSON_TRACK_MARKERS = {
     ),
     "java": (
         "src/main/java/",
-        "mvn compile",
+        "./mvnw compile",
         "```java",
         "finished/java/",
     ),
@@ -109,7 +109,7 @@ STEP_3_TRACK_MARKERS = {
     "python": ("workshop.py", '@define_tool(', "python main.py"),
     "go": ("main.go", "copilot.DefineTool(", "go run ."),
     "rust": ("src/main.rs", 'Tool::new("accessibility_rule_lookup")', "cargo run"),
-    "java": ("AccessibilityReport.java", "ToolDefinition.from(", "mvn compile exec:java"),
+    "java": ("AccessibilityReport.java", "ToolDefinition.from(", "./mvnw compile exec:java"),
 }
 # Every command runs from inside the starter directory the learner already sits in.
 # No lesson may reintroduce a copied sibling project.
@@ -119,7 +119,7 @@ RUN_COMMAND_MARKERS = {
     "python": "python main.py",
     "go": "go run .",
     "rust": "cargo run",
-    "java": "mvn compile exec:java",
+    "java": "./mvnw compile exec:java",
 }
 STEP_9_RUN_COMMAND_MARKERS = {
     "dotnet": "dotnet run",
@@ -127,7 +127,7 @@ STEP_9_RUN_COMMAND_MARKERS = {
     "python": "python main.py",
     "go": "go run .",
     "rust": "cargo run --",
-    "java": "mvn compile exec:java",
+    "java": "./mvnw compile exec:java",
 }
 MUSEUM_COMMAND_MARKERS = {
     "dotnet": (
@@ -146,7 +146,7 @@ MUSEUM_COMMAND_MARKERS = {
         "cargo run",
     ),
     "java": (
-        "mvn compile exec:java",
+        "./mvnw compile exec:java",
     ),
 }
 MUSEUM_ENTRYPOINTS = {
@@ -166,6 +166,7 @@ SECOND_PROJECT_MARKERS = (
     "go mod init",
     "npm init ",
     "mvn archetype:generate",
+    "./mvnw archetype:generate",
 )
 IN_PLACE_FORBIDDEN_MARKERS = (
     "workshop-app",
@@ -178,6 +179,7 @@ MUSEUM_FORBIDDEN_LESSON_MARKERS = (
     "go test",
     "cargo test",
     "mvn test",
+    "./mvnw test",
     "python -m unittest",
     "unittest",
     "mock-wikipedia",
@@ -2080,6 +2082,18 @@ def validate_configuration_explainers() -> None:
                 )
 
 
+def workflow_uses(workflow: str, reference: str) -> bool:
+    """Match `action@ref` either directly or pinned to a commit SHA with a `# ref` comment."""
+    if "@" not in reference:
+        return reference in workflow
+    action, ref = reference.split("@", 1)
+    pattern = (
+        rf"uses:\s*{re.escape(action)}@(?:{re.escape(ref)}\b"
+        rf"|[0-9a-f]{{40}}\s+#\s*{re.escape(ref)}(?:[.\s]|$))"
+    )
+    return re.search(pattern, workflow, re.MULTILINE) is not None
+
+
 def validate_workflows() -> None:
     required_setup = (
         ("actions/setup-dotnet@v6", "dotnet-version: 10.0.x"),
@@ -2093,7 +2107,7 @@ def validate_workflows() -> None:
     validation_workflow = read(ROOT / ".github" / "workflows" / "validate.yml")
     for expected in required_setup:
         for value in expected:
-            require(value in validation_workflow, f"validate.yml is missing required validation setup: {value}")
+            require(workflow_uses(validation_workflow, value), f"validate.yml is missing required validation setup: {value}")
 
     deployment_workflow = read(ROOT / ".github" / "workflows" / "deploy.yml")
     for forbidden in (
@@ -2115,7 +2129,7 @@ def validate_workflows() -> None:
         "actions/upload-pages-artifact@v5",
         "actions/deploy-pages@v5",
     ):
-        require(required in deployment_workflow, f"deploy.yml is missing deployment step: {required}")
+        require(workflow_uses(deployment_workflow, required), f"deploy.yml is missing deployment step: {required}")
 
 
 validate_language_registry()
