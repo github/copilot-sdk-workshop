@@ -5,7 +5,9 @@ it, open that same folder in your editor (`code .` from inside it, or any other 
 command) and keep your terminal there. These starters contain pinned dependencies, a minimal
 executable, and one pre-built curator helper module. The helpers hold the plumbing you never have
 to write: the approved fact sets and their bounds, the pre-built `approved_fact_lookup` local tool
-that hands those facts to the curator, a streaming printer, deterministic exhibit validation, the
+that hands those facts to the curator, the pre-built `approved_wikipedia_fact_lookup` local tool
+that returns captured research and citations when usable research exists, a streaming printer,
+deterministic exhibit validation, the
 scoped Wikipedia MCP server and its deny-by-default permission handler, the single-file
 `exhibit.html` write permission, and small terminal prompts. You never edit the helpers.
 
@@ -15,6 +17,11 @@ session, then streaming, then the curator voice, the fact tool registration and 
 session runner that owns the guardrails, the validation report, scoped Wikipedia research, and an
 optional `exhibit.html` page. Each starter entrypoint carries comments marking exactly where each
 step's code goes. Start at [`workshop/museum-00-preflight.md`](../workshop/museum-00-preflight.md).
+
+Step 7 conditionally registers the Wikipedia lookup alongside the approved-fact lookup and asks
+the curator to call both before writing the narrative and visitor questions. Research remains
+supplemental, not educator-verified; approved facts take precedence. Declining research or receiving
+no usable cited summary leaves generation with only `approved_fact_lookup`.
 
 | Language | Helper module | Change directory, build, and run |
 |---|---|---|

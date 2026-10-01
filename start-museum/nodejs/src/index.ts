@@ -26,7 +26,9 @@
 // Step 7  Wikipedia research ............. add researchConfig() with the scoped Wikipedia MCP
 //                                          server plus wikipediaPermissionHandler(), run it
 //                                          through runSession(), and print sources after the
-//                                          exhibit. Research never joins the approved facts.
+//                                          exhibit. Retain the body and citations, conditionally
+//                                          register approved_wikipedia_fact_lookup, and request
+//                                          both lookups before generation. Approved facts win.
 // Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
 //                                          allowlist and exhibitWritePermission(process.cwd()).
 

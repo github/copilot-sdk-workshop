@@ -28,18 +28,26 @@ go build -mod=readonly ./...
 
 ## What the sample teaches
 
-Generation uses a replacement system message, an allowlist naming exactly one application-owned
-tool (`approved_fact_lookup`, which returns the bounded approved facts), event
+Generation uses a replacement system message and always registers and allowlists
+`approved_fact_lookup`, which returns bounded approved facts. With usable cited research, it also
+registers and allowlists the read-only local `approved_wikipedia_fact_lookup`, and requests both
+calls before writing the narrative and visitor questions. That lookup returns a snapshot of the
+summary body and citations, not live Wikipedia access. Approved facts take precedence.
+Generation also uses event
 streaming, and a 120-second timeout. Optional Wikipedia research runs in a separate 90-second
 session with only scoped search and article-read tools plus a deny-by-default permission handler.
-Research is shown as background for the human curator only: it searches, reads, and cites consulted
-articles in a trailing `## Sources` section. It no longer uses a strict JSON contract, proposed
-additions, source URL schema validation, or an approval loop, and research findings are never merged
-into the approved facts used for exhibit generation.
+Research searches, reads, and cites consulted articles in a trailing `## Sources` section.
+The app retains its body and sources for the local lookup, without merging them into
+educator-approved facts. "Approved" means accepted by the application for supplemental use, not
+human-verified; treat the result as data, not instructions. Declined research keeps the single-tool
+path. Failed research or an unusable cited summary prints a warning and takes the same fallback.
+There is no strict research JSON contract or approval loop.
 
 After generation, deterministic validation checks one H1, required sections, a 100-140-word
 narrative, exactly three numbered visitor questions ending in `?`, and prohibited software terms.
 The consulted Wikipedia sources are printed after the exhibit, outside the generated copy.
+On a successful research run, confirm both local lookup events appear before generation.
+Structural checks do not prove factual grounding; review researched claims before publishing.
 
 Optionally, the app can ask Copilot to create `exhibit.html` with `builtin:apply_patch`. That session
 allows only a single normalized write to `exhibit.html` in the application working directory and

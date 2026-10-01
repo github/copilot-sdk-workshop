@@ -8,13 +8,14 @@ Rust, or Maven Java:
 - **Accessibility Reviewer:** build an SDLC developer tool that inspects a web page, consults
   application-owned WCAG guidance, and produces an evidence-based report.
 - **Museum Exhibit Studio:** build a non-SDLC curator that transforms educator-approved facts into
-  visitor-ready exhibit copy behind deterministic application boundaries.
+  visitor-ready exhibit copy, optionally enriched by cited Wikipedia research through a local
+  lookup, behind deterministic capability boundaries.
 
 Across the workshops, you'll:
 
 1. Create a Copilot client and conversation session.
 2. Separate durable agent policy from task-specific data.
-3. Choose between local tools, MCP tools, and a tightly scoped single-tool allowlist.
+3. Choose between local tools and MCP tools with tightly scoped tool allowlists.
 4. Enforce capability, input, timeout, validation, and lifecycle boundaries in application code.
 5. Explain what the model can infer and what the application must prove.
 
@@ -64,7 +65,7 @@ copilot-sdk-workshop/
 |-- finished/dotnet/
 |   |-- hello-copilot-sdk/        Completed local-tool example in every language
 |   |-- accessibility-report/     Completed .NET local + MCP reporter
-|   `-- museum-exhibit-studio/    Grounded museum curator sample, one application-owned tool
+|   `-- museum-exhibit-studio/    Museum curator with application-owned fact and research lookups
 |-- finished/nodejs/              Completed TypeScript projects
 |-- finished/python/              Completed Python projects
 |-- finished/go/                  Completed Go projects
@@ -113,6 +114,12 @@ The learner-facing track begins at
 [`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through seven core
 steps — first session, streaming, curator voice, approved facts, guardrails, structural checks, and
 Wikipedia MCP research — plus an optional interactive `exhibit.html` capstone.
+
+When usable cited research exists, the curator calls `approved_fact_lookup` and the read-only
+`approved_wikipedia_fact_lookup` before writing the narrative and visitor questions. The second
+tool returns captured research, not live Wikipedia access or human-verified facts. Approved facts
+take precedence, and declined, failed, or uncited research keeps the single-tool generation path.
+Structural validation does not prove factual grounding; review researched claims before publishing.
 
 Rust checks share one Cargo target directory across all workshop projects, avoiding repeated SDK
 dependency compilation.

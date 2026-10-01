@@ -18,9 +18,21 @@ cargo check --locked --manifest-path finished/rust/museum-exhibit-studio/Cargo.t
 
 ## What the sample teaches
 
-The generation session uses a replacement curator system message, validates approved facts, streams with a 120-second timeout, allowlists exactly one application-owned tool (`approved_fact_lookup`, which returns the bounded approved facts), rejects blank output, and prints deterministic structural validation.
+The generation session uses a replacement curator system message, validates approved facts,
+streams with a 120-second timeout, always registers and allowlists `approved_fact_lookup`, rejects
+blank output, and prints deterministic structural validation. With usable cited research, it also
+registers and allowlists the read-only local `approved_wikipedia_fact_lookup`, and requests both
+calls before writing the narrative and visitor questions.
 
-Optional Wikipedia research is separate: it exposes only scoped `search` and `readArticle` MCP tools, uses a deny-by-default permission handler, asks for prose notes plus cited sources, and never merges research into the approved facts.
+Optional Wikipedia research is separate: it exposes only scoped `search` and `readArticle` MCP
+tools, uses a deny-by-default permission handler, and produces a summary and cited sources. The new
+local lookup returns a snapshot of that body and citations, without live Wikipedia access or
+merging research into educator-approved facts. Approved facts take precedence; "approved" research
+is application-accepted supplemental data, not human-verified facts or instructions. Declined
+research keeps the single-tool path. Failed research or an unusable cited summary prints a warning
+and takes the same fallback. Sources print after the exhibit; successful research should show both
+local lookup events before generation. Structural checks do not prove factual grounding, so review
+researched claims before publishing.
 
 Optional HTML generation uses `builtin:apply_patch` with a single-file permission handler that can write only `exhibit.html` in the application working directory.
 

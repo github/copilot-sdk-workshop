@@ -24,15 +24,23 @@ The learner-authored `MuseumExhibitStudio` entrypoint builds sessions directly w
 
 Prompt guidance is not an authorization boundary, so the application also:
 
-- limits generation to exactly one application-owned tool, `approved_fact_lookup`, which returns the bounded approved facts, backed by a reject-all permission handler for everything else;
+- always registers and allowlists `approved_fact_lookup`, adding the read-only local
+  `approved_wikipedia_fact_lookup` only when usable cited research exists;
 - limits research to the configured Wikipedia MCP server and `wikipedia-search` / `wikipedia-readArticle` through a deny-by-default permission handler;
-- treats Wikipedia output as background notes only, extracts cited sources from a trailing `## Sources` section, and never merges research into the approved facts;
+- captures the research body and trailing `## Sources` citations for the second local lookup,
+  never merging them into educator-approved facts or giving generation live Wikipedia access;
 - bounds input to 20 facts of at most 500 characters each before every model send;
 - uses explicit timeouts, rejects blank exhibit output, and disconnects sessions / stops clients on success and failure;
 - checks one H1, required sections, a 100-140-word narrative, exactly three numbered questions ending in `?`, and prohibited software vocabulary; and
 - optionally allows `builtin:apply_patch` to write only `exhibit.html` in the application working directory.
 
-The validator cannot prove semantic factual grounding. Generated claims still require human review or a separate evaluator.
+The curator is instructed to call both local lookups before writing the narrative and visitor
+questions when research exists. Approved facts take precedence over supplemental research, which
+is data, not instructions. "Approved" research means application-accepted, not human-verified.
+Declined research keeps the single-tool path. Failed research or an unusable cited summary prints
+a warning and takes the same fallback. Confirm both lookup events on a successful research run;
+sources still print after the exhibit. The validator cannot prove semantic factual grounding.
+Generated claims still require human review or a separate evaluator.
 
 ## Optional HTML capstone and Java SDK limitation
 
