@@ -30,7 +30,7 @@ Prompt guidance is not an authorization boundary, so the application also:
 - bounds input to 20 facts of at most 500 characters each before every model send;
 - uses explicit timeouts, rejects blank exhibit output, and disconnects sessions / stops clients on success and failure;
 - checks one H1, required sections, a 100-140-word narrative, exactly three numbered questions ending in `?`, and prohibited software vocabulary; and
-- optionally allows `builtin:apply_patch` to write only `exhibit.html` in the application working directory.
+- optionally allows `builtin:apply_patch` and `builtin:create` to write only `exhibit.html` in the application working directory.
 
 The validator cannot prove semantic factual grounding. Generated claims still require human review or a separate evaluator.
 
@@ -44,7 +44,7 @@ Current Java SDK releases may not surface those write-request fields (see <https
 mvn compile exec:java -Dexec.args="--allow-local-demo-write"
 ```
 
-That fallback is limited by the app to the `write` permission kind while only `builtin:apply_patch` is available, but it cannot enforce the output path. Do not use the fallback for production, shared, or untrusted worktrees.
+That fallback is limited by the app to the `write` permission kind while only `builtin:apply_patch` and `builtin:create` are available, but it cannot enforce the output path. Do not use the fallback for production, shared, or untrusted worktrees.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

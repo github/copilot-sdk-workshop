@@ -58,7 +58,7 @@ public final class MuseumExhibitStudio {
             if (options.allowLocalDemoWrite()) {
                 System.err.println("WARNING: Local demo write fallback enabled. Current Java SDK releases may not expose "
                         + "write request fields (https://github.com/github/copilot-sdk/issues/2273), so this run "
-                        + "approves write requests when only builtin:apply_patch is available but cannot enforce "
+                        + "approves write requests when only builtin:apply_patch and builtin:create are available but cannot enforce "
                         + "the output path. Use only in a disposable, controlled local workshop worktree.");
             }
 
@@ -179,7 +179,7 @@ public final class MuseumExhibitStudio {
 
     public static String buildHtmlPrompt(String exhibit) {
         return """
-                Use builtin:apply_patch to create exactly exhibit.html in the current working directory.
+                Use builtin:apply_patch or builtin:create to create exactly exhibit.html in the current working directory.
                 Do not write, modify, rename, or delete any other file.
 
                 Create one complete standalone document using semantic HTML, embedded CSS, and embedded
@@ -224,7 +224,7 @@ public final class MuseumExhibitStudio {
     private static SessionConfig htmlConfig(Path workingDirectory, boolean allowLocalDemoWrite) {
         SessionConfig config = new SessionConfig()
                 .setClientName("museum-exhibit-studio-html")
-                .setAvailableTools(List.of("builtin:apply_patch"))
+                .setAvailableTools(List.of("builtin:apply_patch", "builtin:create"))
                 .setOnPermissionRequest(exhibitPermission(workingDirectory, allowLocalDemoWrite))
                 .setStreaming(true);
         return applyModel(config);

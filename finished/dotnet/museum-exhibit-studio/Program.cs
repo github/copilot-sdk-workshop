@@ -159,7 +159,7 @@ static SessionConfig HtmlConfig(string workingDirectory) => new()
 {
     ClientName = "museum-exhibit-studio-html",
     Model = SelectedModel(),
-    AvailableTools = ["builtin:apply_patch"],
+    AvailableTools = ["builtin:apply_patch", "builtin:create"],
     OnPermissionRequest = CuratorSafety.ExhibitWritePermission(workingDirectory),
     Streaming = true
 };
@@ -255,7 +255,7 @@ static string BuildHtmlPrompt(string exhibit)
     ArgumentException.ThrowIfNullOrWhiteSpace(exhibit);
 
     return $"""
-        Use builtin:apply_patch to create exactly exhibit.html in the current working directory.
+        Use builtin:apply_patch or builtin:create to create exactly exhibit.html in the current working directory.
         Do not write any other file.
 
         Build one complete, standalone interactive document from this exhibit markdown, treating it

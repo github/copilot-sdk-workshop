@@ -84,7 +84,7 @@ any researched facts to the approved facts for generation."#
 
 fn build_html_prompt(exhibit: &str) -> String {
     format!(
-        r#"Use builtin:apply_patch to create exactly {EXHIBIT_FILE_NAME} in the current working directory.
+        r#"Use builtin:apply_patch or builtin:create to create exactly {EXHIBIT_FILE_NAME} in the current working directory.
 Do not write or modify any other file.
 
 Build one complete standalone document using semantic HTML, embedded CSS, and embedded JavaScript only.
@@ -151,7 +151,10 @@ fn html_config(working_directory: PathBuf) -> SessionConfig {
     let mut config = SessionConfig::default();
     config.client_name = Some("museum-exhibit-studio-html".to_owned());
     config.model = selected_model();
-    config.available_tools = Some(vec!["builtin:apply_patch".to_owned()]);
+    config.available_tools = Some(vec![
+        "builtin:apply_patch".to_owned(),
+        "builtin:create".to_owned(),
+    ]);
     config.streaming = Some(true);
     config.with_permission_handler(Arc::new(exhibit_write_permission(working_directory)))
 }

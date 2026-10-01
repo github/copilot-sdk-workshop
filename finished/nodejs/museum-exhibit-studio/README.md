@@ -30,8 +30,8 @@ never merged into the approved facts.
 
 After generation, deterministic checks report structure, narrative length, visitor
 questions, and prohibited vocabulary. If selected, the HTML step exposes only
-`builtin:apply_patch` and approves writing exactly `exhibit.html` in the app
-directory.
+`builtin:apply_patch` and `builtin:create`. Its permission handler approves writing
+exactly `exhibit.html` in the app directory.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

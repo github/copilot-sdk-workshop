@@ -1397,6 +1397,51 @@ def validate_security_invariants() -> None:
     )
 
 
+def validate_file_creation_tools() -> None:
+    write_tools = ("builtin:apply_patch", "builtin:create")
+    report_tools = (
+        "accessibility_rule_lookup",
+        "read_latest_accessibility_snapshot",
+        "playwright-browser_navigate",
+        *write_tools,
+    )
+    allowlist_patterns = {
+        "dotnet": r"AvailableTools=\[([^\]]*)\]",
+        "nodejs": r"availableTools:\[([^\]]*)\]",
+        "python": r"""(?:["']available_tools["']:|available_tools=)\[([^\]]*)\]""",
+        "go": r"AvailableTools:\[\]string\{([^}]*)\}",
+        "rust": r"config\.available_tools=Some\(vec!\[([^\]]*)\]\)",
+        "java": r"\.setAvailableTools\(List\.of\((.*?)\)\)",
+    }
+    for language in LANGUAGES:
+        finished = ROOT / "finished" / language / "museum-exhibit-studio"
+        entrypoint = finished / MUSEUM_ENTRYPOINTS[language]
+        sources = [
+            (read(entrypoint), str(entrypoint.relative_to(ROOT)), write_tools),
+            *(
+                (
+                    render_language_markdown(WORKSHOP / lesson, language),
+                    f"workshop/{lesson} ({language})",
+                    expected_tools,
+                )
+                for lesson, expected_tools in (
+                    ("museum-08-interactive-exhibit-page.md", write_tools),
+                    ("09-interactive-html-report.md", report_tools),
+                )
+            ),
+        ]
+        for text, label, expected_tools in sources:
+            compact = re.sub(r"\s+", "", strip_line_comments(text))
+            allowlists = [
+                tuple(re.findall(r'"([^"]+)"', entries))
+                for entries in re.findall(allowlist_patterns[language], compact)
+            ]
+            require(
+                expected_tools in allowlists,
+                f"{label} must allowlist exactly {', '.join(expected_tools)} for file creation",
+            )
+
+
 def validate_playwright_file_output(text: str, label: Path) -> None:
     configurations = text.split(PLAYWRIGHT_MCP_PACKAGE)[1:]
     for index, configuration in enumerate(configurations, start=1):
@@ -2071,6 +2116,7 @@ validate_layout()
 validate_museum_projects()
 validate_python_dependencies()
 validate_security_invariants()
+validate_file_creation_tools()
 validate_playwright_output_configuration()
 validate_project_behavior()
 validate_site_behavior()
