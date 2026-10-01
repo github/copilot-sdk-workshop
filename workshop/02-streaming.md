@@ -878,7 +878,7 @@ finishes.
 ## Run it
 
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 The completed response should print before the process exits:
@@ -896,7 +896,7 @@ The completed response should print before the process exits:
 |---|---|
 | No response is printed | Confirm `setStreaming(true)` is on `SessionConfig` and you call `sendAndWait`. |
 | The process fails with a null response | Keep the `response == null` guard and throw when the turn completes without a message. |
-| Maven cannot find the main class | Run from the starter directory with `mvn compile exec:java`. |
+| Maven cannot find the main class | Run from the starter directory with `./mvnw compile exec:java`. |
 
 </details>
 

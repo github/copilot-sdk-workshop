@@ -791,7 +791,7 @@ cargo run
 :::
 :::language java
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 :::
 

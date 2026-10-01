@@ -7,7 +7,7 @@ This Maven CLI sample uses the GitHub Copilot SDK as a focused museum-curation a
 From this directory:
 
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 Set `COPILOT_MODEL` to select a model; otherwise the Copilot runtime chooses its default. The sample requires an authenticated GitHub Copilot CLI.
@@ -15,7 +15,7 @@ Set `COPILOT_MODEL` to select a model; otherwise the Copilot runtime chooses its
 Compile without contacting a model:
 
 ```bash
-mvn compile
+./mvnw compile
 ```
 
 ## What it demonstrates
@@ -41,7 +41,7 @@ When prompted, answer yes to generate `exhibit.html`. The default Java permissio
 Current Java SDK releases may not surface those write-request fields (see <https://github.com/github/copilot-sdk/issues/2273>). For the controlled local workshop only, run with:
 
 ```bash
-mvn compile exec:java -Dexec.args="--allow-local-demo-write"
+./mvnw compile exec:java -Dexec.args="--allow-local-demo-write"
 ```
 
 That fallback is limited by the app to the `write` permission kind while only `builtin:apply_patch` is available, but it cannot enforce the output path. Do not use the fallback for production, shared, or untrusted worktrees.

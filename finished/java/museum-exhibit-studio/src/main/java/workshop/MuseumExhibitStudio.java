@@ -303,7 +303,7 @@ public final class MuseumExhibitStudio {
     }
 
     private static String usage() {
-        return "Usage: mvn compile exec:java -Dexec.args=\"[" + LOCAL_DEMO_WRITE_FLAG + "]\"";
+        return "Usage: ./mvnw compile exec:java -Dexec.args=\"[" + LOCAL_DEMO_WRITE_FLAG + "]\"";
     }
 
     private static boolean isTimeout(Throwable error) {
