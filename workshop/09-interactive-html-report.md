@@ -1,8 +1,7 @@
-# Optional: Generate an interactive HTML report
+# Step 9: Generate an interactive HTML report
 
 > **Time:** 15 minutes  
-> **Prerequisite:** Complete the seven core steps first. This extension also works after optional
-> model selection.
+> **Prerequisite:** Complete Step 8: Select a model.
 
 ## What you'll build
 
@@ -13,7 +12,7 @@ open it locally and filter its findings.
 ## Add a narrow write capability
 
 The previous application-owned tools are read-only, and Playwright can navigate only to one exact
-URL. This extension adds two runtime built-in tools: `builtin:apply_patch` and `builtin:create`.
+URL. This step adds two runtime built-in tools: `builtin:apply_patch` and `builtin:create`.
 Either tool can create the report file.
 
 That does **not** mean approving every file change. Keep the existing browser-navigation rule and
@@ -545,7 +544,7 @@ finding, WCAG criterion, or evidence line into the filter and confirm the visibl
 count update.
 
 <details>
-<summary>Troubleshooting this extension</summary>
+<summary>Troubleshooting this step</summary>
 
 | Symptom | Fix |
 |---|---|
@@ -556,7 +555,7 @@ count update.
 
 </details>
 
-> **The extension is complete when:** `accessibility-report.html` opens locally and
+> **This step is complete when:** `accessibility-report.html` opens locally and
 > filters evidence-grounded findings. With the default exact handler, the session approves no other
 > file path; the Java local-demo write fallback deliberately cannot make that guarantee.
 
@@ -585,4 +584,4 @@ payload fields, so it must remain limited to a controlled local target.
 - [Local CLI setup](https://github.com/github/copilot-sdk/blob/main/docs/setup/local-cli.md):
   controlling which CLI the SDK starts, which decides where a written file lands.
 
-Return to [Step 7: Run and explain the application](07-run-explain.md).
+Continue to [Step 10: You did it!](10-complete.md) for a celebration and resources to keep building.

@@ -1,12 +1,15 @@
 # Preflight: prepare your machine
 
 > **Untimed preparation**  
-> Complete this page before starting the 90-minute workshop.
+> Complete this page before starting the 115-minute workshop.
 
 ## What you'll have ready
 
 By the end of preflight, you'll have the repository cloned, the Copilot CLI authenticated, the
 starter project built, and Playwright MCP downloaded and ready.
+
+Follow all nine hands-on steps, including model selection and the interactive HTML report, then
+finish with a celebration and resources to keep building.
 
 :::language dotnet
 ## What you need

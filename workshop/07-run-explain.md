@@ -383,7 +383,7 @@ do not accept a finding that is absent from both the snapshot and source.
 
 </details>
 
-> **You have completed the core workshop when:** the report is grounded, the tool names are visible,
+> **This step is complete when:** the report is grounded, the tool names are visible,
 > and you can answer the architecture questions below without reading the code.
 
 ## Check your understanding
@@ -408,65 +408,10 @@ do not accept a finding that is absent from both the snapshot and source.
 
 </details>
 
-## Keep exploring
+## Next step
 
-Try [Optional: Select a model](08-model-selection.md) if your application needs explicit control
-over model choice, then continue to [Optional: Generate an interactive HTML report](09-interactive-html-report.md).
-You can also go straight to the HTML report extension. Otherwise, the core workshop is complete.
-
-:::language dotnet
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/dotnet/accessibility-report)
-- [GitHub Copilot SDK for .NET](https://github.com/github/copilot-sdk/tree/main/dotnet)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-:::
-
-:::language nodejs
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/nodejs/accessibility-report)
-- [GitHub Copilot SDK for Node.js](https://github.com/github/copilot-sdk/tree/main/nodejs)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-:::
-
-:::language python
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/python/accessibility-report)
-- [GitHub Copilot SDK for Python](https://github.com/github/copilot-sdk/tree/main/python)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-:::
-
-:::language go
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/go/accessibility-report)
-- [GitHub Copilot SDK for Go](https://github.com/github/copilot-sdk/tree/main/go)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-
-If the CLI is missing, install it rather than granting broader permissions.
-:::
-
-:::language rust
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/rust/accessibility-report)
-- [GitHub Copilot SDK for Rust](https://github.com/github/copilot-sdk/tree/main/rust)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-
-If it cannot start, install and authenticate the Copilot CLI.
-:::
-
-:::language java
-Complete references:
-
-- [Finished accessibility reporter](https://github.com/github/copilot-sdk-workshop/tree/main/finished/java/accessibility-report)
-- [GitHub Copilot SDK for Java](https://github.com/github/copilot-sdk/tree/main/java)
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
-
-If the runtime is unavailable, install the Copilot CLI; do not replace Maven with JBang or Gradle.
-:::
+Continue to [Step 8: Select a model](08-model-selection.md), then turn your findings into an
+interactive HTML report in Step 9.
 
 ## Learn more
 
