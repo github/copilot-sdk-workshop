@@ -26,8 +26,8 @@
 #                                          wikipedia_permission_handler(), run it through
 #                                          run_session(), and print sources after the exhibit.
 #                                          Research never joins the approved facts.
-# Step 8  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch"
-#                                          allowlist and exhibit_write_permission(...).
+# Step 8  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
+#                                          "builtin:create" allowlist and exhibit_write_permission(...).
 
 # Your imports from `curator` go here, and grow as the lessons progress.
 

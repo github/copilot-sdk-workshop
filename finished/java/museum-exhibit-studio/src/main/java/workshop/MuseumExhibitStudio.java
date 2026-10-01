@@ -4,7 +4,6 @@ import com.github.copilot.CopilotClient;
 import com.github.copilot.CopilotSession;
 import com.github.copilot.SystemMessageMode;
 import com.github.copilot.rpc.PermissionHandler;
-import com.github.copilot.rpc.PermissionRequestResult;
 import com.github.copilot.rpc.SessionConfig;
 import com.github.copilot.rpc.SystemMessageConfig;
 
@@ -13,7 +12,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -45,22 +43,16 @@ public final class MuseumExhibitStudio {
             "- <article title>: <canonical Wikipedia URL>".
             """;
 
-    private static final String LOCAL_DEMO_WRITE_FLAG = "--allow-local-demo-write";
-
     private MuseumExhibitStudio() {
     }
 
     public static void main(String[] args) {
         int exitCode = 0;
         try {
-            RunOptions options = parseRunOptions(args);
-            Path workingDirectory = Path.of("").toAbsolutePath().normalize();
-            if (options.allowLocalDemoWrite()) {
-                System.err.println("WARNING: Local demo write fallback enabled. Current Java SDK releases may not expose "
-                        + "write request fields (https://github.com/github/copilot-sdk/issues/2273), so this run "
-                        + "approves write requests when only builtin:apply_patch is available but cannot enforce "
-                        + "the output path. Use only in a disposable, controlled local workshop worktree.");
+            if (args.length != 0) {
+                throw new IllegalArgumentException("Usage: ./mvnw compile exec:java");
             }
+            Path workingDirectory = Path.of("").toAbsolutePath().normalize();
 
             System.out.println("=== Museum Exhibit Studio ===");
             System.out.println();
@@ -116,7 +108,7 @@ public final class MuseumExhibitStudio {
             System.out.println();
             if (CuratorTerminal.askYesNo("Generate an interactive exhibit.html?", false)) {
                 runSession(
-                        htmlConfig(workingDirectory, options.allowLocalDemoWrite()),
+                        htmlConfig(workingDirectory),
                         buildHtmlPrompt(exhibit),
                         CuratorStreamer.GENERATION_TIMEOUT);
                 System.out.println("Wrote exhibit.html. Open it in a browser to review the exhibit.");
@@ -179,7 +171,7 @@ public final class MuseumExhibitStudio {
 
     public static String buildHtmlPrompt(String exhibit) {
         return """
-                Use builtin:apply_patch to create exactly exhibit.html in the current working directory.
+                Use builtin:apply_patch or builtin:create to create exactly exhibit.html in the current working directory.
                 Do not write, modify, rename, or delete any other file.
 
                 Create one complete standalone document using semantic HTML, embedded CSS, and embedded
@@ -221,11 +213,11 @@ public final class MuseumExhibitStudio {
         return applyModel(config);
     }
 
-    private static SessionConfig htmlConfig(Path workingDirectory, boolean allowLocalDemoWrite) {
+    private static SessionConfig htmlConfig(Path workingDirectory) {
         SessionConfig config = new SessionConfig()
                 .setClientName("museum-exhibit-studio-html")
-                .setAvailableTools(List.of("builtin:apply_patch"))
-                .setOnPermissionRequest(exhibitPermission(workingDirectory, allowLocalDemoWrite))
+                .setAvailableTools(List.of("builtin:apply_patch", "builtin:create"))
+                .setOnPermissionRequest(CuratorSafety.exhibitWritePermission(workingDirectory))
                 .setStreaming(true);
         return applyModel(config);
     }
@@ -261,19 +253,6 @@ public final class MuseumExhibitStudio {
         }
     }
 
-    private static PermissionHandler exhibitPermission(Path workingDirectory, boolean allowLocalDemoWrite) {
-        PermissionHandler strict = CuratorSafety.exhibitWritePermission(workingDirectory);
-        if (!allowLocalDemoWrite) {
-            return strict;
-        }
-        return (request, invocation) -> {
-            if (request != null && "write".equals(request.getKind())) {
-                return CompletableFuture.completedFuture(PermissionRequestResult.approveOnce());
-            }
-            return strict.handle(request, invocation);
-        };
-    }
-
     private static CuratorFacts.FactSet selectFactSet(String input) {
         if (input != null && !input.isBlank()) {
             try {
@@ -285,25 +264,6 @@ public final class MuseumExhibitStudio {
             }
         }
         return CuratorFacts.factSets.get(0);
-    }
-
-    private static RunOptions parseRunOptions(String[] args) {
-        boolean allowLocalDemoWrite = false;
-        for (String arg : args) {
-            if (LOCAL_DEMO_WRITE_FLAG.equals(arg)) {
-                if (allowLocalDemoWrite) {
-                    throw new IllegalArgumentException("Specify " + LOCAL_DEMO_WRITE_FLAG + " at most once.");
-                }
-                allowLocalDemoWrite = true;
-            } else {
-                throw new IllegalArgumentException(usage());
-            }
-        }
-        return new RunOptions(allowLocalDemoWrite);
-    }
-
-    private static String usage() {
-        return "Usage: ./mvnw compile exec:java -Dexec.args=\"[" + LOCAL_DEMO_WRITE_FLAG + "]\"";
     }
 
     private static boolean isTimeout(Throwable error) {
@@ -327,8 +287,5 @@ public final class MuseumExhibitStudio {
         }
         String message = current.getMessage();
         return message == null || message.isBlank() ? current.getClass().getSimpleName() : message;
-    }
-
-    private record RunOptions(boolean allowLocalDemoWrite) {
     }
 }

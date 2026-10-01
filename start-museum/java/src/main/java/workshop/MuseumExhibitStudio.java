@@ -34,8 +34,8 @@ package workshop;
 //                                          plus CuratorSafety.wikipediaPermissionHandler(), run it
 //                                          through runSession, and print sources after the
 //                                          exhibit. Research never joins the approved facts.
-// Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
-//                                          allowlist and CuratorSafety.exhibitWritePermission(...).
+// Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
+//                                          "builtin:create" allowlist and CuratorSafety.exhibitWritePermission(...).
 
 // Your imports go here, and grow as the lessons progress.
 

@@ -30,21 +30,16 @@ Prompt guidance is not an authorization boundary, so the application also:
 - bounds input to 20 facts of at most 500 characters each before every model send;
 - uses explicit timeouts, rejects blank exhibit output, and disconnects sessions / stops clients on success and failure;
 - checks one H1, required sections, a 100-140-word narrative, exactly three numbered questions ending in `?`, and prohibited software vocabulary; and
-- optionally allows `builtin:apply_patch` to write only `exhibit.html` in the application working directory.
+- optionally allows `builtin:apply_patch` and `builtin:create` to write only `exhibit.html` in the application working directory.
 
 The validator cannot prove semantic factual grounding. Generated claims still require human review or a separate evaluator.
 
-## Optional HTML capstone and Java SDK limitation
+## Optional HTML capstone
 
-When prompted, answer yes to generate `exhibit.html`. The default Java permission handler approves a write only when the SDK exposes a write request whose normalized `fileName` is exactly `exhibit.html` in this directory.
-
-Current Java SDK releases may not surface those write-request fields (see <https://github.com/github/copilot-sdk/issues/2273>). For the controlled local workshop only, run with:
-
-```bash
-./mvnw compile exec:java -Dexec.args="--allow-local-demo-write"
-```
-
-That fallback is limited by the app to the `write` permission kind while only `builtin:apply_patch` is available, but it cannot enforce the output path. Do not use the fallback for production, shared, or untrusted worktrees.
+When prompted, answer yes to generate `exhibit.html`. The pinned Java SDK 1.0.11 preserves
+permission fields such as `fileName`, so the strict permission handler approves a write only
+when its normalized path is exactly `exhibit.html` in this directory. Missing path data,
+other file paths, and non-write requests remain denied; there is no broad write fallback.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

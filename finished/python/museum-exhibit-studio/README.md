@@ -51,7 +51,7 @@ human, but they are never merged into the approved facts used to generate the
 exhibit. There is no strict JSON contract and no proposed-addition approval
 loop.
 
-After validation, the optional HTML capstone exposes only `builtin:apply_patch`
+After validation, the optional HTML capstone exposes only `builtin:apply_patch` and `builtin:create`
 and approves writing exactly `exhibit.html` in the application working
 directory. The prompt asks for one standalone semantic HTML file with embedded
 CSS and JavaScript, a human-review caveat, and an accessible question filter.

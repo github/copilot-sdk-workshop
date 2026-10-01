@@ -76,7 +76,7 @@ facts to the exhibit. End with a "## Sources" section listing each consulted art
 }
 
 func buildHTMLPrompt(exhibit string) string {
-	return fmt.Sprintf(`Use builtin:apply_patch to create exactly exhibit.html in the current working directory.
+	return fmt.Sprintf(`Use builtin:apply_patch or builtin:create to create exactly exhibit.html in the current working directory.
 Do not write any other file.
 
 Write one complete, standalone HTML document. Use semantic HTML, embedded CSS, and embedded
@@ -142,7 +142,7 @@ func htmlConfig(workingDirectory string) *copilot.SessionConfig {
 	return &copilot.SessionConfig{
 		ClientName:          "museum-exhibit-studio-html",
 		Model:               selectedModel(),
-		AvailableTools:      []string{"builtin:apply_patch"},
+		AvailableTools:      []string{"builtin:apply_patch", "builtin:create"},
 		OnPermissionRequest: ExhibitWritePermission(workingDirectory),
 		Streaming:           copilot.Bool(true),
 		WorkingDirectory:    workingDirectory,
