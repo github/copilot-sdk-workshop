@@ -29,8 +29,8 @@ an event and left pending for manual resolution, so the run stops and waits for 
 arrives.
 
 Give this first session an approve-all handler so every request has an answer. It approves requests
-when managed settings are disabled, and it is a default rather than a safety measure: Step 5 shows
-what actually constrains this session, and Steps 7 and 8 replace it with narrow, scoped handlers.
+when managed settings are disabled, and it is a default rather than a safety measure: Step 4 shows
+what actually constrains this session, and Steps 6 and 7 replace it with narrow, scoped handlers.
 
 ## Write the session
 

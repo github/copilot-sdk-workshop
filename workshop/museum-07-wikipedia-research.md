@@ -1,4 +1,4 @@
-# Step 7: Research with Wikipedia MCP
+# Step 6: Research with Wikipedia MCP
 
 > **Time:** 20 minutes
 
@@ -736,12 +736,12 @@ Consulted Wikipedia sources:
 Three things to notice in that output:
 
 1. The research notes and the exhibit are clearly separated, and the notice between them says so.
-2. The exhibit that follows still contains only the approved facts. Compare it against a Step 6 run
+2. The exhibit that follows still contains only the approved facts. Compare it against a Step 5 run
    with the same fact set — the research did not sneak new claims in.
 3. The sources are printed **after** the exhibit and validation report. They are provenance for the
    educator, not exhibit copy, and they never appear inside the text a visitor would read.
 
-Answer `N` instead and the run works exactly as it did in Step 6. Disconnect from the network and
+Answer `N` instead and the run works exactly as it did in Step 5. Disconnect from the network and
 answer `y`: research fails, prints `Wikipedia research did not complete: ...`, and the exhibit is
 still produced from the approved facts. An optional enrichment must never be able to take the
 application down.

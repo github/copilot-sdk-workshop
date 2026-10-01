@@ -1,4 +1,4 @@
-# Step 6: Prove the structure
+# Step 5: Prove the structure
 
 > **Time:** 10 minutes
 

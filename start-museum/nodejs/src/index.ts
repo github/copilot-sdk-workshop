@@ -17,31 +17,28 @@
 //                                          tools: [createApprovedFactLookup(approvedFacts)] and
 //                                          availableTools: [approvedFactLookupName]; the prompt
 //                                          tells the curator to call approved_fact_lookup first.
-// Step 5  Set the guardrails ............. add generationConfig() and the single runSession()
-//                                          lifecycle function: one-tool allowlist, the Step 1
-//                                          permission handler carried forward, generation timeout,
-//                                          blank-output rejection, cleanup in `finally`.
-//                                          Steps 6-8 reuse runSession() and add nothing to it.
-// Step 6  Prove the structure ............ call formatValidation(validateExhibit(exhibit)).
-// Step 7  Wikipedia research ............. add researchConfig() with the scoped Wikipedia MCP
+//                                          Add generationConfig() and runSession() with the
+//                                          generation timeout, blank-output rejection, and cleanup.
+// Step 5  Prove the structure ............ call formatValidation(validateExhibit(exhibit)).
+// Step 6  Wikipedia research ............. add researchConfig() with the scoped Wikipedia MCP
 //                                          server plus wikipediaPermissionHandler(), run it
 //                                          through runSession(), and print sources after the
 //                                          exhibit. Research never joins the approved facts.
-// Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
+// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch"
 //                                          allowlist and exhibitWritePermission(process.cwd()).
 
 // Your SDK and "./curator.js" imports go here, and grow as the lessons progress.
 
 // Your system message (Step 3) goes here.
 
-// Your prompt builders (Steps 4, 7, 8) go here.
+// Your prompt builders (Steps 4, 6, 7) go here.
 
-// Your session configuration builders (Steps 5, 7, 8) go here.
+// Your session configuration builders (Steps 4, 6, 7) go here.
 
-// Your runSession() lifecycle function (Step 5) goes here.
+// Your runSession() lifecycle function (Step 4) goes here.
 
 console.log("=== Museum Exhibit Studio starter ===");
 console.log("Pre-built curator helpers are ready in src/curator.ts.");
 console.log("Continue with museum step 1 to write your first curator session.");
 
-// Your main() (Steps 1-8) goes here, and the call that runs it.
+// Your main() (Steps 1-7) goes here, and the call that runs it.

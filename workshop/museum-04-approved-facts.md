@@ -10,7 +10,8 @@ exhibit label is an institutional claim, and "the model knew it" is not a source
 In this step the educator supplies the facts and the **application** hands them to the curator
 through a tool it owns. You register the pre-built `approved_fact_lookup` tool, make it the one
 tool the model may call, and write a prompt that orders the curator to call it before writing a
-word. You also let the educator pick one of three approved fact sets or type their own.
+word. You also let the educator pick one of three approved fact sets or type their own, and put
+the session lifecycle in one small runner that later steps reuse.
 
 ## Why the facts belong behind a tool, not inside the prompt
 
@@ -31,7 +32,7 @@ unbounded list. Bounds are not politeness: an unbounded fact list is unpredictab
 and attack surface.
 
 `skip permission` is set on this tool because it only reads application-owned data that the
-educator just approved on screen. The external Wikipedia process in Step 7 gets a permission
+educator just approved on screen. The external Wikipedia process in Step 6 gets a permission
 boundary instead.
 
 This is the museum equivalent of `accessibility_rule_lookup` in the accessibility track: one
@@ -48,12 +49,18 @@ workshop:
 - **`availableTools`** is the *allowlist*. It names which tools the model is permitted to call in
   this session. A tool that is registered but not allowlisted cannot be called.
 
-You need both. Step 5 returns to the allowlist and shows what it prevents.
+You need both. Naming only `approved_fact_lookup` also excludes every other tool: this session
+offers no file reader, shell, or browser.
 
 The prompt is the third piece, and it is the weakest one: it *asks* the model to call the tool. It
 does not make the call happen, and it cannot stop a call. Keep the explicit "call
 `approved_fact_lookup` first" instruction — at this stage you want the tool call to be reliable so
 you can see it.
+
+**Keep the run bounded:** pass the helper's existing **120-second generation timeout** explicitly
+to the session runner. The runner returns the exhibit text for later validation, rejects blank
+output, and cleans up the session and client even if the stream fails. These are application
+controls, not instructions for the model.
 
 ## Register the tool and build the prompt
 
@@ -63,53 +70,96 @@ Open `Program.cs`. Widen nothing at the top — you already have
 end of the file:
 
 ```csharp
-Console.WriteLine("=== Museum Exhibit Studio ===");
-Console.WriteLine();
-Console.WriteLine("Approved fact sets:");
-for (var index = 0; index < CuratorFacts.FactSets.Count; index++)
+try
 {
-    Console.WriteLine($"{index + 1}. {CuratorFacts.FactSets[index].Label}");
+    Console.WriteLine("=== Museum Exhibit Studio ===");
+    Console.WriteLine();
+    Console.WriteLine("Approved fact sets:");
+    for (var index = 0; index < CuratorFacts.FactSets.Count; index++)
+    {
+        Console.WriteLine($"{index + 1}. {CuratorFacts.FactSets[index].Label}");
+    }
+
+    Console.WriteLine();
+
+    var selectedFactSet = ReadFactSetSelection();
+    var approvedFacts = CuratorFacts.BoundFacts(selectedFactSet.Facts);
+    for (var index = 0; index < approvedFacts.Length; index++)
+    {
+        Console.WriteLine($"{index + 1}. {approvedFacts[index]}");
+    }
+
+    Console.WriteLine();
+
+    if (!CuratorTerminal.AskYesNo("Use these facts?", defaultYes: true))
+    {
+        approvedFacts = CuratorFacts.BoundFacts(CuratorTerminal.ReadFacts());
+    }
+
+    Console.WriteLine();
+    await RunSessionAsync(
+        GenerationConfig(approvedFacts),
+        BuildExhibitPrompt(),
+        CuratorStreamer.GenerationTimeout);
+
+    return 0;
+}
+catch (TimeoutException)
+{
+    Console.Error.WriteLine("The curator did not respond in time. Try again.");
+    return 1;
+}
+catch (Exception exception)
+{
+    Console.Error.WriteLine($"Could not generate the exhibit: {exception.Message}");
+    return 1;
+}
+finally
+{
+    CuratorTerminal.CloseTerminal();
 }
 
-Console.WriteLine();
-
-var selectedFactSet = ReadFactSetSelection();
-var approvedFacts = CuratorFacts.BoundFacts(selectedFactSet.Facts);
-for (var index = 0; index < approvedFacts.Length; index++)
+static string? SelectedModel()
 {
-    Console.WriteLine($"{index + 1}. {approvedFacts[index]}");
+    var model = Environment.GetEnvironmentVariable("COPILOT_MODEL");
+    return string.IsNullOrWhiteSpace(model) ? null : model.Trim();
 }
 
-Console.WriteLine();
-
-if (!CuratorTerminal.AskYesNo("Use these facts?", defaultYes: true))
-{
-    approvedFacts = CuratorFacts.BoundFacts(CuratorTerminal.ReadFacts());
-}
-
-Console.WriteLine();
-
-await using var client = new CopilotClient();
-await client.StartAsync();
-
-await using var session = await client.CreateSessionAsync(new SessionConfig
+SessionConfig GenerationConfig(IEnumerable<string?> approvedFacts) => new()
 {
     ClientName = "museum-exhibit-studio",
+    Model = SelectedModel(),
     OnPermissionRequest = PermissionHandler.ApproveAll,
-    Streaming = true,
     Tools = [CuratorFacts.CreateApprovedFactLookup(approvedFacts)],
     AvailableTools = [CuratorFacts.ApprovedFactLookupName],
+    Streaming = true,
     SystemMessage = new SystemMessageConfig
     {
         Mode = SystemMessageMode.Replace,
         Content = SystemMessage
     }
-});
+};
 
-await CuratorStreamer.StreamExhibitAsync(session, BuildExhibitPrompt());
+static async Task<string> RunSessionAsync(SessionConfig config, string prompt, TimeSpan timeout)
+{
+    await using var client = new CopilotClient();
+    try
+    {
+        await client.StartAsync();
+        await using var session = await client.CreateSessionAsync(config);
+        var content = await CuratorStreamer.StreamExhibitAsync(session, prompt, timeout);
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            throw new InvalidOperationException("The curator returned no exhibit content.");
+        }
 
-await client.StopAsync();
-CuratorTerminal.CloseTerminal();
+        return content;
+    }
+    finally
+    {
+        await client.StopAsync();
+    }
+}
 
 CuratorFactSet ReadFactSetSelection()
 {
@@ -148,7 +198,9 @@ static string BuildExhibitPrompt()
 }
 ```
 
-Local functions come after the top-level statements. `BuildExhibitPrompt` takes no facts at all now
+Local functions come after the top-level statements. `RunSessionAsync` uses
+`CuratorStreamer.GenerationTimeout` from `Helpers/CuratorStreamer.cs` and disposes the session
+before stopping the client in `finally`. `BuildExhibitPrompt` takes no facts at all now
 — it names the tool instead. `CreateApprovedFactLookup` calls `BoundFacts` internally, so the bound
 holds no matter who builds the tool.
 
@@ -162,9 +214,10 @@ the data is application-owned. The three fact sets and the `MaximumFactCount` (2
 :::
 
 :::language nodejs
-Open `src/index.ts` and widen the helper import:
+Open `src/index.ts`. Add the session config type to the SDK import and widen the helper import:
 
 ```typescript
+import { approveAll, CopilotClient, type SessionConfig } from "@github/copilot-sdk";
 import {
   approvedFactLookupName,
   askLine,
@@ -173,6 +226,7 @@ import {
   closeTerminal,
   createApprovedFactLookup,
   factSets,
+  generationTimeoutMs,
   readFacts,
   streamExhibit,
 } from "./curator.js";
@@ -211,45 +265,83 @@ async function chooseFactSet(): Promise<(typeof factSets)[number]> {
 }
 ```
 
-Replace `main` with:
+Add the configuration builder and reusable session runner above `main`, then replace `main`:
 
 ```typescript
-async function main(): Promise<void> {
-  console.log("=== Museum Exhibit Studio ===");
-  console.log();
-  console.log("Approved fact sets:");
-  factSets.forEach((factSet, index) => console.log(`${index + 1}. ${factSet.label}`));
-  console.log();
-
-  const chosenSet = await chooseFactSet();
-  let approvedFacts = boundFacts(chosenSet.facts);
-  approvedFacts.forEach((fact, index) => console.log(`${index + 1}. ${fact}`));
-  console.log();
-
-  if (!(await askYesNo("Use these facts?", true))) {
-    approvedFacts = boundFacts(await readFacts());
-  }
-
-  console.log();
-  const client = new CopilotClient();
-  await client.start();
-  const session = await client.createSession({
+function generationConfig(approvedFacts: Iterable<string>): SessionConfig {
+  return {
     clientName: "museum-exhibit-studio",
+    model: process.env.COPILOT_MODEL?.trim() || undefined,
     onPermissionRequest: approveAll,
-    streaming: true,
     tools: [createApprovedFactLookup(approvedFacts)],
     availableTools: [approvedFactLookupName],
+    streaming: true,
     systemMessage: { mode: "replace", content: systemMessage },
-  });
+  };
+}
 
-  await streamExhibit(session, buildExhibitPrompt());
+async function runSession(
+  config: SessionConfig,
+  prompt: string,
+  timeout: number,
+): Promise<string> {
+  const client = new CopilotClient();
+  try {
+    await client.start();
+    const session = await client.createSession(config);
+    try {
+      const content = await streamExhibit(session, prompt, timeout);
+      if (!content.trim()) throw new Error("The curator returned no exhibit content.");
+      return content;
+    } finally {
+      await session.disconnect();
+    }
+  } finally {
+    await client.stop();
+  }
+}
 
-  await session.disconnect();
-  await client.stop();
-  closeTerminal();
+function describe(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function main(): Promise<void> {
+  try {
+    console.log("=== Museum Exhibit Studio ===");
+    console.log();
+    console.log("Approved fact sets:");
+    factSets.forEach((factSet, index) => console.log(`${index + 1}. ${factSet.label}`));
+    console.log();
+
+    const chosenSet = await chooseFactSet();
+    let approvedFacts = boundFacts(chosenSet.facts);
+    approvedFacts.forEach((fact, index) => console.log(`${index + 1}. ${fact}`));
+    console.log();
+
+    if (!(await askYesNo("Use these facts?", true))) {
+      approvedFacts = boundFacts(await readFacts());
+    }
+
+    console.log();
+    await runSession(
+      generationConfig(approvedFacts),
+      buildExhibitPrompt(),
+      generationTimeoutMs,
+    );
+  } catch (error) {
+    const message = describe(error);
+    console.error(message.toLocaleLowerCase().includes("timeout")
+      ? "The curator did not respond in time. Try again."
+      : `Could not generate the exhibit: ${message}`);
+    process.exitCode = 1;
+  } finally {
+    closeTerminal();
+  }
 }
 ```
 
+Keep the `void main();` call. `runSession` passes `generationTimeoutMs` from `src/curator.ts`
+to the streamer; its nested `finally` blocks disconnect the session and stop the client.
 `buildExhibitPrompt` takes no facts at all now — it names the tool instead.
 `createApprovedFactLookup` calls `boundFacts` internally, so the bound holds no matter who builds
 the tool.
@@ -264,12 +356,14 @@ right there because the data is application-owned. The three fact sets and the `
 :::
 
 :::language python
-Open `main.py` and widen the helper import:
+Open `main.py`. Add `import os`, `import sys`, `from collections.abc import Iterable`, and
+`from typing import Any` at the top, and widen the helper import:
 
 ```python
 from curator import (
     APPROVED_FACT_LOOKUP_NAME,
     FACT_SETS,
+    GENERATION_TIMEOUT_SECONDS,
     ask_line,
     ask_yes_no,
     bound_facts,
@@ -302,42 +396,83 @@ Write exactly three distinct visitor reflection questions. Do not add a preface,
 conclusion, software discussion, or facts the tool did not return."""
 ```
 
-Replace `main`:
+Add the configuration builder and session runner above `main`, then replace `main` and the
+entrypoint below it:
 
 ```python
-async def main() -> None:
-    print("=== Museum Exhibit Studio ===")
-    print()
-    print("Approved fact sets:")
-    for index, fact_set in enumerate(FACT_SETS, start=1):
-        print(f"{index}. {fact_set.label}")
-    print()
+def generation_config(approved_facts: Iterable[str]) -> dict[str, Any]:
+    config: dict[str, Any] = {
+        "client_name": "museum-exhibit-studio",
+        "on_permission_request": PermissionHandler.approve_all,
+        "tools": [create_approved_fact_lookup(approved_facts)],
+        "available_tools": [APPROVED_FACT_LOOKUP_NAME],
+        "streaming": True,
+        "system_message": {"mode": "replace", "content": SYSTEM_MESSAGE},
+    }
+    model = os.getenv("COPILOT_MODEL")
+    if model and model.strip():
+        config["model"] = model.strip()
+    return config
 
-    choice = ask_line("Choose a fact set [1-3, default 1]: ")
-    selected_index = int(choice) - 1 if choice in {"1", "2", "3"} else 0
-    facts = list(FACT_SETS[selected_index].facts)
-    for index, fact in enumerate(facts, start=1):
-        print(f"{index}. {fact}")
-    print()
 
-    if not ask_yes_no("Use these facts?", True):
-        facts = read_facts()
-    facts = bound_facts(facts)
+async def run_session(config: dict[str, Any], prompt: str, timeout: float) -> str:
+    client = CopilotClient()
+    try:
+        await client.start()
+        session = await client.create_session(**config)
+        try:
+            content = await stream_exhibit(session, prompt, timeout)
+            if not content.strip():
+                raise RuntimeError("The curator returned no exhibit content.")
+            return content
+        finally:
+            await session.disconnect()
+    finally:
+        await client.stop()
 
-    print()
-    async with CopilotClient() as client:
-        async with await client.create_session(
-            client_name="museum-exhibit-studio",
-            on_permission_request=PermissionHandler.approve_all,
-            streaming=True,
-            tools=[create_approved_fact_lookup(facts)],
-            available_tools=[APPROVED_FACT_LOOKUP_NAME],
-            system_message={"mode": "replace", "content": SYSTEM_MESSAGE},
-        ) as session:
-            await stream_exhibit(session, build_exhibit_prompt())
+
+async def main() -> int:
+    try:
+        print("=== Museum Exhibit Studio ===")
+        print()
+        print("Approved fact sets:")
+        for index, fact_set in enumerate(FACT_SETS, start=1):
+            print(f"{index}. {fact_set.label}")
+        print()
+
+        choice = ask_line("Choose a fact set [1-3, default 1]: ")
+        selected_index = int(choice) - 1 if choice in {"1", "2", "3"} else 0
+        facts = list(FACT_SETS[selected_index].facts)
+        for index, fact in enumerate(facts, start=1):
+            print(f"{index}. {fact}")
+        print()
+
+        if not ask_yes_no("Use these facts?", True):
+            facts = read_facts()
+        facts = bound_facts(facts)
+
+        print()
+        await run_session(
+            generation_config(facts),
+            build_exhibit_prompt(),
+            GENERATION_TIMEOUT_SECONDS,
+        )
+        return 0
+    except TimeoutError:
+        print("The curator did not respond in time. Try again.", file=sys.stderr)
+        return 1
+    except Exception as error:
+        print(f"Could not generate the exhibit: {error}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(asyncio.run(main()))
 ```
 
-`build_exhibit_prompt` takes no facts at all now — it names the tool instead.
+`run_session` passes `GENERATION_TIMEOUT_SECONDS` from `curator.py` to the streamer; its
+`finally` blocks disconnect the session and stop the client. `build_exhibit_prompt` takes no
+facts at all now — it names the tool instead.
 `create_approved_fact_lookup` calls `bound_facts` internally, so the bound holds no matter who
 builds the tool.
 
@@ -351,8 +486,8 @@ fact sets and the `MAXIMUM_FACT_COUNT` (20) and `MAXIMUM_FACT_LENGTH` (500) boun
 :::
 
 :::language go
-Open `main.go`. Add `"strconv"` to the import block, then add the prompt builder
-below the system message:
+Open `main.go`. Add `"errors"`, `"os"`, `"strconv"`, `"strings"`, and `"time"` to the import
+block, then add the prompt builder below the system message:
 
 ```go
 func buildExhibitPrompt() string {
@@ -376,10 +511,76 @@ conclusion, software discussion, or facts the tool did not return.`, ApprovedFac
 }
 ```
 
-Replace `main`:
+Add the configuration builder and session runner, then replace `main` with a thin wrapper and
+a `run` function:
 
 ```go
+func generationConfig(workingDirectory string, approvedFacts []string) (*copilot.SessionConfig, error) {
+	lookup, err := ApprovedFactLookup(approvedFacts)
+	if err != nil {
+		return nil, err
+	}
+
+	return &copilot.SessionConfig{
+		ClientName:          "museum-exhibit-studio",
+		Model:               strings.TrimSpace(os.Getenv("COPILOT_MODEL")),
+		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+		Tools:               []copilot.Tool{lookup},
+		AvailableTools:      []string{ApprovedFactLookupName},
+		Streaming:           copilot.Bool(true),
+		SystemMessage: &copilot.SystemMessageConfig{
+			Mode:    "replace",
+			Content: systemMessage,
+		},
+		WorkingDirectory: workingDirectory,
+	}, nil
+}
+
+func runSession(
+	ctx context.Context,
+	config *copilot.SessionConfig,
+	prompt string,
+	timeout time.Duration,
+) (string, error) {
+	client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
+	if err := client.Start(ctx); err != nil {
+		return "", err
+	}
+	defer func() { _ = client.Stop() }()
+
+	session, err := client.CreateSession(ctx, config)
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = session.Disconnect() }()
+
+	content, err := StreamExhibit(session, prompt, timeout)
+	if err != nil {
+		return "", err
+	}
+	if strings.TrimSpace(content) == "" {
+		return "", errors.New("The curator returned no exhibit content.")
+	}
+	return content, nil
+}
+
+func isTimeout(err error) bool {
+	return errors.Is(err, context.DeadlineExceeded) ||
+		strings.Contains(strings.ToLower(err.Error()), "timeout")
+}
+
 func main() {
+	if err := run(); err != nil {
+		if isTimeout(err) {
+			fmt.Fprintln(os.Stderr, "The curator did not respond in time. Try again.")
+		} else {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	fmt.Println("=== Museum Exhibit Studio ===")
 	fmt.Println()
 	fmt.Println("Approved fact sets:")
@@ -405,45 +606,31 @@ func main() {
 	}
 	facts, err := BoundFacts(facts)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	lookup, err := ApprovedFactLookup(facts)
+	ctx := context.Background()
+	workingDirectory, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		return err
+	}
+
+	exhibitConfig, err := generationConfig(workingDirectory, facts)
+	if err != nil {
+		return err
 	}
 
 	fmt.Println()
-	ctx := context.Background()
-	client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
-	if err := client.Start(ctx); err != nil {
-		panic(err)
+	if _, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout); err != nil {
+		return err
 	}
-	defer func() { _ = client.Stop() }()
-
-	session, err := client.CreateSession(ctx, &copilot.SessionConfig{
-		ClientName:          "museum-exhibit-studio",
-		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
-		Streaming:           copilot.Bool(true),
-		Tools:               []copilot.Tool{lookup},
-		AvailableTools:      []string{ApprovedFactLookupName},
-		SystemMessage: &copilot.SystemMessageConfig{
-			Mode:    "replace",
-			Content: systemMessage,
-		},
-	})
-	if err != nil {
-		panic(err)
-	}
-	defer func() { _ = session.Disconnect() }()
-
-	if _, err := StreamExhibit(session, buildExhibitPrompt(), GenerationTimeout); err != nil {
-		panic(err)
-	}
+	return nil
 }
 ```
 
-`buildExhibitPrompt` takes no facts at all now — it names the tool instead. `ApprovedFactLookup`
+`runSession` passes `GenerationTimeout` from `curator.go` to the streamer and uses `defer` to
+disconnect the session and stop the client. `buildExhibitPrompt` takes no facts at all now — it
+names the tool instead. `ApprovedFactLookup`
 calls `BoundFacts` internally, so the bound holds no matter who builds the tool.
 
 **Look inside:** `curator.go` holds all of this, and it is worth reading because it is a real
@@ -456,12 +643,13 @@ fact sets and the `MaximumFactCount` (20) and `MaximumFactLength` (500) bounds e
 :::
 
 :::language rust
-Open `src/main.rs` and widen the crate import:
+Open `src/main.rs`. Add `use std::error::Error;` and `use std::time::Duration;`, and widen
+the crate import:
 
 ```rust
 use museum_exhibit_studio::{
-    APPROVED_FACT_LOOKUP_NAME, GENERATION_TIMEOUT, RuntimeError, approved_fact_lookup, ask_line,
-    ask_yes_no, bound_facts, fact_sets, read_facts, stream_exhibit,
+    APPROVED_FACT_LOOKUP_NAME, FactBoundsError, GENERATION_TIMEOUT, RuntimeError,
+    approved_fact_lookup, ask_line, ask_yes_no, bound_facts, fact_sets, read_facts, stream_exhibit,
 };
 ```
 
@@ -491,11 +679,86 @@ conclusion, software discussion, or facts the tool did not return."#
 }
 ```
 
-Replace `main`:
+Add the configuration builder and session runner, then replace `main` with a thin wrapper and
+a `run` function:
 
 ```rust
+fn selected_model() -> Option<String> {
+    std::env::var("COPILOT_MODEL")
+        .ok()
+        .map(|model| model.trim().to_owned())
+        .filter(|model| !model.is_empty())
+}
+
+fn generation_config(approved_facts: &[String]) -> Result<SessionConfig, FactBoundsError> {
+    let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
+    config.client_name = Some("museum-exhibit-studio".to_owned());
+    config.model = selected_model();
+    config.tools = Some(vec![approved_fact_lookup(approved_facts)?]);
+    config.available_tools = Some(vec![APPROVED_FACT_LOOKUP_NAME.to_owned()]);
+    config.streaming = Some(true);
+    config.system_message = Some(
+        SystemMessageConfig::new()
+            .with_mode("replace")
+            .with_content(SYSTEM_MESSAGE),
+    );
+    Ok(config)
+}
+
+async fn run_session(
+    config: SessionConfig,
+    prompt: String,
+    timeout: Duration,
+) -> Result<String, RuntimeError> {
+    let client = Client::start(ClientOptions::default()).await?;
+    let session_result = async {
+        let session = client.create_session(config).await?;
+        let stream_result = stream_exhibit(&session, prompt, timeout).await;
+        let disconnect_result = session.disconnect().await;
+        match (stream_result, disconnect_result) {
+            (Ok(content), Ok(())) => Ok(content),
+            (Err(error), _) => Err(error),
+            (Ok(_), Err(error)) => Err(Box::new(error) as RuntimeError),
+        }
+    }
+    .await;
+    let stop_result = client.stop().await;
+    let content = match (session_result, stop_result) {
+        (Ok(content), Ok(())) => content,
+        (Err(error), _) => return Err(error),
+        (Ok(_), Err(error)) => return Err(Box::new(error) as RuntimeError),
+    };
+    if content.trim().is_empty() {
+        return Err("The curator returned no exhibit content.".into());
+    }
+    Ok(content)
+}
+
+fn is_timeout_error(error: &(dyn Error + 'static)) -> bool {
+    let mut current = Some(error);
+    while let Some(candidate) = current {
+        let message = candidate.to_string().to_lowercase();
+        if message.contains("timeout") || message.contains("timed out") {
+            return true;
+        }
+        current = candidate.source();
+    }
+    false
+}
+
 #[tokio::main]
-async fn main() -> Result<(), RuntimeError> {
+async fn main() {
+    if let Err(error) = run().await {
+        if is_timeout_error(error.as_ref()) {
+            eprintln!("The curator did not respond in time. Try again.");
+        } else {
+            eprintln!("Could not complete Museum Exhibit Studio: {error}");
+        }
+        std::process::exit(1);
+    }
+}
+
+async fn run() -> Result<(), RuntimeError> {
     println!("=== Museum Exhibit Studio ===");
     println!();
     println!("Approved fact sets:");
@@ -528,28 +791,20 @@ async fn main() -> Result<(), RuntimeError> {
     let facts = bound_facts(facts)?;
 
     println!();
-    let client = Client::start(ClientOptions::default()).await?;
-    let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
-    config.client_name = Some("museum-exhibit-studio".to_owned());
-    config.streaming = Some(true);
-    config.tools = Some(vec![approved_fact_lookup(&facts)?]);
-    config.available_tools = Some(vec![APPROVED_FACT_LOOKUP_NAME.to_owned()]);
-    config.system_message = Some(
-        SystemMessageConfig::new()
-            .with_mode("replace")
-            .with_content(SYSTEM_MESSAGE),
-    );
-    let session = client.create_session(config).await?;
+    run_session(
+        generation_config(&facts)?,
+        build_exhibit_prompt(),
+        GENERATION_TIMEOUT,
+    )
+    .await?;
 
-    stream_exhibit(&session, build_exhibit_prompt(), GENERATION_TIMEOUT).await?;
-
-    session.disconnect().await?;
-    client.stop().await?;
     Ok(())
 }
 ```
 
-`build_exhibit_prompt` takes no facts at all now — it names the tool instead.
+`run_session` passes `GENERATION_TIMEOUT` from `src/lib.rs` to the streamer and disconnects
+the session and stops the client before propagating errors. `build_exhibit_prompt` takes no
+facts at all now — it names the tool instead.
 `approved_fact_lookup` calls `bound_facts` internally, so the bound holds no matter who builds the
 tool.
 
@@ -564,8 +819,16 @@ the same file.
 :::
 
 :::language java
-Open `src/main/java/workshop/MuseumExhibitStudio.java`. Add
-`import java.util.List;` to the imports, then add the prompt builder to the class:
+Open `src/main/java/workshop/MuseumExhibitStudio.java`. Add these imports, then add the prompt
+builder and fact-set chooser to the class:
+
+```java
+import com.github.copilot.CopilotSession;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+```
 
 ```java
     public static String buildExhibitPrompt() {
@@ -604,56 +867,123 @@ Open `src/main/java/workshop/MuseumExhibitStudio.java`. Add
     }
 ```
 
-Replace `main`:
+Add the configuration builder and session runner to the class, then replace `main`:
 
 ```java
-    public static void main(String[] args) throws Exception {
-        System.out.println("=== Museum Exhibit Studio ===");
-        System.out.println();
-        System.out.println("Approved fact sets:");
-        for (int index = 0; index < CuratorFacts.factSets.size(); index++) {
-            System.out.printf("%d. %s%n", index + 1, CuratorFacts.factSets.get(index).label());
+    private static SessionConfig generationConfig(Iterable<String> approvedFacts) {
+        SessionConfig config = new SessionConfig()
+                .setClientName("museum-exhibit-studio")
+                .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+                .setTools(List.of(CuratorFacts.approvedFactLookup(approvedFacts)))
+                .setAvailableTools(List.of(CuratorFacts.APPROVED_FACT_LOOKUP_NAME))
+                .setStreaming(true)
+                .setSystemMessage(new SystemMessageConfig()
+                        .setMode(SystemMessageMode.REPLACE)
+                        .setContent(SYSTEM_MESSAGE));
+        String model = System.getenv("COPILOT_MODEL");
+        if (model != null && !model.isBlank()) {
+            config.setModel(model.trim());
         }
-        System.out.println();
+        return config;
+    }
 
-        CuratorFacts.FactSet selected =
-                selectFactSet(CuratorTerminal.askLine("Choose a fact set [1-3, default 1]: "));
-        List<String> facts = selected.facts();
-        for (int index = 0; index < facts.size(); index++) {
-            System.out.printf("%d. %s%n", index + 1, facts.get(index));
-        }
-        System.out.println();
-
-        if (!CuratorTerminal.askYesNo("Use these facts?", true)) {
-            facts = CuratorTerminal.readFacts();
-        }
-        facts = CuratorFacts.boundFacts(facts);
-
-        System.out.println();
+    private static String runSession(SessionConfig config, String prompt, Duration timeout)
+            throws Exception {
         try (var client = new CopilotClient()) {
-            client.start().get();
-            var session = client.createSession(new SessionConfig()
-                    .setClientName("museum-exhibit-studio")
-                    .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
-                    .setStreaming(true)
-                    .setTools(List.of(CuratorFacts.approvedFactLookup(facts)))
-                    .setAvailableTools(List.of(CuratorFacts.APPROVED_FACT_LOOKUP_NAME))
-                    .setSystemMessage(new SystemMessageConfig()
-                            .setMode(SystemMessageMode.REPLACE)
-                            .setContent(SYSTEM_MESSAGE))).get();
+            CopilotSession session = null;
             try {
-                CuratorStreamer.streamExhibit(session, buildExhibitPrompt());
+                client.start().get();
+                session = client.createSession(config).get();
+                String content = CuratorStreamer.streamExhibit(session, prompt, timeout);
+                if (content == null || content.isBlank()) {
+                    throw new IllegalStateException("The curator returned no exhibit content.");
+                }
+                return content;
             } finally {
-                session.close();
-                client.stop().get();
+                try {
+                    if (session != null) {
+                        session.close();
+                    }
+                } finally {
+                    client.stop().get();
+                }
+            }
+        }
+    }
+
+    private static boolean isTimeout(Throwable error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof TimeoutException) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    private static String rootMessage(Throwable error) {
+        Throwable current = error;
+        while (current instanceof ExecutionException && current.getCause() != null) {
+            current = current.getCause();
+        }
+        while (current.getCause() != null) {
+            current = current.getCause();
+        }
+        String message = current.getMessage();
+        return message == null || message.isBlank() ? current.getClass().getSimpleName() : message;
+    }
+
+    public static void main(String[] args) {
+        int exitCode = 0;
+        try {
+            System.out.println("=== Museum Exhibit Studio ===");
+            System.out.println();
+            System.out.println("Approved fact sets:");
+            for (int index = 0; index < CuratorFacts.factSets.size(); index++) {
+                System.out.printf("%d. %s%n", index + 1, CuratorFacts.factSets.get(index).label());
+            }
+            System.out.println();
+
+            CuratorFacts.FactSet selected =
+                    selectFactSet(CuratorTerminal.askLine("Choose a fact set [1-3, default 1]: "));
+            List<String> facts = selected.facts();
+            for (int index = 0; index < facts.size(); index++) {
+                System.out.printf("%d. %s%n", index + 1, facts.get(index));
+            }
+            System.out.println();
+
+            if (!CuratorTerminal.askYesNo("Use these facts?", true)) {
+                facts = CuratorTerminal.readFacts();
+            }
+            facts = CuratorFacts.boundFacts(facts);
+
+            System.out.println();
+            runSession(generationConfig(facts), buildExhibitPrompt(), CuratorStreamer.GENERATION_TIMEOUT);
+        } catch (Exception exception) {
+            exitCode = 1;
+            if (isTimeout(exception)) {
+                System.err.println("The curator did not respond in time. Try again.");
+            } else {
+                System.err.println("Could not complete the exhibit studio run: " + rootMessage(exception));
             }
         } finally {
-            CuratorTerminal.close();
+            try {
+                CuratorTerminal.close();
+            } catch (Exception exception) {
+                System.err.println("Could not close the terminal: " + rootMessage(exception));
+                exitCode = 1;
+            }
+        }
+        if (exitCode != 0) {
+            System.exit(exitCode);
         }
     }
 ```
 
-`buildExhibitPrompt` takes no facts at all now — it names the tool instead. `approvedFactLookup`
+`runSession` passes `CuratorStreamer.GENERATION_TIMEOUT` from `CuratorStreamer.java` to the
+streamer; its nested `finally` blocks close the session and stop the client. `buildExhibitPrompt`
+takes no facts at all now — it names the tool instead. `approvedFactLookup`
 calls `boundFacts` internally, so the bound holds no matter who builds the tool.
 
 **Look inside:** `CuratorFacts.java` holds all of this, and it is worth reading because it is a
@@ -744,8 +1074,16 @@ handed them back to the model.
 
 Try the failure case too. Answer `n` and immediately submit a blank line without typing any facts.
 The run stops with `Provide at least one approved fact.` — the tool factory refused to be built
-around an empty list, so no request was ever sent. Step 5 turns that crash into a civil error
-message.
+around an empty list, so no request was ever sent. The error handler reports the failure and
+exits with status 1.
+
+The session runner also reports a timeout instead of leaving you waiting indefinitely:
+
+```text
+The curator did not respond in time. Try again.
+```
+
+The normal timeout is 120 seconds; it does not change which facts or tools the curator may use.
 
 ## Check your understanding
 
@@ -767,4 +1105,4 @@ message.
 - [Context clearing and terminal tools](https://github.com/github/copilot-sdk/blob/main/docs/features/context-management.md):
   what a tool can do to the conversation itself, and why most tools should not.
 
-Continue to [Set the guardrails](museum-05-guardrails.md).
+Continue to [Prove the structure](museum-06-prove-the-structure.md).

@@ -358,7 +358,7 @@ the streaming flag on the session config.
 - Streaming is switched on in two places conceptually: the session config and the code that reads
   events. Which one did you write, and which one did the helper already own?
 - The helper returns the full response text even though it also printed it. Why will that return
-  value matter in Step 6?
+  value matter in Step 5?
 - If the model never becomes idle, what stops your program from waiting forever?
 
 ## Learn more
