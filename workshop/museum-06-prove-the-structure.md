@@ -1,4 +1,4 @@
-# Step 6: Prove the structure
+# Step 5: Prove the structure
 
 > **Time:** 10 minutes
 
@@ -216,7 +216,7 @@ cargo run
 :::
 :::language java
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 :::
 

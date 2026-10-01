@@ -49,7 +49,7 @@ The consulted Wikipedia sources are printed after the exhibit, outside the gener
 On a successful research run, confirm both local lookup events appear before generation.
 Structural checks do not prove factual grounding; review researched claims before publishing.
 
-Optionally, the app can ask Copilot to create `exhibit.html` with `builtin:apply_patch`. That session
+Optionally, the app can ask Copilot to create `exhibit.html` with `builtin:apply_patch` or `builtin:create`. That session
 allows only a single normalized write to `exhibit.html` in the application working directory and
 rejects every other file, shell, or MCP permission request. The HTML prompt requires a standalone
 semantic document with embedded CSS and JavaScript, a human-review caveat, and an accessible question

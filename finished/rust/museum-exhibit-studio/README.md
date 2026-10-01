@@ -34,7 +34,7 @@ and takes the same fallback. Sources print after the exhibit; successful researc
 local lookup events before generation. Structural checks do not prove factual grounding, so review
 researched claims before publishing.
 
-Optional HTML generation uses `builtin:apply_patch` with a single-file permission handler that can write only `exhibit.html` in the application working directory.
+Optional HTML generation uses `builtin:apply_patch` or `builtin:create` with a single-file permission handler that can write only `exhibit.html` in the application working directory.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

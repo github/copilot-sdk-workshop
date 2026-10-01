@@ -3,7 +3,7 @@
 Start today: http://github.github.com/copilot-sdk-workshop/
 
 Choose one of two hands-on GitHub Copilot SDK workshops in .NET, Node.js/TypeScript, Python, Go,
-Rust, or Maven Java:
+Rust, or Java:
 
 - **Accessibility Reviewer:** build an SDLC developer tool that inspects a web page, consults
   application-owned WCAG guidance, and produces an evidence-based report.
@@ -19,7 +19,7 @@ Across the workshops, you'll:
 4. Enforce capability, input, timeout, validation, and lifecycle boundaries in application code.
 5. Explain what the model can infer and what the application must prove.
 
-Plan on about 90 minutes for Accessibility Reviewer or 90 minutes for Museum Exhibit Studio.
+Plan on about 90 minutes for Accessibility Reviewer or 75 minutes for Museum Exhibit Studio.
 Machine setup happens separately in an untimed preflight for each workshop.
 
 ## Start the workshop
@@ -46,7 +46,7 @@ the Markdown requests used by the lesson viewer.
 - [Python 3.11 or newer](https://www.python.org/downloads/)
 - [Go 1.24 or newer](https://go.dev/dl/)
 - [Rust 1.94 or newer](https://rustup.rs/)
-- [Java 17 or newer](https://adoptium.net/) and [Maven](https://maven.apache.org/install.html)
+- [Java 17 or newer](https://adoptium.net/)
 - [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli)
 - GitHub Copilot subscription or trial
 - Microsoft Edge (the workshop default) or Google Chrome
@@ -107,12 +107,12 @@ single-file `exhibit.html` write permission, and small terminal prompts.
 
 Learners work directly in `start-museum/<language>` and grow that one project across the
 lessons, running it at every step. They write only the session setup, the curator and research
-system messages, the prompt builders, one session runner that owns the lifecycle and guardrails, and
+system messages, the prompt builders, one session runner that owns the lifecycle and timeout, and
 `main`. The finished sample is what a learner ends up with, not a separate reference architecture.
 
 The learner-facing track begins at
-[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through seven core
-steps — first session, streaming, curator voice, approved facts, guardrails, structural checks, and
+[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through six core
+steps — first session, streaming, curator voice, approved facts, structural checks, and
 Wikipedia MCP research — plus an optional interactive `exhibit.html` capstone.
 
 When usable cited research exists, the curator calls `approved_fact_lookup` and the read-only

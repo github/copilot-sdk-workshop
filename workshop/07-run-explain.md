@@ -211,7 +211,7 @@ cargo run -- "{{TARGET_APP_URL}}"
 :::
 :::language java
 ```bash
-mvn compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
+./mvnw compile exec:java -Dexec.args="--allow-local-demo-mcp {{TARGET_APP_URL}}"
 ```
 
 > **Java local-demo warning:** This explicit flag is a temporary workaround for

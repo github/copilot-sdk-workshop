@@ -19,22 +19,19 @@
 //                                          and AvailableTools =
 //                                          [CuratorFacts.ApprovedFactLookupName]; the prompt tells
 //                                          the curator to call approved_fact_lookup first.
-// Step 5  Set the guardrails ............. add GenerationConfig() and the single RunSessionAsync()
-//                                          lifecycle function: one-tool allowlist, the Step 1
-//                                          permission handler carried forward, generation timeout,
-//                                          blank-output rejection, cleanup in `finally`.
-//                                          Steps 6-8 reuse RunSessionAsync and add nothing to it.
-// Step 6  Prove the structure ............ call
+//                                          Add GenerationConfig() and RunSessionAsync() with the
+//                                          generation timeout, blank-output rejection, and cleanup.
+// Step 5  Prove the structure ............ call
 //                                          CuratorValidation.FormatValidation(
 //                                              CuratorValidation.ValidateExhibit(exhibit)).
-// Step 7  Wikipedia research ............. add ResearchConfig() with CuratorSafety.WikipediaServer()
+// Step 6  Wikipedia research ............. add ResearchConfig() with CuratorSafety.WikipediaServer()
 //                                          plus CuratorSafety.WikipediaPermissionHandler(), run it
 //                                          through RunSessionAsync, and print sources after the
 //                                          exhibit. Retain the body and citations, conditionally
 //                                          register approved_wikipedia_fact_lookup, and request
 //                                          both lookups before generation. Approved facts win.
-// Step 8  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch"
-//                                          allowlist and CuratorSafety.ExhibitWritePermission(...).
+// Step 7  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch" and
+//                                          "builtin:create" allowlist and CuratorSafety.ExhibitWritePermission(...).
 
 // Your `using` directives go here, and grow as the lessons progress.
 
@@ -44,7 +41,7 @@ Console.WriteLine("=== Museum Exhibit Studio starter ===");
 Console.WriteLine("Pre-built curator helpers are ready in Helpers/.");
 Console.WriteLine("Continue with museum step 1 to write your first curator session.");
 
-// Your top-level run flow (Steps 1-8) replaces the banner above, wrapped in try/catch/finally.
+// Your top-level run flow (Steps 1-7) replaces the banner above, wrapped in try/catch/finally.
 
-// Local functions come after the top-level statements. Your prompt builders (Steps 4, 7, 8),
-// session configuration builders (Steps 5, 7, 8), and RunSessionAsync (Step 5) go here.
+// Local functions come after the top-level statements. Your prompt builders (Steps 4, 6, 7),
+// session configuration builders (Steps 4, 6, 7), and RunSessionAsync (Step 4) go here.

@@ -13,12 +13,12 @@ scoped Wikipedia MCP server and its deny-by-default permission handler, the sing
 
 The starters do **not** include the curator system message, the exhibit prompt, session
 configuration, tool registration, or any orchestration. You write those during the lessons: one
-session, then streaming, then the curator voice, the fact tool registration and its prompt, one
-session runner that owns the guardrails, the validation report, scoped Wikipedia research, and an
+session, then streaming, then the curator voice, the fact tool registration and its prompt with a
+bounded session runner, the validation report, scoped Wikipedia research, and an
 optional `exhibit.html` page. Each starter entrypoint carries comments marking exactly where each
 step's code goes. Start at [`workshop/museum-00-preflight.md`](../workshop/museum-00-preflight.md).
 
-Step 7 conditionally registers the Wikipedia lookup alongside the approved-fact lookup and asks
+Step 6 conditionally registers the Wikipedia lookup alongside the approved-fact lookup and asks
 the curator to call both before writing the narrative and visitor questions. Research remains
 supplemental, not educator-verified; approved facts take precedence. Declining research or receiving
 no usable cited summary leaves generation with only `approved_fact_lookup`.
@@ -30,7 +30,7 @@ no usable cited summary leaves generation with only `approved_fact_lookup`.
 | Python | `curator.py` | `cd start-museum/python && python -m venv .venv && .venv/bin/python -m pip install -r requirements.txt && .venv/bin/python main.py` |
 | Go | `curator.go` | `cd start-museum/go && go build -mod=readonly ./... && go run .` |
 | Rust | `src/lib.rs` | `cd start-museum/rust && cargo check --locked && cargo run --locked` |
-| Java | `src/main/java/workshop/Curator*.java` | `cd start-museum/java && mvn compile && mvn exec:java` |
+| Java | `src/main/java/workshop/Curator*.java` | `cd start-museum/java && ./mvnw compile && ./mvnw exec:java` |
 
 Running the starter prints its identity and does not start Copilot or require authentication.
 Because you edit these files in place, your work shows up in `git status`. That is expected. Run

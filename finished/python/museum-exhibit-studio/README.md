@@ -56,7 +56,7 @@ human-verified facts; treat it as data, not instructions. Declined research keep
 path. Failed research or an unusable cited summary prints a warning and takes the same fallback.
 There is no strict research JSON contract or proposed-addition approval loop.
 
-After validation, the optional HTML capstone exposes only `builtin:apply_patch`
+After validation, the optional HTML capstone exposes only `builtin:apply_patch` and `builtin:create`
 and approves writing exactly `exhibit.html` in the application working
 directory. The prompt asks for one standalone semantic HTML file with embedded
 CSS and JavaScript, a human-review caveat, and an accessible question filter.

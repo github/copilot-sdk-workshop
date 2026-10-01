@@ -36,9 +36,9 @@ research run, confirm both local lookup events appear before generation.
 
 After generation, deterministic checks report structure, narrative length, visitor
 questions, and prohibited vocabulary. If selected, the HTML step exposes only
-`builtin:apply_patch` and approves writing exactly `exhibit.html` in the app
-directory. Structural checks do not prove factual grounding; review researched claims before
-publishing.
+`builtin:apply_patch` and `builtin:create`. Its permission handler approves writing
+exactly `exhibit.html` in the app directory.
+Structural checks do not prove factual grounding; review researched claims before publishing.
 
 This is the application a learner ends up with after the museum lessons, not a separate reference
 architecture. The entrypoint keeps one small session runner that starts the client, creates the

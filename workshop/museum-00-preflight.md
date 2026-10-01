@@ -19,11 +19,10 @@ step adds one idea and ends with a real run, so the curator comes together in fr
 | 1 | A client, a session, one prompt | Museum copy in your terminal |
 | 2 | The pre-built streaming printer | Text arriving live |
 | 3 | The curator system message | A different voice and shape |
-| 4 | The approved-fact prompt builder | Copy that tracks your facts |
-| 5 | One session runner with the guardrails | Refused tools and friendly failures |
-| 6 | The pre-built validator | A PASS/FAIL structural report |
-| 7 | A scoped Wikipedia research session | Cited background, kept out of the exhibit |
-| 8 | An optional interactive page | `exhibit.html` in your browser |
+| 4 | The approved-fact tool, prompt, and bounded session runner | Copy that tracks your facts |
+| 5 | The pre-built validator | A PASS/FAIL structural report |
+| 6 | A scoped Wikipedia research session | Cited background, kept out of the exhibit |
+| 7 | An optional interactive page | `exhibit.html` in your browser |
 
 The starter already ships the plumbing you should never have to write: the approved fact sets and
 their bounds, a streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server
@@ -162,13 +161,14 @@ every lesson change in `src/main.rs`.
 :::
 
 :::language java
-Change into the Maven starter, resolve SDK 1.0.11, compile, and run it:
+Change into the Maven starter, resolve SDK 1.0.11, compile, and run it with the included
+Maven Wrapper (no separate Maven install needed; on Windows, use `mvnw.cmd` instead of `./mvnw`):
 
 ```bash
 cd start-museum/java
-mvn dependency:go-offline
-mvn compile
-mvn exec:java
+./mvnw dependency:go-offline
+./mvnw compile
+./mvnw exec:java
 ```
 
 Pass condition: Maven succeeds and the program prints `=== Museum Exhibit Studio starter ===`

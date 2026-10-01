@@ -1,4 +1,4 @@
-# Step 7: Research with Wikipedia MCP
+# Step 6: Research with Wikipedia MCP
 
 > **Time:** 20 minutes
 
@@ -1151,7 +1151,7 @@ cargo run
 :::
 :::language java
 ```bash
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 :::
 
@@ -1189,13 +1189,13 @@ Three things to notice in that output:
 1. The research notes and exhibit are clearly separated. The notice says how the captured findings
    reach the curator, and the two local lookup events show that it requested both sources.
 2. The exhibit may now contain relevant researched details in its narrative and question premises.
-   Compare it against a Step 6 run with the same fact set. Check that researched claims are supported
+   Compare it against a Step 5 run with the same fact set. Check that researched claims are supported
    by the cited articles and that approved facts win if the sources conflict.
 3. The sources are printed **after** the exhibit and validation report. They are provenance for the
    educator, not exhibit copy, and they never appear inside the text a visitor would read.
 
 Answer `N` instead: only `approved_fact_lookup` is registered and requested, so the run uses
-approved facts as in Step 6. Disconnect from the network and answer `y`: research fails, prints an
+approved facts as in Step 5. Disconnect from the network and answer `y`: research fails, prints an
 explicit warning, and the exhibit is still produced from approved facts. A blank summary or missing
 citations also prints a warning and takes this single-tool fallback. The new lookup refuses such
 input rather than returning a misleading success result.

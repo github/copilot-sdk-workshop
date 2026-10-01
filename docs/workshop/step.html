@@ -242,21 +242,12 @@
                 time: '15 min'
             },
             {
-                id: 'museum-05-guardrails',
-                file: 'workshop/museum-05-guardrails.md',
-                title: 'Set the guardrails',
-                navTitle: 'Guardrails',
-                kind: 'core',
-                number: 5,
-                time: '15 min'
-            },
-            {
                 id: 'museum-06-prove-the-structure',
                 file: 'workshop/museum-06-prove-the-structure.md',
                 title: 'Prove the structure',
                 navTitle: 'Structural checks',
                 kind: 'core',
-                number: 6,
+                number: 5,
                 time: '10 min'
             },
             {
@@ -265,7 +256,7 @@
                 title: 'Research with Wikipedia MCP',
                 navTitle: 'Wikipedia research',
                 kind: 'core',
-                number: 7,
+                number: 6,
                 time: '20 min'
             },
             {
@@ -274,7 +265,7 @@
                 title: 'Publish an interactive exhibit page',
                 navTitle: 'Exhibit page',
                 kind: 'optional',
-                number: 8,
+                number: 7,
                 time: '15 min'
             }
         ];
@@ -299,10 +290,11 @@
             '11-generate-tests': '07-run-explain',
             '12-run-review': '07-run-explain',
             'museum-01-curator-role': 'museum-03-curator-voice',
-            'museum-02-tool-free-session': 'museum-05-guardrails',
+            'museum-02-tool-free-session': 'museum-04-approved-facts',
             'museum-03-approved-facts': 'museum-04-approved-facts',
             'museum-04-deterministic-validation': 'museum-06-prove-the-structure',
-            'museum-05-lifecycle-tests': 'museum-05-guardrails',
+            'museum-05-lifecycle-tests': 'museum-04-approved-facts',
+            'museum-05-guardrails': 'museum-04-approved-facts',
             'museum-06-run-review': 'museum-06-prove-the-structure',
             'museum-07-wikipedia-grounding': 'museum-07-wikipedia-research'
         };
