@@ -11,9 +11,29 @@ const markdown = require('../markdown-language-preprocessor.js');
 const completion = require('../workshop-completion.js');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const viewerSource = fs.readFileSync(path.join(__dirname, '..', 'workshop', 'step.html'), 'utf8')
-    .match(/<script>([\s\S]*?)<\/script>/)[1];
+function extractViewerSource(html) {
+    const match = html.match(/<script>([\s\S]*?)<\/script>/i);
+    assert.ok(match, 'The lesson viewer must contain an inline script.');
+    return match[1];
+}
+
+const viewerSource = extractViewerSource(
+    fs.readFileSync(path.join(__dirname, '..', 'workshop', 'step.html'), 'utf8'));
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('inline viewer extraction recognizes lowercase, uppercase, and mixed-case script tags', () => {
+    for (const [opening, closing] of [
+        ['script', 'script'],
+        ['SCRIPT', 'SCRIPT'],
+        ['ScRiPt', 'sCrIpT']
+    ]) {
+        assert.equal(
+            extractViewerSource(`<script src="external.js"></script><${opening}>const value = 1;</${closing}>`),
+            'const value = 1;'
+        );
+    }
+    assert.throws(() => extractViewerSource('<script src="external.js"></script>'), /must contain an inline script/);
+});
 
 class Element {
     constructor() {
