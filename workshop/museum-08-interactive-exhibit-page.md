@@ -1,4 +1,4 @@
-# Step 8 (optional): Publish an interactive exhibit page
+# Step 7 (optional): Publish an interactive exhibit page
 
 > **Time:** 15 minutes
 
@@ -24,7 +24,7 @@ This step exposes a real write capability for the first time, so the boundary ha
   succeed on the first try. It is not what stops a second write. The handler is.
 
 The exhibit text goes into the prompt as **source material, not instructions**. It came from a model
-a moment ago, so treat it the way you treated Wikipedia articles in Step 7.
+a moment ago, so treat it the way you treated Wikipedia articles in Step 6.
 
 ## Add the HTML session
 

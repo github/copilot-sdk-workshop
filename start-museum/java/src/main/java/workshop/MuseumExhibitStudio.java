@@ -22,19 +22,15 @@ package workshop;
 //                                          facts))) and .setAvailableTools(List.of(
 //                                          CuratorFacts.APPROVED_FACT_LOOKUP_NAME)); the prompt
 //                                          tells the curator to call approved_fact_lookup first.
-// Step 5  Set the guardrails ............. add generationConfig() and the single runSession()
-//                                          lifecycle function: one-tool allowlist, the Step 1
-//                                          permission handler carried forward, generation timeout,
-//                                          blank-output rejection, cleanup in nested `finally`
-//                                          blocks. Steps 6-8 reuse runSession and add nothing
-//                                          to it.
-// Step 6  Prove the structure ............ call CuratorValidation.formatValidation(
+//                                          Add generationConfig() and runSession() with the
+//                                          generation timeout, blank-output rejection, and cleanup.
+// Step 5  Prove the structure ............ call CuratorValidation.formatValidation(
 //                                              CuratorValidation.validateExhibit(exhibit)).
-// Step 7  Wikipedia research ............. add researchConfig() with CuratorSafety.wikipediaServer()
+// Step 6  Wikipedia research ............. add researchConfig() with CuratorSafety.wikipediaServer()
 //                                          plus CuratorSafety.wikipediaPermissionHandler(), run it
 //                                          through runSession, and print sources after the
 //                                          exhibit. Research never joins the approved facts.
-// Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
+// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
 //                                          "builtin:create" allowlist and CuratorSafety.exhibitWritePermission(...).
 
 // Your imports go here, and grow as the lessons progress.
@@ -49,13 +45,13 @@ public final class MuseumExhibitStudio {
         System.out.println("=== Museum Exhibit Studio starter ===");
         System.out.println("Pre-built curator helpers are ready in src/main/java/workshop/.");
         System.out.println("Continue with museum step 1 to write your first curator session.");
-        // Your run flow (Steps 1-8) replaces the banner above. In Step 5 it gains the
+        // Your run flow (Steps 1-7) replaces the banner above. In Step 4 it gains the
         // try/catch/finally that reports a timeout, closes the terminal, and exits with status 1.
     }
 
-    // Your prompt builders (Steps 4, 7, 8) go here.
+    // Your prompt builders (Steps 4, 6, 7) go here.
 
-    // Your session configuration builders (Steps 5, 7, 8) go here.
+    // Your session configuration builders (Steps 4, 6, 7) go here.
 
-    // Your runSession() lifecycle function (Step 5) goes here.
+    // Your runSession() lifecycle function (Step 4) goes here.
 }

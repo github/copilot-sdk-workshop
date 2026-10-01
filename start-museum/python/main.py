@@ -16,36 +16,33 @@
 #                                          with tools=[create_approved_fact_lookup(facts)] and
 #                                          available_tools=[APPROVED_FACT_LOOKUP_NAME]; the prompt
 #                                          tells the curator to call approved_fact_lookup first.
-# Step 5  Set the guardrails ............. add generation_config() and the single run_session()
-#                                          lifecycle function: one-tool allowlist, the Step 1
-#                                          permission handler carried forward, generation timeout,
-#                                          blank-output rejection, cleanup in `finally`.
-#                                          Steps 6-8 reuse run_session() and add nothing to it.
-# Step 6  Prove the structure ............ call format_validation(validate_exhibit(exhibit)).
-# Step 7  Wikipedia research ............. add research_config() with wikipedia_server() plus
+#                                          Add generation_config() and run_session() with the
+#                                          generation timeout, blank-output rejection, and cleanup.
+# Step 5  Prove the structure ............ call format_validation(validate_exhibit(exhibit)).
+# Step 6  Wikipedia research ............. add research_config() with wikipedia_server() plus
 #                                          wikipedia_permission_handler(), run it through
 #                                          run_session(), and print sources after the exhibit.
 #                                          Research never joins the approved facts.
-# Step 8  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
+# Step 7  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
 #                                          "builtin:create" allowlist and exhibit_write_permission(...).
 
 # Your imports from `curator` go here, and grow as the lessons progress.
 
 # Your SYSTEM_MESSAGE (Step 3) goes here.
 
-# Your prompt builders (Steps 4, 7, 8) go here.
+# Your prompt builders (Steps 4, 6, 7) go here.
 
-# Your session configuration builders (Steps 5, 7, 8) go here.
+# Your session configuration builders (Steps 4, 6, 7) go here.
 
-# Your run_session() lifecycle function (Step 5) goes here.
+# Your run_session() lifecycle function (Step 4) goes here.
 
 
 def main() -> None:
     print("=== Museum Exhibit Studio starter ===")
     print("Pre-built curator helpers are ready in curator.py.")
     print("Continue with museum step 1 to write your first curator session.")
-    # Your run flow (Steps 1-8) replaces the banner above. It becomes `async def main() -> int`
-    # once you create a session, and the entrypoint below becomes asyncio.run(main()).
+    # Your run flow (Steps 1-7) replaces the banner above. It becomes `async def main() -> int`
+    # in Step 4, and the entrypoint below becomes raise SystemExit(asyncio.run(main())).
 
 
 if __name__ == "__main__":

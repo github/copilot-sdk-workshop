@@ -22,31 +22,28 @@ import "fmt"
 //                                          ApprovedFactLookup(facts) and AvailableTools:
 //                                          []string{ApprovedFactLookupName}; the prompt tells the
 //                                          curator to call approved_fact_lookup first.
-// Step 5  Set the guardrails ............. add generationConfig() and the single runSession()
-//                                          lifecycle function: one-tool allowlist, the Step 1
-//                                          permission handler carried forward, generation timeout,
-//                                          blank-output rejection, cleanup via defer.
-//                                          Steps 6-8 reuse runSession and add nothing to it.
-// Step 6  Prove the structure ............ call FormatValidation(ValidateExhibit(exhibit)).
-// Step 7  Wikipedia research ............. add researchConfig() with WikipediaServer() plus
+//                                          Add generationConfig() and runSession() with the
+//                                          generation timeout, blank-output rejection, and cleanup.
+// Step 5  Prove the structure ............ call FormatValidation(ValidateExhibit(exhibit)).
+// Step 6  Wikipedia research ............. add researchConfig() with WikipediaServer() plus
 //                                          WikipediaPermissionHandler(), run it through
 //                                          runSession, and print sources after the exhibit.
 //                                          Research never joins the approved facts.
-// Step 8  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
+// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
 //                                          "builtin:create" allowlist and ExhibitWritePermission(...).
 
 // Your system message (Step 3) goes here.
 
-// Your prompt builders (Steps 4, 7, 8) go here.
+// Your prompt builders (Steps 4, 6, 7) go here.
 
-// Your session configuration builders (Steps 5, 7, 8) go here.
+// Your session configuration builders (Steps 4, 6, 7) go here.
 
-// Your runSession() lifecycle function (Step 5) goes here.
+// Your runSession() lifecycle function (Step 4) goes here.
 
 func main() {
 	fmt.Println("=== Museum Exhibit Studio starter ===")
 	fmt.Println("Pre-built curator helpers are ready in curator.go.")
 	fmt.Println("Continue with museum step 1 to write your first curator session.")
-	// Your run flow (Steps 1-8) replaces the banner above. In Step 5 main() becomes a thin
+	// Your run flow (Steps 1-7) replaces the banner above. In Step 4 main() becomes a thin
 	// wrapper over a run() error { ... } function so failures exit with status 1.
 }

@@ -11,8 +11,8 @@ scoped Wikipedia MCP server and its deny-by-default permission handler, the sing
 
 The starters do **not** include the curator system message, the exhibit prompt, session
 configuration, tool registration, or any orchestration. You write those during the lessons: one
-session, then streaming, then the curator voice, the fact tool registration and its prompt, one
-session runner that owns the guardrails, the validation report, scoped Wikipedia research, and an
+session, then streaming, then the curator voice, the fact tool registration and its prompt with a
+bounded session runner, the validation report, scoped Wikipedia research, and an
 optional `exhibit.html` page. Each starter entrypoint carries comments marking exactly where each
 step's code goes. Start at [`workshop/museum-00-preflight.md`](../workshop/museum-00-preflight.md).
 

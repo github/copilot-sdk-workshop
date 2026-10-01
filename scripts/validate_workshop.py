@@ -32,7 +32,6 @@ MUSEUM_LESSONS = (
     "museum-02-stream-the-curator.md",
     "museum-03-curator-voice.md",
     "museum-04-approved-facts.md",
-    "museum-05-guardrails.md",
     "museum-06-prove-the-structure.md",
     "museum-07-wikipedia-research.md",
     "museum-08-interactive-exhibit-page.md",
@@ -289,14 +288,6 @@ PROCEDURE_MARKERS = {
         "go": "buildExhibitPrompt",
         "rust": "build_exhibit_prompt",
         "java": "buildExhibitPrompt",
-    },
-    "museum-05-guardrails.md": {
-        "dotnet": "static async Task<string> RunSessionAsync",
-        "nodejs": "async function runSession",
-        "python": "async def run_session",
-        "go": "func runSession(",
-        "rust": "async fn run_session",
-        "java": "private static String runSession",
     },
     "museum-06-prove-the-structure.md": {
         "dotnet": "CuratorValidation.FormatValidation",
@@ -1043,6 +1034,65 @@ MUSEUM_TOOL_REGISTRATION = {
     "rust": (r"tools=some\(vec!\[approvedfactlookup\(",),
     "java": (r"settools\(list\.of\(curatorfacts\.approvedfactlookup\(",),
 }
+MUSEUM_SESSION_RUNNER_MARKERS = {
+    "dotnet": (
+        "static async Task<string> RunSessionAsync",
+        "CuratorStreamer.StreamExhibitAsync(session, prompt, timeout)",
+        "await using var session",
+        "await client.StopAsync();",
+    ),
+    "nodejs": (
+        "async function runSession",
+        "streamExhibit(session, prompt, timeout)",
+        "await session.disconnect();",
+        "await client.stop();",
+    ),
+    "python": (
+        "async def run_session",
+        "stream_exhibit(session, prompt, timeout)",
+        "await session.disconnect()",
+        "await client.stop()",
+    ),
+    "go": (
+        "func runSession(",
+        "StreamExhibit(session, prompt, timeout)",
+        "defer func() { _ = session.Disconnect() }()",
+        "defer func() { _ = client.Stop() }()",
+    ),
+    "rust": (
+        "async fn run_session",
+        "stream_exhibit(&session, prompt, timeout)",
+        "session.disconnect().await",
+        "client.stop().await",
+    ),
+    "java": (
+        "private static String runSession",
+        "CuratorStreamer.streamExhibit(session, prompt, timeout)",
+        "session.close();",
+        "client.stop().get();",
+    ),
+}
+MUSEUM_TIMEOUT_REPORTERS = {
+    "dotnet": r'Console\.Error\.WriteLine\("The curator did not respond in time\. Try again\."\)',
+    "nodejs": r'console\.error\([^;]*"The curator did not respond in time\. Try again\."[^;]*\)',
+    "python": r'print\("The curator did not respond in time\. Try again\.",\s*file=sys\.stderr\)',
+    "go": r'fmt\.Fprintln\(os\.Stderr,\s*"The curator did not respond in time\. Try again\."\)',
+    "rust": r'eprintln!\("The curator did not respond in time\. Try again\."\)',
+    "java": r'System\.err\.println\("The curator did not respond in time\. Try again\."\)',
+}
+MUSEUM_GENERATION_RUN_CALLS = {
+    "dotnet": r"RunSessionAsync\(\s*GenerationConfig\(approvedFacts\),\s*"
+              r"BuildExhibitPrompt\(\),\s*CuratorStreamer\.GenerationTimeout\s*\)",
+    "nodejs": r"runSession\(\s*generationConfig\(approvedFacts\),\s*"
+              r"buildExhibitPrompt\(\),\s*generationTimeoutMs,?\s*\)",
+    "python": r"run_session\(\s*generation_config\(facts\),\s*"
+              r"build_exhibit_prompt\(\),\s*GENERATION_TIMEOUT_SECONDS,?\s*\)",
+    "go": r"runSession\(ctx,\s*exhibitConfig,\s*buildExhibitPrompt\(\),\s*GenerationTimeout\)",
+    "rust": r"run_session\(\s*generation_config\(&facts\)\?,\s*"
+            r"build_exhibit_prompt\(\),\s*GENERATION_TIMEOUT,?\s*\)",
+    "java": r"runSession\(generationConfig\(facts\),\s*buildExhibitPrompt\(\),\s*"
+            r"CuratorStreamer\.GENERATION_TIMEOUT\)",
+}
 # A session created without a permission handler does not deny requests: the runtime emits them as
 # events and leaves them pending for manual resolution, so the run stalls. Repository validation
 # never authenticates the Copilot CLI or sends a prompt, so nothing else here can catch that.
@@ -1051,7 +1101,6 @@ MUSEUM_SESSION_CONFIGURATION_LESSONS = (
     "museum-02-stream-the-curator.md",
     "museum-03-curator-voice.md",
     "museum-04-approved-facts.md",
-    "museum-05-guardrails.md",
     "museum-07-wikipedia-research.md",
     "museum-08-interactive-exhibit-page.md",
 )
@@ -1160,7 +1209,7 @@ def validate_museum_projects() -> None:
             "Museum Exhibit Studio starter" in entrypoint,
             f"{starter.relative_to(ROOT)} does not identify itself when run",
         )
-        for step_reference in ("Step 1", "Step 4", "Step 5", "Step 8"):
+        for step_reference in ("Step 1", "Step 4", "Step 5", "Step 6", "Step 7"):
             require(
                 step_reference in entrypoint,
                 f"{starter.relative_to(ROOT)} entrypoint does not tell the learner where "
@@ -1655,7 +1704,6 @@ def validate_documentation() -> None:
         "museum-02-stream-the-curator",
         "museum-03-curator-voice",
         "museum-04-approved-facts",
-        "museum-05-guardrails",
         "museum-06-prove-the-structure",
         "museum-07-wikipedia-research",
         "museum-08-interactive-exhibit-page",
@@ -1667,6 +1715,7 @@ def validate_documentation() -> None:
     for retired_step_id in (
         "museum-01-curator-role",
         "museum-02-tool-free-session",
+        "museum-05-guardrails",
         "museum-05-lifecycle-tests",
         "museum-06-run-review",
         "museum-07-wikipedia-grounding",
@@ -1682,14 +1731,16 @@ def validate_documentation() -> None:
     require(
         "'museum-03-approved-facts': 'museum-04-approved-facts'" in lesson_viewer
         and "'museum-04-deterministic-validation': 'museum-06-prove-the-structure'" in lesson_viewer
-        and "'museum-05-lifecycle-tests': 'museum-05-guardrails'" in lesson_viewer
+        and "'museum-02-tool-free-session': 'museum-04-approved-facts'" in lesson_viewer
+        and "'museum-05-lifecycle-tests': 'museum-04-approved-facts'" in lesson_viewer
+        and "'museum-05-guardrails': 'museum-04-approved-facts'" in lesson_viewer
         and "'museum-07-wikipedia-grounding': 'museum-07-wikipedia-research'" in lesson_viewer,
         "Legacy museum step URLs must map onto the redesigned lessons",
     )
 
     wikipedia_lesson = read(WORKSHOP / "museum-07-wikipedia-research.md")
     for required_step in (
-        "# Step 7: Research with Wikipedia MCP",
+        "# Step 6: Research with Wikipedia MCP",
         "## Two sessions, two capability profiles",
         "## Add the research session",
         "wikipedia-search",
@@ -1710,8 +1761,8 @@ def validate_documentation() -> None:
     require(
         "id: 'museum-07-wikipedia-research'" in lesson_viewer
         and "title: 'Research with Wikipedia MCP',\n                navTitle: 'Wikipedia research'" in lesson_viewer
-        and "kind: 'core',\n                number: 7,\n                time: '20 min'" in lesson_viewer,
-        "Wikipedia MCP must be registered as required 20-minute museum step 7",
+        and "kind: 'core',\n                number: 6,\n                time: '20 min'" in lesson_viewer,
+        "Wikipedia MCP must be registered as required 20-minute museum step 6",
     )
 
     html_lesson = read(WORKSHOP / "museum-08-interactive-exhibit-page.md")
@@ -1727,15 +1778,32 @@ def validate_documentation() -> None:
         )
     require(
         "id: 'museum-08-interactive-exhibit-page'" in lesson_viewer
-        and "kind: 'optional',\n                number: 8,\n                time: '15 min'" in lesson_viewer,
-        "The interactive exhibit page must be registered as optional 15-minute museum step 8",
+        and "kind: 'optional',\n                number: 7,\n                time: '15 min'" in lesson_viewer,
+        "The interactive exhibit page must be registered as optional 15-minute museum step 7",
     )
 
     landing_page = read(DOCS / "index.html")
     require(
-        "Non-SDLC tool · 90 minutes" in landing_page
-        and "90 minutes for Museum Exhibit Studio" in read(ROOT / "README.md"),
-        "Museum workshop duration must match the seven timed core steps",
+        "Non-SDLC tool · 75 minutes" in landing_page
+        and "75 minutes for Museum Exhibit Studio" in read(ROOT / "README.md"),
+        "Museum workshop duration must match the six timed core steps",
+    )
+    museum_navigation = re.search(r"const museumSteps = \[(.*?)\];", lesson_viewer, re.DOTALL)
+    require(museum_navigation is not None, "Lesson viewer must declare museumSteps")
+    if museum_navigation is not None:
+        numbers = re.findall(r"number: (\d+)", museum_navigation.group(1))
+        require(
+            numbers == [str(number) for number in range(1, 8)],
+            "Museum navigation must have six consecutively numbered core steps and optional step 7",
+        )
+    for number, lesson_name in enumerate(MUSEUM_LESSONS[1:], start=1):
+        require(
+            read(WORKSHOP / lesson_name).startswith(f"# Step {number}"),
+            f"{lesson_name} must display step {number} while retaining its existing URL",
+        )
+    require(
+        not (WORKSHOP / "museum-05-guardrails.md").exists(),
+        "The standalone Guardrails lesson must be removed; its essential wiring belongs in Approved Facts",
     )
 
     museum_lessons = {name: read(WORKSHOP / name) for name in MUSEUM_LESSONS}
@@ -1798,27 +1866,42 @@ def validate_documentation() -> None:
         "museum-04-approved-facts.md must show the approved_fact_lookup tool event in its run output",
     )
     for language in LANGUAGES:
-        for lesson_name, lesson_label in (
-            ("museum-04-approved-facts.md", "register"),
-            ("museum-05-guardrails.md", "keep"),
-        ):
-            rendered = museum_tokens(render_language_markdown(WORKSHOP / lesson_name, language))
+        lesson_name = "museum-04-approved-facts.md"
+        rendered = render_language_markdown(WORKSHOP / lesson_name, language)
+        code = "\n".join(lesson_code_blocks(rendered, language))
+        tokens = museum_tokens(code)
+        require(
+            any(re.search(pattern, tokens) for pattern in MUSEUM_TOOL_REGISTRATION[language]),
+            f"workshop/{lesson_name} ({language}) must register the approved_fact_lookup "
+            "implementation in the session tool list",
+        )
+        require(
+            any(re.search(pattern, tokens) for pattern in MUSEUM_ONE_TOOL_ALLOWLIST[language]),
+            f"workshop/{lesson_name} ({language}) must register approved_fact_lookup as "
+            "the single entry in the session tool allowlist",
+        )
+        for marker in MUSEUM_SESSION_RUNNER_MARKERS[language]:
             require(
-                any(
-                    re.search(pattern, rendered)
-                    for pattern in MUSEUM_TOOL_REGISTRATION[language]
-                ),
-                f"workshop/{lesson_name} ({language}) must {lesson_label} the approved_fact_lookup "
-                "implementation in the session tool list",
+                marker in code,
+                f"workshop/{lesson_name} ({language}) must supply the reusable session runner "
+                f"with timeout forwarding and session/client cleanup: {marker}",
             )
-            require(
-                any(
-                    re.search(pattern, rendered)
-                    for pattern in MUSEUM_ONE_TOOL_ALLOWLIST[language]
-                ),
-                f"workshop/{lesson_name} ({language}) must {lesson_label} approved_fact_lookup as "
-                "the single entry in the session tool allowlist",
-            )
+        require(
+            re.search(MUSEUM_GENERATION_RUN_CALLS[language], code) is not None,
+            f"workshop/{lesson_name} ({language}) must call the runner with its explicit generation timeout",
+        )
+        require(
+            "The curator returned no exhibit content." in code,
+            f"workshop/{lesson_name} ({language}) must reject blank exhibit output",
+        )
+        require(
+            re.search(MUSEUM_TIMEOUT_REPORTERS[language], code) is not None,
+            f"workshop/{lesson_name} ({language}) must report timeout failures in its error handler",
+        )
+    require(
+        "Continue to [Prove the structure](museum-06-prove-the-structure.md)." in facts_lesson,
+        "Approved Facts must continue directly to Structural Checks",
+    )
 
     museum_preflight = read(WORKSHOP / "museum-00-preflight.md")
     for clone_step in (
@@ -1952,10 +2035,10 @@ def validate_museum_permission_handlers() -> None:
         )
 
 
-def rust_lesson_code_blocks(markdown_file: Path) -> list[str]:
-    """Return the Rust fenced blocks a learner is told to type in one lesson."""
-    rendered = render_language_markdown(markdown_file, "rust")
-    return re.findall(r"^```rust\n(.*?)^```$", rendered, re.S | re.M)
+def lesson_code_blocks(rendered: str, language: str) -> list[str]:
+    """Return language code fences without prose, shell commands, or sample output."""
+    fence = {"dotnet": "csharp", "nodejs": "typescript"}.get(language, language)
+    return re.findall(rf"^```{fence}\n(.*?)^```$", rendered, re.S | re.M)
 
 
 def rust_result_error_type(returns: str) -> str | None:
@@ -1987,7 +2070,7 @@ def validate_museum_rust_error_types() -> None:
         f"`{MUSEUM_RUST_ERROR_ALIAS_DEFINITION}` as the error type every helper returns",
     )
     for lesson_name in MUSEUM_LESSONS:
-        blocks = rust_lesson_code_blocks(WORKSHOP / lesson_name)
+        blocks = lesson_code_blocks(render_language_markdown(WORKSHOP / lesson_name, "rust"), "rust")
         lesson_source = "\n".join(blocks)
         imported = {
             name.strip()
