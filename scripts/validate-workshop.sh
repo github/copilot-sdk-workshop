@@ -37,6 +37,7 @@ run_system_python() {
 validate_content() {
     run_system_python scripts/validate_workshop.py
     node docs/tests/markdown-language-preprocessor.test.js
+    node docs/tests/workshop-site.test.js
     node --test docs/tests/workshop-completion.test.js
 }
 
@@ -44,7 +45,7 @@ validate_dotnet() {
     projects=()
     while IFS= read -r project; do
         projects+=("$project")
-    done < <(find start-accessibility/dotnet start-museum/dotnet finished/dotnet -name '*.csproj' -print | sort)
+    done < <(find start-intro/dotnet start-accessibility/dotnet start-museum/dotnet finished/dotnet -name '*.csproj' -print | sort)
     projects+=("src/BlazorApp/BlazorApp.csproj")
     for project in "${projects[@]}"; do
         echo "Restoring and building $project"
@@ -57,7 +58,7 @@ validate_dotnet() {
 }
 
 validate_nodejs() {
-    for project in start-accessibility/nodejs start-museum/nodejs finished/nodejs/*; do
+    for project in start-intro/nodejs start-accessibility/nodejs start-museum/nodejs finished/nodejs/*; do
         echo "Installing and type-checking $project"
         (
             cd "$project"
@@ -77,7 +78,7 @@ validate_python() {
         venv_python="$python_venv/Scripts/python.exe"
     fi
 
-    for project in start-accessibility/python start-museum/python finished/python/*; do
+    for project in start-intro/python start-accessibility/python start-museum/python finished/python/*; do
         echo "Installing and smoke-checking $project"
         (
             cd "$project"
@@ -95,7 +96,7 @@ validate_go() {
     go_build_directory="$temporary_directory/go-build"
     mkdir -p "$go_build_directory"
 
-    for project in start-accessibility/go start-museum/go finished/go/*; do
+    for project in start-intro/go start-accessibility/go start-museum/go finished/go/*; do
         echo "Resolving and building $project"
         (cd "$project" && go mod download && go mod verify && go build -mod=readonly -o "$go_build_directory/" ./...)
         if [[ "$project" != "start-museum/go" && "$project" != "finished/go/museum-exhibit-studio" ]]; then
@@ -106,7 +107,7 @@ validate_go() {
 
 validate_rust() {
     export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$repo_root/.cargo-target}"
-    for project in start-accessibility/rust start-museum/rust finished/rust/*; do
+    for project in start-intro/rust start-accessibility/rust start-museum/rust finished/rust/*; do
         echo "Checking $project"
         (cd "$project" && cargo check --locked)
         if [[ "$project" != "start-museum/rust" && "$project" != "finished/rust/museum-exhibit-studio" ]]; then
@@ -116,7 +117,7 @@ validate_rust() {
 }
 
 validate_java() {
-    for project in start-accessibility/java start-museum/java finished/java/*; do
+    for project in start-intro/java start-accessibility/java start-museum/java finished/java/*; do
         echo "Resolving and compiling $project"
         (cd "$project" && mvn --batch-mode --no-transfer-progress dependency:go-offline compile)
         if [[ "$project" == "start-museum/java" || "$project" == "finished/java/museum-exhibit-studio" ]]; then

@@ -107,6 +107,55 @@
     </div>
 
     <script>
+        const introSteps = [
+            {
+                id: 'intro-00-preflight',
+                file: 'workshop/intro-00-preflight.md',
+                title: 'Prepare for SDK 101',
+                navTitle: 'Preflight',
+                kind: 'preflight',
+                time: 'Untimed'
+            },
+            {
+                id: 'intro-01-sdk-basics',
+                file: 'workshop/intro-01-sdk-basics.md',
+                title: 'SDK basics',
+                navTitle: 'SDK basics',
+                kind: 'core',
+                number: 1,
+                time: '5 min'
+            },
+            {
+                id: 'intro-02-hello-world',
+                file: 'workshop/intro-02-hello-world.md',
+                demoAct: 'one',
+                title: 'Streaming hello world',
+                navTitle: 'Hello world',
+                kind: 'core',
+                number: 2,
+                time: '10 min'
+            },
+            {
+                id: 'intro-03-podcast-agent',
+                file: 'workshop/intro-03-podcast-agent.md',
+                demoAct: 'two',
+                title: 'Build the podcast agent',
+                navTitle: 'Podcast agent',
+                kind: 'core',
+                number: 3,
+                time: '12 min'
+            },
+            {
+                id: 'intro-04-wrap-up',
+                file: 'workshop/intro-04-wrap-up.md',
+                title: 'Recap and next steps',
+                navTitle: 'Recap',
+                kind: 'core',
+                number: 4,
+                time: '3 min'
+            }
+        ];
+
         const sdlcSteps = [
             {
                 id: '00-preflight',
@@ -292,6 +341,7 @@
         ];
 
         const workshopTracks = {
+            intro: { title: 'SDK 101', steps: introSteps },
             sdlc: { title: 'Accessibility Reviewer', steps: sdlcSteps },
             museum: { title: 'Museum Exhibit Studio', steps: museumSteps }
         };
@@ -321,7 +371,9 @@
         };
         const requestedStepParameter = new URLSearchParams(window.location.search).get('step');
         const mappedStepParameter = legacyStepMap[requestedStepParameter] ?? requestedStepParameter;
-        const activeWorkshopId = mappedStepParameter?.startsWith('museum-') ? 'museum' : 'sdlc';
+        const activeWorkshopId = mappedStepParameter?.startsWith('intro-')
+            ? 'intro'
+            : mappedStepParameter?.startsWith('museum-') ? 'museum' : 'sdlc';
         const activeWorkshop = workshopTracks[activeWorkshopId];
         const steps = activeWorkshop.steps;
 
@@ -473,7 +525,7 @@
                 { label: 'Workshop', steps: steps.filter(step => step.kind !== 'preflight') }
             ];
 
-            document.getElementById('workshopNavigation').innerHTML = groups.map(group => `
+            document.getElementById('workshopNavigation').innerHTML = groups.filter(group => group.steps.length > 0).map(group => `
                 <section class="navigation-group">
                     <h3>${group.label}</h3>
                     ${group.steps.map(step => {
@@ -738,19 +790,32 @@
             status.textContent = `Loading ${step.title}.`;
 
             try {
-                const response = await fetch(getMarkdownUrl(step.file));
+                const demoFile = `start-intro/${language.id}/LIVE_DEMO.md`;
+                const [response, demoResponse] = await Promise.all([
+                    fetch(getMarkdownUrl(step.file)),
+                    step.demoAct ? fetch(getMarkdownUrl(demoFile)) : Promise.resolve(null)
+                ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
                 if (!response.ok) {
                     throw new Error(`Lesson request failed with HTTP ${response.status}.`);
                 }
+                if (demoResponse && !demoResponse.ok) {
+                    throw new Error(`${demoFile} request failed with HTTP ${demoResponse.status}.`);
+                }
 
-                const source = await response.text();
+                const [source, demoSource] = await Promise.all([
+                    response.text(),
+                    demoResponse ? demoResponse.text() : Promise.resolve(null)
+                ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
-                const markdown = processMarkdown(source);
+                const combined = step.demoAct
+                    ? WorkshopMarkdown.includeLiveDemoAct(source, demoSource, step.demoAct)
+                    : source;
+                const markdown = processMarkdown(combined);
                 container.innerHTML =
                     `<article class="markdown${step.kind === 'completion' ? ' workshop-complete' : ''}">${marked.parse(markdown, { gfm: true })}</article>`;
                 prepareRenderedLesson();

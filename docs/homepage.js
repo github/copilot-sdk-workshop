@@ -17,6 +17,20 @@
     let selectedWorkshopId = null;
 
     const workshops = {
+        intro: {
+            name: 'SDK 101',
+            previewTitle: 'start-intro',
+            preview: `Client → streaming hello world
+       → select a podcast episode
+       → approve an RSS tool
+       → headline and launch post
+
+[tool] get_github_podcast_episode
+
+30 minutes · six languages
+Complete setup before the session.`,
+            guidance: 'Learn SDK basics in 30 minutes. Install, authenticate, and download starter dependencies beforehand.'
+        },
         sdlc: {
             name: 'Accessibility reviewer',
             previewTitle: 'accessibility-reviewer',
@@ -101,8 +115,12 @@ System message: replace
         summary.textContent = workshop
             ? `${workshop.name} will use the ${language.displayName} SDK.`
             : 'Choose a workshop to continue.';
-        installCommand.textContent = language.installCommand;
-        runtimeNote.textContent = language.runtimeNote;
+        installCommand.textContent = selectedWorkshopId === 'intro'
+            ? 'git clone https://github.com/github/copilot-sdk-workshop.git'
+            : language.installCommand;
+        runtimeNote.textContent = selectedWorkshopId === 'intro'
+            ? `Work in start-intro/${language.id}. Preflight covers its runtime and dependency setup.`
+            : language.runtimeNote;
         startGuidance.textContent = workshop?.guidance ?? 'Choose a workshop to continue.';
     }
 

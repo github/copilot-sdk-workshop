@@ -29,6 +29,10 @@ jobs:
           cp -r docs/* ./_site/
           mkdir -p ./_site/workshop
           cp -r workshop/* ./_site/workshop/
+          for language in dotnet nodejs python go java rust; do
+            mkdir -p "./_site/start-intro/$language"
+            cp "start-intro/$language/LIVE_DEMO.md" "./_site/start-intro/$language/"
+          done
           touch ./_site/.nojekyll
 
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
