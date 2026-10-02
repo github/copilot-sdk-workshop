@@ -50,4 +50,9 @@ one subscription instead of printing each text fragment twice. Node.js lets
 the bounded send propagate session errors instead of throwing from a callback.
 Its RSS helper uses parser-based XML decoding and HTML-to-plain-text extraction,
 with regression tests for CDATA, entity decoding, and script/style exclusion.
+All six RSS helpers use finite ten-second network timeouts. Java rejects XML
+DOCTYPE declarations and external resources while reading namespaced duration
+metadata. Python and Rust recognize the SDK's custom-tool permission payloads;
+Rust reads approvals on a detached input thread so a turn timeout can still
+shut down the runtime.
 The upstream repository is attribution, not a setup requirement.

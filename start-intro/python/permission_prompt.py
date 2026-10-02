@@ -2,7 +2,7 @@ from copilot.rpc import PermissionDecisionApproveOnce, PermissionDecisionReject
 
 
 def permission_prompt(request, _invocation):
-    if getattr(request, "kind", None) != "tool":
+    if getattr(request, "kind", None) != "custom-tool":
         return PermissionDecisionReject(
             feedback="This demo only permits its GitHub Podcast episode lookup tool."
         )

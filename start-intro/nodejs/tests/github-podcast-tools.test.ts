@@ -22,8 +22,12 @@ function feed(items: string): string {
 }
 
 test("reads episode metadata and converts CDATA HTML to plain text", async (context) => {
-  const fetchMock = context.mock.method(globalThis, "fetch", async (input: Parameters<typeof fetch>[0]) => {
+  const fetchMock = context.mock.method(globalThis, "fetch", async (
+    input: Parameters<typeof fetch>[0], options: Parameters<typeof fetch>[1],
+  ) => {
     assert.equal(input, feedUrl);
+    assert.ok(options?.signal instanceof AbortSignal);
+    assert.equal(options.signal.aborted, false);
     return new Response(feed(episode(
       "42: GitHub &amp; Copilot",
       '<![CDATA[<p>Build &amp; learn &#39;together&#39; &#x1F680;.</p>]]>',

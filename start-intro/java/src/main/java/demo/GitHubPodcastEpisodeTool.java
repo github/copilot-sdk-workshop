@@ -4,15 +4,24 @@ import com.github.copilot.rpc.ToolDefinition;
 import com.github.copilot.tool.Param;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.XMLConstants;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class GitHubPodcastEpisodeTool {
     private static final String FEED_URL = "https://feeds.simplecast.com/ioCY0vfY";
+    private static final Duration FEED_TIMEOUT = Duration.ofSeconds(10);
+    private static final HttpClient FEED_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(FEED_TIMEOUT).build();
 
     private GitHubPodcastEpisodeTool() {
     }
@@ -76,10 +85,41 @@ public final class GitHubPodcastEpisodeTool {
     }
 
     private static List<org.w3c.dom.Element> items() throws Exception {
-        var response = HttpClient.newHttpClient().send(
-                HttpRequest.newBuilder(URI.create(FEED_URL)).build(),
-                HttpResponse.BodyHandlers.ofInputStream());
-        var document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(response.body());
+        return readItems(FEED_CLIENT, URI.create(FEED_URL), FEED_TIMEOUT);
+    }
+
+    static List<org.w3c.dom.Element> readItems(HttpClient client, URI uri, Duration timeout) throws Exception {
+        var request = HttpRequest.newBuilder(uri).timeout(timeout).build();
+        var pending = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
+        HttpResponse<byte[]> response;
+        try {
+            response = pending.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException exception) {
+            throw new IOException("The GitHub Podcast RSS request timed out.", exception);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw exception;
+        } finally {
+            pending.cancel(true);
+        }
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IOException("Failed to fetch The GitHub Podcast RSS feed: " + response.statusCode());
+        }
+        return parseItems(response.body());
+    }
+
+    static List<org.w3c.dom.Element> parseItems(byte[] xml) throws Exception {
+        var factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+        var document = factory.newDocumentBuilder().parse(new ByteArrayInputStream(xml));
         var nodes = document.getElementsByTagName("item");
         var items = new ArrayList<org.w3c.dom.Element>();
         for (int index = 0; index < nodes.getLength(); index++) {
@@ -88,7 +128,7 @@ public final class GitHubPodcastEpisodeTool {
         return items;
     }
 
-    private static EpisodeBrief toEpisodeBrief(org.w3c.dom.Element item) {
+    static EpisodeBrief toEpisodeBrief(org.w3c.dom.Element item) {
         var title = value(item, "title");
         return new EpisodeBrief(
                 episodeNumber(title),

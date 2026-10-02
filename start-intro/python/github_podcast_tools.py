@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 from model_selector import read_index
 
 FEED_URL = "https://feeds.simplecast.com/ioCY0vfY"
+FEED_TIMEOUT_SECONDS = 10
 
 
 @dataclass(frozen=True)
@@ -78,7 +79,7 @@ def pick_episode(episodes: list[EpisodeBrief]) -> EpisodeBrief:
 
 
 def get_items() -> list[ET.Element]:
-    with urllib.request.urlopen(FEED_URL) as response:
+    with urllib.request.urlopen(FEED_URL, timeout=FEED_TIMEOUT_SECONDS) as response:
         document = ET.fromstring(response.read())
     return list(document.iter("item"))
 

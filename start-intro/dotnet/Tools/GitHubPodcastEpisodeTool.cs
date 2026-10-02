@@ -56,7 +56,7 @@ internal static class GitHubPodcastEpisodeTool
 
     private static async Task<List<XElement>> GetItemsAsync()
     {
-        using var httpClient = new HttpClient();
+        using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         var feed = await httpClient.GetStringAsync(FeedUrl);
         var document = XDocument.Parse(feed);
         return document.Descendants("item").ToList();

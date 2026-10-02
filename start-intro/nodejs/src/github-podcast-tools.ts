@@ -61,7 +61,7 @@ export async function pickEpisode(episodes: EpisodeBrief[]): Promise<EpisodeBrie
 }
 
 async function getItems(): Promise<string[]> {
-  const response = await fetch(feedUrl);
+  const response = await fetch(feedUrl, { signal: AbortSignal.timeout(10_000) });
   if (!response.ok) {
     throw new Error(`Failed to fetch The GitHub Podcast RSS feed: ${response.status}`);
   }

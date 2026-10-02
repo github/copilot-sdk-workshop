@@ -133,6 +133,7 @@ Replace the hello-world `SessionConfig` fields with these, keeping
 
 ```csharp
 Model = model,
+Streaming = true,
 Tools = [episodeTool, latestEpisodesTool],
 AvailableTools = ["get_github_podcast_episode", "get_latest_github_podcast_episodes"],
 OnPermissionRequest = PermissionPrompt.RequestAsync,

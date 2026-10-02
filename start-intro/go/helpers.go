@@ -12,11 +12,14 @@ import (
 	"strconv"
 	"strings"
 	"sync/atomic"
+	"time"
 
 	copilot "github.com/github/copilot-sdk/go"
 )
 
 const feedURL = "https://feeds.simplecast.com/ioCY0vfY"
+
+var podcastHTTPClient = &http.Client{Timeout: 10 * time.Second}
 
 type episodeBrief struct {
 	EpisodeNumber *int   `json:"episodeNumber"`
@@ -99,7 +102,7 @@ func getEpisode(episodeTitle string) (episodeBrief, error) {
 }
 
 func getItems() ([]rssItem, error) {
-	response, err := http.Get(feedURL)
+	response, err := podcastHTTPClient.Get(feedURL)
 	if err != nil {
 		return nil, err
 	}

@@ -1911,6 +1911,9 @@ def validate_intro_workshop() -> None:
                     f"{language} hello world must follow the source guide's four edits")
             require(re.findall(r"^### (\d+)\.", podcast_act, re.MULTILINE) == ["1", "2", "3"],
                     f"{language} podcast act must follow the source guide's three edits")
+            if language == "dotnet":
+                require("Streaming = true" in podcast_act,
+                        ".NET podcast configuration must preserve streaming for its delta event handler")
             require("Replace" in hello_act and INTRO_ENTRYPOINTS[language].replace("/", "\\") in read(guide),
                     f"{language} demo must edit its included entrypoint")
             require("LIVE_DEMO.md" in read(starter / "README.md"),

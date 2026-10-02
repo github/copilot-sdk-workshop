@@ -1,5 +1,6 @@
 use std::io::{self, Write};
 use std::sync::Arc;
+use std::time::Duration;
 
 use async_trait::async_trait;
 use github_copilot_sdk::handler::{PermissionHandler, PermissionResult};
@@ -88,28 +89,22 @@ impl PermissionHandler for PermissionPrompt {
         _request_id: RequestId,
         data: PermissionRequestData,
     ) -> PermissionResult {
-        if data.kind != Some(PermissionRequestKind::CustomTool) {
-            return PermissionResult::reject(
-                "This demo only permits its GitHub Podcast episode lookup tool.".to_owned(),
-            );
-        }
-
-        let tool_name = data
-            .extra
-            .get("toolName")
-            .and_then(|value| value.as_str())
-            .unwrap_or("custom tool")
-            .to_owned();
-
-        let answer = tokio::task::spawn_blocking(move || {
+        let tool_name = match requested_tool_name(data) {
+            Ok(tool_name) => tool_name,
+            Err(feedback) => return PermissionResult::reject(feedback),
+        };
+        let answer = read_on_thread(move || {
             print!("Approve {tool_name}? [y/N] ");
-            let _ = io::stdout().flush();
+            io::stdout().flush()?;
             let mut answer = String::new();
-            let _ = io::stdin().read_line(&mut answer);
-            answer
+            io::stdin().read_line(&mut answer)?;
+            Ok(answer)
         })
-        .await
-        .unwrap_or_default();
+        .await;
+        let answer = match answer {
+            Ok(answer) => answer,
+            Err(error) => return PermissionResult::reject(format!("Permission prompt failed: {error}")),
+        };
 
         if answer.trim().eq_ignore_ascii_case("y") {
             PermissionResult::approve_once()
@@ -117,6 +112,37 @@ impl PermissionHandler for PermissionPrompt {
             PermissionResult::reject("The user did not approve the episode lookup.".to_owned())
         }
     }
+}
+
+fn requested_tool_name(data: PermissionRequestData) -> Result<String, String> {
+    let request = match data.extra.get("permissionRequest") {
+        Some(request) => serde_json::from_value::<PermissionRequestData>(request.clone())
+            .map_err(|error| format!("Invalid permission request: {error}"))?,
+        None => data,
+    };
+    if request.kind != Some(PermissionRequestKind::CustomTool) {
+        return Err("This demo only permits its GitHub Podcast episode lookup tools.".to_owned());
+    }
+    Ok(request
+        .extra
+        .get("toolName")
+        .and_then(|value| value.as_str())
+        .unwrap_or("custom tool")
+        .to_owned())
+}
+
+async fn read_on_thread<F>(read: F) -> io::Result<String>
+where
+    F: FnOnce() -> io::Result<String> + Send + 'static,
+{
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+    std::thread::Builder::new()
+        .name("podcast-permission-input".to_owned())
+        .spawn(move || {
+            // A turn timeout may have already dropped the receiver.
+            let _ = sender.send(read());
+        })?;
+    receiver.await.map_err(io::Error::other)?
 }
 
 pub fn permission_prompt() -> Arc<dyn PermissionHandler> {
@@ -173,8 +199,18 @@ pub async fn select_model(client: &Client, preferred_model: &str) -> Result<Opti
 }
 
 async fn get_items() -> Result<Vec<Item>, Error> {
-    let response = reqwest::get(FEED_URL)
+    let client = reqwest::Client::builder()
+        .timeout(Duration::from_secs(10))
+        .build()
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
+    get_items_from(&client, FEED_URL).await
+}
+
+async fn get_items_from(client: &reqwest::Client, url: &str) -> Result<Vec<Item>, Error> {
+    let response = client.get(url).send()
         .await
+        .map_err(|error| std::io::Error::other(error.to_string()))?
+        .error_for_status()
         .map_err(|error| std::io::Error::other(error.to_string()))?;
     let xml = response
         .text()
@@ -255,5 +291,92 @@ fn read_index(prompt: &str, option_count: usize, default_index: usize) -> Result
             }
         }
         println!("Enter a number from 1 to {option_count}.");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::io::Read;
+    use std::net::TcpListener;
+    use std::time::Instant;
+
+    #[test]
+    fn accepts_flat_and_nested_custom_tool_requests() {
+        for name in ["get_github_podcast_episode", "get_latest_github_podcast_episodes"] {
+            let request = json!({"kind": "custom-tool", "toolName": name});
+            for payload in [request.clone(), json!({"permissionRequest": request})] {
+                let data = serde_json::from_value(payload).unwrap();
+                assert_eq!(requested_tool_name(data).unwrap(), name);
+            }
+        }
+    }
+
+    #[test]
+    fn denies_other_kinds_and_malformed_nested_requests() {
+        for payload in [
+            json!({"kind": "shell"}),
+            json!({"permissionRequest": {"kind": "mcp"}}),
+            json!({"kind": "custom-tool", "permissionRequest": null}),
+            json!({"kind": "custom-tool", "permissionRequest": "invalid"}),
+            json!({"permissionRequest": {}}),
+        ] {
+            assert!(requested_tool_name(serde_json::from_value(payload).unwrap()).is_err());
+        }
+    }
+
+    #[tokio::test]
+    async fn reports_input_errors() {
+        let result = read_on_thread(|| Err(io::Error::other("input unavailable"))).await;
+        assert_eq!(result.unwrap_err().to_string(), "input unavailable");
+    }
+
+    #[test]
+    fn canceled_input_does_not_block_runtime_shutdown() {
+        let (sender, receiver) = std::sync::mpsc::channel::<String>();
+        let release = std::thread::spawn(move || {
+            std::thread::sleep(Duration::from_millis(1500));
+            sender.send("n".to_owned()).unwrap();
+        });
+        let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+        let start = Instant::now();
+        let result = runtime.block_on(async {
+            tokio::time::timeout(
+                Duration::from_millis(20),
+                read_on_thread(move || receiver.recv().map_err(io::Error::other)),
+            ).await
+        });
+        assert!(result.is_err());
+        drop(runtime);
+        let elapsed = start.elapsed();
+        release.join().unwrap();
+        assert!(elapsed < Duration::from_secs(1), "Shutdown waited for input: {elapsed:?}");
+    }
+
+    #[tokio::test]
+    async fn bounds_stalled_headers_and_bodies() {
+        for send_headers in [false, true] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let url = format!("http://{}/", listener.local_addr().unwrap());
+            let server = std::thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                stream.set_read_timeout(Some(Duration::from_secs(2))).unwrap();
+                let mut request = [0; 4096];
+                stream.read(&mut request).unwrap();
+                if send_headers {
+                    stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n").unwrap();
+                    stream.flush().unwrap();
+                }
+                std::thread::sleep(Duration::from_millis(500));
+            });
+            let client = reqwest::Client::builder().no_proxy()
+                .timeout(Duration::from_millis(100)).build().unwrap();
+            let start = Instant::now();
+            let result = get_items_from(&client, &url).await;
+            assert!(result.is_err());
+            assert!(start.elapsed() < Duration::from_millis(400));
+            server.join().unwrap();
+        }
     }
 }
