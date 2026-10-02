@@ -85,6 +85,7 @@ import {
   streamExhibit,
   validateExhibit,
 } from "./curator.js";
+import { curatorSystemMessage } from "./system-messages.js";
 ```
 
 **REPLACE** region `generate` in `src/index.ts`:
@@ -145,6 +146,7 @@ from curator import (
     stream_exhibit,
     validate_exhibit,
 )
+from system_messages import CURATOR_SYSTEM_MESSAGE
 ```
 
 **REPLACE** region `generate` in `main.py`:
@@ -234,8 +236,8 @@ use github_copilot_sdk::permission;
 use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
 use github_copilot_sdk::{Client, ClientOptions};
 use museum_exhibit_studio::{
-    APPROVED_FACT_LOOKUP_NAME, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT, RuntimeError,
-    approved_fact_lookup, choose_approved_facts, describe_failure, format_validation,
+    APPROVED_FACT_LOOKUP_NAME, CURATOR_SYSTEM_MESSAGE, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT,
+    RuntimeError, approved_fact_lookup, choose_approved_facts, describe_failure, format_validation,
     selected_model, stream_exhibit, validate_exhibit,
 };
 ```

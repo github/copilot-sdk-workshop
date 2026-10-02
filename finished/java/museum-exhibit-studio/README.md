@@ -20,7 +20,7 @@ Compile without contacting a model:
 
 ## What it demonstrates
 
-The learner-authored `MuseumExhibitStudio` entrypoint builds sessions directly with `new CopilotClient()`. The pre-built `Curator*` helpers provide approved facts and the fact-selection menu, streaming, validation, scoped permissions, source extraction, fixed prompt text, and the failure message. The `>>> BEGIN` / `<<< END` comments in the entrypoint are the named regions the lessons fill; each `BEGIN` line lists the steps that insert or replace that region.
+The learner-authored `MuseumExhibitStudio` entrypoint builds sessions directly with `new CopilotClient()`. The pre-built `Curator*` helpers provide approved facts and the fact-selection menu, streaming, validation, scoped permissions, source extraction, fixed prompt text, the failure message, and (in `CuratorSystemMessages.java`) the curator and research system messages. The `>>> BEGIN` / `<<< END` comments in the entrypoint are the named regions the lessons fill; each `BEGIN` line lists the steps that insert or replace that region.
 
 Prompt guidance is not an authorization boundary, so the application also:
 

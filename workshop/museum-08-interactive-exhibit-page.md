@@ -128,6 +128,7 @@ import {
   wikipediaTools,
   type ExtractedSources,
 } from "./curator.js";
+import { curatorWithResearchSystemMessage, researchSystemMessage } from "./system-messages.js";
 ```
 
 **INSERT** region `html-config` in `src/index.ts`:
@@ -236,6 +237,7 @@ from curator import (
     wikipedia_permission_handler,
     wikipedia_server,
 )
+from system_messages import CURATOR_WITH_RESEARCH_SYSTEM_MESSAGE, RESEARCH_SYSTEM_MESSAGE
 ```
 
 **INSERT** region `html-config` in `main.py`:
@@ -379,12 +381,13 @@ use github_copilot_sdk::permission;
 use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
 use github_copilot_sdk::{Client, ClientOptions, IndexMap};
 use museum_exhibit_studio::{
-    APPROVED_FACT_LOOKUP_NAME, APPROVED_WIKIPEDIA_FACT_LOOKUP_NAME, EXHIBIT_FILE_NAME,
-    EXHIBIT_STRUCTURE, ExtractedSources, GENERATION_TIMEOUT, HTML_REQUIREMENTS, RESEARCH_TIMEOUT,
-    RuntimeError, WIKIPEDIA_TOOLS, approved_fact_lookup, approved_wikipedia_fact_lookup,
-    ask_yes_no, build_research_prompt, choose_approved_facts, describe_failure,
-    exhibit_write_permission, extract_sources, format_sources, format_validation, selected_model,
-    stream_exhibit, validate_exhibit, wikipedia_permission_handler, wikipedia_server,
+    APPROVED_FACT_LOOKUP_NAME, APPROVED_WIKIPEDIA_FACT_LOOKUP_NAME,
+    CURATOR_WITH_RESEARCH_SYSTEM_MESSAGE, EXHIBIT_FILE_NAME, EXHIBIT_STRUCTURE, ExtractedSources,
+    GENERATION_TIMEOUT, HTML_REQUIREMENTS, RESEARCH_SYSTEM_MESSAGE, RESEARCH_TIMEOUT, RuntimeError,
+    WIKIPEDIA_TOOLS, approved_fact_lookup, approved_wikipedia_fact_lookup, ask_yes_no,
+    build_research_prompt, choose_approved_facts, describe_failure, exhibit_write_permission,
+    extract_sources, format_sources, format_validation, selected_model, stream_exhibit,
+    validate_exhibit, wikipedia_permission_handler, wikipedia_server,
 };
 ```
 

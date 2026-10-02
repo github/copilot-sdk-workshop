@@ -1,14 +1,15 @@
 # Museum Exhibit Studio
 
-This Go sample uses the GitHub Copilot SDK as a focused museum-curation harness. The app now has a
-two-file shape:
+This Go sample uses the GitHub Copilot SDK as a focused museum-curation harness. The app has three
+source files:
 
 - `curator.go` contains the pre-built helper API: approved fact sets and the fact-selection menu,
   fact bounds, response streaming, structural validation, Wikipedia permissions, source
   extraction, the optional `exhibit.html` write permission, fixed prompt text, and the failure
   message.
-- `main.go` contains the learner-authored SDK code: system messages, the instructions in the
-  exhibit and page prompts, session configuration, the session runner, and cleanup.
+- `system_messages.go` contains the pre-built curator and research system messages.
+- `main.go` contains the learner-authored SDK code: the instructions in the exhibit and page
+  prompts, session configuration, the session runner, and cleanup.
 
 The `>>> BEGIN` / `<<< END` comments in `main.go` are the named regions the lessons fill. Each
 `BEGIN` line lists the steps that insert or replace that region.

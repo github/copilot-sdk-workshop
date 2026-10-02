@@ -1,6 +1,6 @@
 # Museum Exhibit Studio
 
-This Rust sample uses the GitHub Copilot SDK as a focused, non-software-engineering agent harness. Pre-built helpers live in `src/lib.rs`: approved fact sets and the fact-selection menu, streaming, validation, scoped permissions, fixed prompt text, and the failure message. The learner-authored SDK code lives in `src/main.rs`: system messages, the instructions in the exhibit and page prompts, session configuration, and the session runner.
+This Rust sample uses the GitHub Copilot SDK as a focused, non-software-engineering agent harness. Pre-built helpers live in `src/lib.rs`: approved fact sets and the fact-selection menu, streaming, validation, scoped permissions, fixed prompt text, and the failure message. The curator and research system messages are pre-built in `src/system_messages.rs`. The learner-authored SDK code lives in `src/main.rs`: the instructions in the exhibit and page prompts, session configuration, and the session runner.
 
 The `>>> BEGIN` / `<<< END` comments in `src/main.rs` are the named regions the lessons fill. Each `BEGIN` line lists the steps that insert or replace that region.
 

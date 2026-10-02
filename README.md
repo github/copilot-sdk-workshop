@@ -140,15 +140,15 @@ Museum Exhibit Studio starters live under `start-museum/<language>`, with comple
 `finished/<language>/museum-exhibit-studio`. Each starter ships one pre-built curator helper module
 that learners never edit: approved fact sets, their bounds, and the fact-selection menu, a
 streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server with its
-deny-by-default permission handler, the single-file `exhibit.html` write permission, the fixed
-prompt text (exhibit structure, research request, page requirements), and the failure message the
-entrypoint prints.
+deny-by-default permission handler, the single-file `exhibit.html` write permission, the curator
+and research system messages (in their own helper file), the fixed prompt text (exhibit structure,
+research request, page requirements), and the failure message the entrypoint prints.
 
 Learners work directly in `start-museum/<language>` and grow that one project across the
-lessons, running it at every step. They write the SDK code: the session setup, the curator and
-research system messages, tool registration and the three session configurations, the
-instructions in the exhibit and page prompts, and one session runner that owns the lifecycle and
-timeout. The finished sample is what a learner ends up with, not a separate reference architecture.
+lessons, running it at every step. They write the SDK code: the session setup, tool registration
+and the three session configurations (each of which installs a pre-built system message in
+replace mode), the instructions in the exhibit and page prompts, and one session runner that owns
+the lifecycle and timeout. The finished sample is what a learner ends up with, not a separate reference architecture.
 
 Every place a learner writes code is a named region in the starter entrypoint, delimited by two
 marker comments whose `BEGIN` line lists the steps that touch it:

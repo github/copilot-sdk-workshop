@@ -3,21 +3,23 @@
 Choose the directory for your workshop language and work directly inside it. After you change into
 it, open that same folder in your editor (`code .` from inside it, or any other editor's open-folder
 command) and keep your terminal there. These starters contain pinned dependencies, an entrypoint
-laid out as named regions, and one pre-built curator helper module. The helpers hold the plumbing
-you never have to write: the approved fact sets, their bounds, and the menu that lets an educator
-choose or type them, the pre-built `approved_fact_lookup` local tool that hands those facts to the
-curator, the pre-built `approved_wikipedia_fact_lookup` local tool that returns captured research
-and citations when usable research exists, a streaming printer, deterministic exhibit validation,
-the scoped Wikipedia MCP server and its deny-by-default permission handler, the single-file
-`exhibit.html` write permission, the fixed prompt text (exhibit structure, research request, and
-page requirements), the `COPILOT_MODEL` lookup, and the failure message. You never edit the
-helpers.
+laid out as named regions, a pre-built curator helper module, and a pre-built file holding the
+system messages. The helpers hold the plumbing you never have to write: the approved fact sets,
+their bounds, and the menu that lets an educator choose or type them, the pre-built
+`approved_fact_lookup` local tool that hands those facts to the curator, the pre-built
+`approved_wikipedia_fact_lookup` local tool that returns captured research and citations when
+usable research exists, a streaming printer, deterministic exhibit validation, the scoped Wikipedia
+MCP server and its deny-by-default permission handler, the single-file `exhibit.html` write
+permission, the fixed prompt text (exhibit structure, research request, and page requirements), the
+`COPILOT_MODEL` lookup, and the failure message. The system messages file holds the three long
+messages the sessions run under: the curator's, the curator's once research is available, and the
+research assistant's. You never edit the helpers.
 
-The starters do **not** include the curator system message, the exhibit prompt's instructions,
-session configuration, tool registration, or the session runner. You write those during the
-lessons: one session, then streaming, then the curator voice, the fact tool registration and its
-prompt with a bounded session runner, the validation report, scoped Wikipedia research, and an
-interactive `exhibit.html` page. Start at
+The starters do **not** include the exhibit prompt's instructions, session configuration, tool
+registration, or the session runner. You write those during the lessons: one session, then
+streaming, then the curator voice (installing the pre-built system message), the fact tool
+registration and its prompt with a bounded session runner, the validation report, scoped Wikipedia
+research, and an interactive `exhibit.html` page. Start at
 [`workshop/museum-00-preflight.md`](../workshop/museum-00-preflight.md).
 
 ## How the entrypoint is laid out
@@ -39,8 +41,6 @@ the complete contents of its region. Never edit a marker line or the code outsid
 | Region | Holds | Steps |
 |---|---|---|
 | `imports` | Imports | 1, then whenever a step needs new names |
-| `curator-system-message` | Curator system message | 3, 6 |
-| `research-system-message` | Research system message | 6 |
 | `banner` | Program banner | 1 |
 | `choose-facts` | Fact selection call | 4 |
 | `research` | Optional Wikipedia research pass | 6 |
@@ -60,14 +60,14 @@ the curator to call both before writing the narrative and visitor questions. Res
 supplemental, not educator-verified; approved facts take precedence. Declining research or receiving
 no usable cited summary leaves generation with only `approved_fact_lookup`.
 
-| Language | Helper module | Change directory, build, and run |
-|---|---|---|
-| .NET | `Helpers/Curator*.cs` | `cd start-museum/dotnet && dotnet build && dotnet run` |
-| Node.js | `src/curator.ts` | `cd start-museum/nodejs && npm ci && npm run build && npm start` |
-| Python | `curator.py` | `cd start-museum/python && python -m venv .venv && .venv/bin/python -m pip install -r requirements.txt && .venv/bin/python main.py` |
-| Go | `curator.go` | `cd start-museum/go && go build -mod=readonly ./... && go run .` |
-| Rust | `src/lib.rs` | `cd start-museum/rust && cargo check --locked && cargo run --locked` |
-| Java | `src/main/java/workshop/Curator*.java` | `cd start-museum/java && ./mvnw compile && ./mvnw exec:java` |
+| Language | Helper module | System messages | Change directory, build, and run |
+|---|---|---|---|
+| .NET | `Helpers/Curator*.cs` | `Helpers/CuratorSystemMessages.cs` | `cd start-museum/dotnet && dotnet build && dotnet run` |
+| Node.js | `src/curator.ts` | `src/system-messages.ts` | `cd start-museum/nodejs && npm ci && npm run build && npm start` |
+| Python | `curator.py` | `system_messages.py` | `cd start-museum/python && python -m venv .venv && .venv/bin/python -m pip install -r requirements.txt && .venv/bin/python main.py` |
+| Go | `curator.go` | `system_messages.go` | `cd start-museum/go && go build -mod=readonly ./... && go run .` |
+| Rust | `src/lib.rs` | `src/system_messages.rs` | `cd start-museum/rust && cargo check --locked && cargo run --locked` |
+| Java | `src/main/java/workshop/Curator*.java` | `CuratorSystemMessages.java` | `cd start-museum/java && ./mvnw compile && ./mvnw exec:java` |
 
 Running the starter prints its identity and does not start Copilot or require authentication.
 Because you edit these files in place, your work shows up in `git status`. That is expected. Run

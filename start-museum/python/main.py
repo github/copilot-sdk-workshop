@@ -17,10 +17,11 @@
 # A block is always the complete contents of its region. Never edit, move, or delete a marker
 # line, and leave the code outside the regions as it is.
 #
-# The pre-built curator helpers live in curator.py. Do not edit that file: it is the
-# application-owned half of the workshop, and it must stay identical to the finished app's copy.
+# The pre-built curator helpers live in curator.py, and the system messages in
+# system_messages.py. Do not edit those files: they are the application-owned half of the
+# workshop, and they must stay identical to the finished app's copy.
 
-# >>> BEGIN imports | Steps 1-2, 4-7: REPLACE
+# >>> BEGIN imports | Steps 1-7: REPLACE
 from __future__ import annotations
 
 import asyncio
@@ -28,12 +29,6 @@ import sys
 
 from curator import describe_failure
 # <<< END imports
-
-# >>> BEGIN curator-system-message | Step 3: INSERT | Step 6: REPLACE
-# <<< END curator-system-message
-
-# >>> BEGIN research-system-message | Step 6: INSERT
-# <<< END research-system-message
 
 
 # >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE

@@ -27,12 +27,6 @@ package workshop;
 // <<< END imports
 
 public final class MuseumExhibitStudio {
-    // >>> BEGIN curator-system-message | Step 3: INSERT | Step 6: REPLACE
-    // <<< END curator-system-message
-
-    // >>> BEGIN research-system-message | Step 6: INSERT
-    // <<< END research-system-message
-
     private MuseumExhibitStudio() {
     }
 

@@ -17,18 +17,13 @@
 // A block is always the complete contents of its region. Never edit, move, or delete a marker
 // line, and leave the code outside the regions as it is.
 //
-// The pre-built curator helpers live in src/lib.rs. Do not edit that file: it is the
-// application-owned half of the workshop, and it must stay identical to the finished app's copy.
+// The pre-built curator helpers live in src/lib.rs, and the system messages in
+// src/system_messages.rs. Do not edit those files: they are the application-owned half of the
+// workshop, and they must stay identical to the finished app's copy.
 
 // >>> BEGIN imports | Steps 1-7: REPLACE
 use museum_exhibit_studio::{RuntimeError, describe_failure};
 // <<< END imports
-
-// >>> BEGIN curator-system-message | Step 3: INSERT | Step 6: REPLACE
-// <<< END curator-system-message
-
-// >>> BEGIN research-system-message | Step 6: INSERT
-// <<< END research-system-message
 
 #[tokio::main]
 async fn main() {

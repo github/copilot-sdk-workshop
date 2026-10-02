@@ -20,6 +20,12 @@ use github_copilot_sdk::types::{
 };
 use github_copilot_sdk::{Error as SdkError, ToolResult};
 
+mod system_messages;
+
+pub use system_messages::{
+    CURATOR_SYSTEM_MESSAGE, CURATOR_WITH_RESEARCH_SYSTEM_MESSAGE, RESEARCH_SYSTEM_MESSAGE,
+};
+
 pub const MAXIMUM_FACT_COUNT: usize = 20;
 pub const MAXIMUM_FACT_LENGTH: usize = 500;
 pub const GENERATION_TIMEOUT: Duration = Duration::from_secs(120);

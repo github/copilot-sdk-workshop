@@ -92,8 +92,8 @@ prints one message from `CuratorTerminal.DescribeFailure` and exits with a nonze
 
 The pre-built helpers you start calling in Step 2 live in `Helpers/CuratorFacts.cs`,
 `Helpers/CuratorStreamer.cs`, `Helpers/CuratorValidation.cs`, `Helpers/CuratorSafety.cs`,
-`Helpers/CuratorPrompts.cs`, and `Helpers/CuratorTerminal.cs`. You never edit those files — you
-read them.
+`Helpers/CuratorPrompts.cs`, `Helpers/CuratorSystemMessages.cs`, and `Helpers/CuratorTerminal.cs`.
+You never edit those files — you read them.
 :::
 
 :::language nodejs
@@ -139,8 +139,8 @@ import { closeTerminal, describeFailure } from "./curator.js";
 The `try`/`catch`/`finally` around your regions shipped with the starter. If anything throws, it
 prints one message from `describeFailure` in `src/curator.ts` and sets a nonzero exit code.
 
-The pre-built helper module you start calling in Step 2 lives in `src/curator.ts`. You never edit
-that file — you read it.
+The pre-built helper module you start calling in Step 2 lives in `src/curator.ts`, and the system
+messages Step 3 uses are in `src/system-messages.ts`. You never edit those files — you read them.
 :::
 
 :::language python
@@ -205,8 +205,9 @@ whole listener with one helper call.
 The `try`/`except` around your regions shipped with the starter. If anything throws, it prints one
 message from `describe_failure` in `curator.py` and exits with a nonzero code.
 
-`curator.py` beside this file is the pre-built helper module that owns later replacement helpers.
-You never edit it — you read it.
+`curator.py` beside this file is the pre-built helper module you start calling in Step 2, and
+`system_messages.py` holds the system messages Step 3 uses. You never edit those files — you read
+them.
 :::
 
 :::language go
@@ -273,8 +274,8 @@ The `main`/`run` wrapper and error handler around your regions shipped with the 
 anything returns an error, `main` prints one message from `DescribeFailure` in `curator.go` and
 exits with a nonzero code.
 
-The pre-built helpers you start calling in Step 2 live in `curator.go`. You never edit that file —
-you read it.
+The pre-built helpers you start calling in Step 2 live in `curator.go`, and the system messages
+Step 3 uses are in `system_messages.go`. You never edit those files — you read them.
 :::
 
 :::language rust
@@ -328,8 +329,8 @@ The `main` wrapper, `run` function, exit code, and error handler around your reg
 the starter. If anything throws, the wrapper prints one message from `describe_failure` in
 `src/lib.rs` and exits with a nonzero code.
 
-The pre-built helpers you start calling in Step 2 live in `src/lib.rs`. You never edit that file -
-you read it.
+The pre-built helpers you start calling in Step 2 live in `src/lib.rs`, and the system messages
+Step 3 uses are in `src/system_messages.rs`. You never edit those files — you read them.
 :::
 
 :::language java
@@ -382,7 +383,7 @@ import com.github.copilot.rpc.SessionConfig;
 
 The `main`/`run` scaffolding, top-level `try`/`catch`/`finally`, and exit-code handling shipped with the starter. If anything throws, the error handler prints one message through `CuratorTerminal.describeFailure` and exits with a nonzero code.
 
-The pre-built helpers you start calling in Step 2 sit beside your file in `src/main/java/workshop/`: `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`, `CuratorSafety.java`, `CuratorPrompts.java`, and `CuratorTerminal.java`. You never edit those files — you read them.
+The pre-built helpers you start calling in Step 2 sit beside your file in `src/main/java/workshop/`: `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`, `CuratorSafety.java`, `CuratorPrompts.java`, `CuratorSystemMessages.java`, and `CuratorTerminal.java`. You never edit those files — you read them.
 :::
 
 ## Run it

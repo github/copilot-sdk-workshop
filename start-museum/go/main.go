@@ -19,8 +19,9 @@ package main
 // A block is always the complete contents of its region. Never edit, move, or delete a marker
 // line, and leave the code outside the regions as it is.
 //
-// The pre-built curator helpers live in curator.go. Do not edit that file: it is the
-// application-owned half of the workshop, and it must stay identical to the finished app's copy.
+// The pre-built curator helpers live in curator.go, and the system messages in
+// system_messages.go. Do not edit those files: they are the application-owned half of the
+// workshop, and they must stay identical to the finished app's copy.
 
 // >>> BEGIN imports | Steps 1, 4, 6: REPLACE
 import (
@@ -29,12 +30,6 @@ import (
 )
 
 // <<< END imports
-
-// >>> BEGIN curator-system-message | Step 3: INSERT | Step 6: REPLACE
-// <<< END curator-system-message
-
-// >>> BEGIN research-system-message | Step 6: INSERT
-// <<< END research-system-message
 
 func main() {
 	if err := run(); err != nil {

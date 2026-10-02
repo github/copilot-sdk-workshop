@@ -114,7 +114,7 @@ SessionConfig GenerationConfig(IEnumerable<string?> approvedFacts) => new()
     SystemMessage = new SystemMessageConfig
     {
         Mode = SystemMessageMode.Replace,
-        Content = SystemMessage
+        Content = CuratorSystemMessages.Curator
     }
 };
 ```
@@ -182,6 +182,7 @@ import {
   selectedModel,
   streamExhibit,
 } from "./curator.js";
+import { curatorSystemMessage } from "./system-messages.js";
 ```
 
 **INSERT** region `choose-facts` in `src/index.ts`:
@@ -227,7 +228,7 @@ function generationConfig(approvedFacts: Iterable<string>): SessionConfig {
     tools: [createApprovedFactLookup(approvedFacts)],
     availableTools: [approvedFactLookupName],
     streaming: true,
-    systemMessage: { mode: "replace", content: systemMessage },
+    systemMessage: { mode: "replace", content: curatorSystemMessage },
   };
 }
 ```
@@ -302,6 +303,7 @@ from curator import (
     selected_model,
     stream_exhibit,
 )
+from system_messages import CURATOR_SYSTEM_MESSAGE
 ```
 
 **INSERT** region `choose-facts` in `main.py`:
@@ -347,7 +349,7 @@ def generation_config(approved_facts: Iterable[str]) -> dict[str, Any]:
         "tools": [create_approved_fact_lookup(approved_facts)],
         "available_tools": [APPROVED_FACT_LOOKUP_NAME],
         "streaming": True,
-        "system_message": {"mode": "replace", "content": SYSTEM_MESSAGE},
+        "system_message": {"mode": "replace", "content": CURATOR_SYSTEM_MESSAGE},
     }
 ```
 
@@ -473,7 +475,7 @@ func generationConfig(workingDirectory string, approvedFacts []string) (*copilot
 		Streaming:           copilot.Bool(true),
 		SystemMessage: &copilot.SystemMessageConfig{
 			Mode:    "replace",
-			Content: systemMessage,
+			Content: CuratorSystemMessage,
 		},
 		WorkingDirectory: workingDirectory,
 	}, nil
@@ -546,8 +548,9 @@ use github_copilot_sdk::permission;
 use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
 use github_copilot_sdk::{Client, ClientOptions};
 use museum_exhibit_studio::{
-    APPROVED_FACT_LOOKUP_NAME, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT, RuntimeError,
-    approved_fact_lookup, choose_approved_facts, describe_failure, selected_model, stream_exhibit,
+    APPROVED_FACT_LOOKUP_NAME, CURATOR_SYSTEM_MESSAGE, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT,
+    RuntimeError, approved_fact_lookup, choose_approved_facts, describe_failure, selected_model,
+    stream_exhibit,
 };
 ```
 
@@ -600,7 +603,7 @@ fn generation_config(approved_facts: &[String]) -> Result<SessionConfig, Runtime
     config.system_message = Some(
         SystemMessageConfig::new()
             .with_mode("replace")
-            .with_content(SYSTEM_MESSAGE),
+            .with_content(CURATOR_SYSTEM_MESSAGE),
     );
     Ok(config)
 }
@@ -718,7 +721,7 @@ The inline client and session from Steps 1–3 leave `generate`. They move into 
                 .setStreaming(true)
                 .setSystemMessage(new SystemMessageConfig()
                         .setMode(SystemMessageMode.REPLACE)
-                        .setContent(SYSTEM_MESSAGE));
+                        .setContent(CuratorSystemMessages.CURATOR));
         return CuratorStreamer.withSelectedModel(config);
     }
 ```

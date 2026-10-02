@@ -3,10 +3,10 @@
 This completed .NET sample uses the GitHub Copilot SDK to generate a small museum exhibit from
 approved facts. The pre-built `Helpers/Curator*.cs` files provide fact sets and the fact-selection
 menu, bounds checking, streaming, deterministic validation, scoped Wikipedia permissions, scoped
-`exhibit.html` write permission, fixed prompt text, and the failure message. `Program.cs` stays
-learner-authored: it defines the curator and research system messages, writes the instructions in
-the exhibit and page prompts, creates the three session configurations, and runs each through one
-session runner.
+`exhibit.html` write permission, fixed prompt text, and the failure message, and
+`Helpers/CuratorSystemMessages.cs` holds the curator and research system messages. `Program.cs`
+stays learner-authored: it writes the instructions in the exhibit and page prompts, creates the
+three session configurations, and runs each through one session runner.
 
 The `>>> BEGIN` / `<<< END` comments in `Program.cs` are the named regions the lessons fill. Each
 `BEGIN` line lists the steps that insert or replace that region, so the file shows which step

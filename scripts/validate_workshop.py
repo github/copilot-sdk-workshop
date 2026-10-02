@@ -323,12 +323,12 @@ PROCEDURE_MARKERS = {
         "java": "CuratorStreamer.streamExhibit",
     },
     "museum-03-curator-voice.md": {
-        "dotnet": "const string SystemMessage",
-        "nodejs": "const systemMessage",
-        "python": "SYSTEM_MESSAGE =",
-        "go": "const systemMessage",
-        "rust": "const SYSTEM_MESSAGE",
-        "java": "public static final String SYSTEM_MESSAGE",
+        "dotnet": "Content = CuratorSystemMessages.Curator",
+        "nodejs": "content: curatorSystemMessage",
+        "python": '"content": CURATOR_SYSTEM_MESSAGE',
+        "go": "Content: CuratorSystemMessage",
+        "rust": ".with_content(CURATOR_SYSTEM_MESSAGE)",
+        "java": ".setContent(CuratorSystemMessages.CURATOR)",
     },
     "museum-04-approved-facts.md": {
         "dotnet": "BuildExhibitPrompt",
@@ -1026,12 +1026,27 @@ def validate_layout() -> None:
 
 MUSEUM_HELPER_PATTERNS = {
     "dotnet": ("Helpers/Curator*.cs",),
-    "nodejs": ("src/curator.ts",),
-    "python": ("curator.py",),
-    "go": ("curator.go",),
-    "rust": ("src/lib.rs",),
+    "nodejs": ("src/curator.ts", "src/system-messages.ts"),
+    "python": ("curator.py", "system_messages.py"),
+    "go": ("curator.go", "system_messages.go"),
+    "rust": ("src/lib.rs", "src/system_messages.rs"),
     "java": ("src/main/java/workshop/Curator*.java",),
 }
+# The system messages are long application-owned text, so they ship in a pre-built helper file and
+# the learner only wires them into a session. Keeping them out of the entrypoint is what keeps it
+# short enough to follow.
+MUSEUM_SYSTEM_MESSAGE_FILES = {
+    "dotnet": "Helpers/CuratorSystemMessages.cs",
+    "nodejs": "src/system-messages.ts",
+    "python": "system_messages.py",
+    "go": "system_messages.go",
+    "rust": "src/system_messages.rs",
+    "java": "src/main/java/workshop/CuratorSystemMessages.java",
+}
+MUSEUM_SYSTEM_MESSAGE_OPENINGS = (
+    "You are an interpretive museum exhibit curator.",
+    "You are a museum research assistant.",
+)
 MUSEUM_HELPER_SYMBOLS = (
     "apollo11facts",
     "greatbarrierreeffacts",
@@ -1058,6 +1073,8 @@ MUSEUM_HELPER_SYMBOLS = (
     "exhibitstructure",
     "htmlrequirements",
     "buildresearchprompt",
+    "curatorsystemmessage",
+    "curatorwithresearch",
 )
 MUSEUM_HELPER_LESSON_REFERENCES = {
     "dotnet": re.compile(r"Helpers/Curator[A-Za-z]+\.cs"),
@@ -1469,6 +1486,29 @@ def validate_museum_projects() -> None:
             f"{starter.relative_to(ROOT)} helper module does not ship the pre-built "
             "approved_fact_lookup tool",
         )
+        system_messages = starter / MUSEUM_SYSTEM_MESSAGE_FILES[language]
+        require(
+            system_messages.exists(),
+            f"{starter.relative_to(ROOT)} is missing its pre-built system message file "
+            f"{MUSEUM_SYSTEM_MESSAGE_FILES[language]}",
+        )
+        for opening in MUSEUM_SYSTEM_MESSAGE_OPENINGS:
+            require(
+                system_messages.exists() and opening in read(system_messages),
+                f"{system_messages.relative_to(ROOT)} must hold the system message that opens "
+                f"with: {opening}",
+            )
+            for lesson_name in MUSEUM_LESSONS:
+                require(
+                    opening
+                    not in "\n".join(
+                        lesson_code_blocks(
+                            render_language_markdown(WORKSHOP / lesson_name, language), language
+                        )
+                    ),
+                    f"workshop/{lesson_name} ({language}) pastes a system message into the "
+                    f"entrypoint; it belongs in {MUSEUM_SYSTEM_MESSAGE_FILES[language]}",
+                )
         for marker in MUSEUM_STARTER_SOLUTION_MARKERS:
             require(
                 marker not in entrypoint_symbols,
