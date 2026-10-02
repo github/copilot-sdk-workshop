@@ -1,47 +1,81 @@
 // Museum Exhibit Studio — learner entrypoint.
 //
+// HOW TO EDIT THIS FILE
+//
+// Every place you write code is a named region between two marker lines:
+//
+//     >>> BEGIN <region> | Step 4: INSERT | Step 6: REPLACE
+//     <<< END <region>
+//
+// The BEGIN line lists every step that touches the region. Each lesson block names its region
+// and one of two actions:
+//
+//     INSERT   The region is empty. Paste the block between the two marker lines.
+//     REPLACE  The region already has code. Delete everything between the two marker lines,
+//              then paste the block.
+//
+// A block is always the complete contents of its region. Never edit, move, or delete a marker
+// line, and leave the code outside the regions as it is.
+//
 // The pre-built curator helpers live in Helpers/. Do not edit those files: they are the
 // application-owned half of the workshop, and they must stay identical to the finished app's copy.
-// Everything below is yours to write, one lesson at a time.
-//
-// Step 1  First curator session .......... create the CopilotClient, create a session with
-//                                          OnPermissionRequest = PermissionHandler.ApproveAll so
-//                                          requests get an answer, send a prompt, print the reply,
-//                                          then dispose and stop.
-// Step 2  Stream the curator ............. swap the blocking send for
-//                                          CuratorStreamer.StreamExhibitAsync so tokens and
-//                                          [tool:start] / [tool:done] events print live.
-// Step 3  Curator voice .................. add `const string SystemMessage = ...` here and pass it
-//                                          as SystemMessage with SystemMessageMode.Replace.
-// Step 4  Ground it in approved facts .... add ReadFactSetSelection() and BuildExhibitPrompt();
-//                                          register the pre-built tool with
-//                                          Tools = [CuratorFacts.CreateApprovedFactLookup(facts)]
-//                                          and AvailableTools =
-//                                          [CuratorFacts.ApprovedFactLookupName]; the prompt tells
-//                                          the curator to call approved_fact_lookup first.
-//                                          Add GenerationConfig() and RunSessionAsync() with the
-//                                          generation timeout, blank-output rejection, and cleanup.
-// Step 5  Prove the structure ............ call
-//                                          CuratorValidation.FormatValidation(
-//                                              CuratorValidation.ValidateExhibit(exhibit)).
-// Step 6  Wikipedia research ............. add ResearchConfig() with CuratorSafety.WikipediaServer()
-//                                          plus CuratorSafety.WikipediaPermissionHandler(), run it
-//                                          through RunSessionAsync, and print sources after the
-//                                          exhibit. Retain the body and citations, conditionally
-//                                          register approved_wikipedia_fact_lookup, and request
-//                                          both lookups before generation. Approved facts win.
-// Step 7  Interactive exhibit page ....... add HtmlConfig() with the "builtin:apply_patch" and
-//                                          "builtin:create" allowlist and CuratorSafety.ExhibitWritePermission(...).
 
-// Your `using` directives go here, and grow as the lessons progress.
+// >>> BEGIN imports | Steps 1, 6: REPLACE
+using MuseumExhibitStudio.Helpers;
+// <<< END imports
 
-// Your system message (Step 3) goes here.
+try
+{
+    // >>> BEGIN banner | Step 1: REPLACE
+    Console.WriteLine("=== Museum Exhibit Studio starter ===");
+    Console.WriteLine("Pre-built curator helpers are ready in Helpers/.");
+    Console.WriteLine("Continue with museum step 1 to write your first curator session.");
+    // <<< END banner
 
-Console.WriteLine("=== Museum Exhibit Studio starter ===");
-Console.WriteLine("Pre-built curator helpers are ready in Helpers/.");
-Console.WriteLine("Continue with museum step 1 to write your first curator session.");
+    // >>> BEGIN choose-facts | Step 4: INSERT
+    // <<< END choose-facts
 
-// Your top-level run flow (Steps 1-7) replaces the banner above, wrapped in try/catch/finally.
+    // >>> BEGIN research | Step 6: INSERT
+    // <<< END research
 
-// Local functions come after the top-level statements. Your prompt builders (Steps 4, 6, 7),
-// session configuration builders (Steps 4, 6, 7), and RunSessionAsync (Step 4) go here.
+    // >>> BEGIN generate | Step 1: INSERT | Steps 2-6: REPLACE
+    // <<< END generate
+
+    // >>> BEGIN validate | Step 5: INSERT
+    // <<< END validate
+
+    // >>> BEGIN sources | Step 6: INSERT
+    // <<< END sources
+
+    // >>> BEGIN exhibit-page | Step 7: INSERT
+    // <<< END exhibit-page
+
+    return 0;
+}
+catch (Exception exception)
+{
+    Console.Error.WriteLine(CuratorTerminal.DescribeFailure(exception));
+    return 1;
+}
+finally
+{
+    CuratorTerminal.CloseTerminal();
+}
+
+// >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE
+// <<< END exhibit-prompt
+
+// >>> BEGIN html-prompt | Step 7: INSERT
+// <<< END html-prompt
+
+// >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+// <<< END generation-config
+
+// >>> BEGIN research-config | Step 6: INSERT
+// <<< END research-config
+
+// >>> BEGIN html-config | Step 7: INSERT
+// <<< END html-config
+
+// >>> BEGIN session-runner | Step 4: INSERT
+// <<< END session-runner

@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -27,6 +29,28 @@ const (
 	ApprovedFactLookupName          = "approved_fact_lookup"
 	ApprovedWikipediaFactLookupName = "approved_wikipedia_fact_lookup"
 )
+
+const ExhibitStructure = `Return exactly this structure:
+
+# <an engaging exhibit title>
+## Narrative
+<100-140 words, excluding the title and questions>
+## Visitor questions
+1. <question>
+2. <question>
+3. <question>
+
+Write exactly three distinct visitor reflection questions. Do not add a preface,
+conclusion, software discussion, or facts the configured lookup tools did not return.`
+
+const HTMLRequirements = `Requirements:
+- Use semantic HTML.
+- Use embedded CSS and embedded JavaScript only; no external assets or libraries.
+- Include the exhibit title, the narrative, and the three visitor questions.
+- Include a visible caveat that unsupported claims require human review.
+- Add an accessible text filter over the visitor questions that updates a visible count.
+- Treat exhibit text as data and escape text before inserting it into HTML.
+- Make keyboard focus visible.`
 
 var Apollo11Facts = []string{
 	"Apollo 11 launched July 16, 1969.",
@@ -62,6 +86,65 @@ var FactSets = []FactSet{
 	{Key: "apollo11", Label: "Apollo 11", Facts: Apollo11Facts},
 	{Key: "reef", Label: "Great Barrier Reef", Facts: GreatBarrierReefFacts},
 	{Key: "terracotta", Label: "Terracotta Army", Facts: TerracottaArmyFacts},
+}
+
+func ChooseApprovedFacts() ([]string, error) {
+	fmt.Println("Approved fact sets:")
+	for index, factSet := range FactSets {
+		fmt.Printf("%d. %s\n", index+1, factSet.Label)
+	}
+	fmt.Println()
+
+	choice := AskLine(fmt.Sprintf("Choose a fact set [1-%d, default 1]: ", len(FactSets)))
+	selectedIndex := 0
+	if parsed, err := strconv.Atoi(choice); err == nil && parsed >= 1 && parsed <= len(FactSets) {
+		selectedIndex = parsed - 1
+	}
+
+	facts, err := BoundFacts(FactSets[selectedIndex].Facts)
+	if err != nil {
+		return nil, err
+	}
+	for index, fact := range facts {
+		fmt.Printf("%d. %s\n", index+1, fact)
+	}
+	fmt.Println()
+
+	if !AskYesNo("Use these facts?", true) {
+		facts, err = BoundFacts(ReadFacts())
+		if err != nil {
+			return nil, err
+		}
+	}
+	return facts, nil
+}
+
+func BuildResearchPrompt(approvedFacts []string) (string, error) {
+	facts, err := BoundFacts(approvedFacts)
+	if err != nil {
+		return "", err
+	}
+
+	var factList strings.Builder
+	for index, fact := range facts {
+		if index > 0 {
+			factList.WriteByte('\n')
+		}
+		fmt.Fprintf(&factList, "- %s", fact)
+	}
+
+	return fmt.Sprintf(`Research background for a museum exhibit using only the configured Wikipedia tools.
+
+Supplied approved facts:
+%s
+
+Search first with the scoped search tool, then read at most a few of the most relevant
+articles with readArticle. Write a short, cited factual summary that the application can
+supply to the curator through a local lookup. Associate researched claims with the
+consulted articles. Do not modify the approved facts or write exhibit copy.
+
+End with a ## Sources section listing each consulted article as:
+- <article title>: <canonical Wikipedia URL>`, factList.String()), nil
 }
 
 func BoundFacts(facts []string) ([]string, error) {
@@ -123,6 +206,20 @@ func ApprovedWikipediaFactLookup(research SourceExtraction) (copilot.Tool, error
 	)
 	lookup.SkipPermission = true
 	return lookup, nil
+}
+
+func DescribeFailure(err error) string {
+	if err != nil && (errors.Is(err, context.DeadlineExceeded) || strings.Contains(strings.ToLower(err.Error()), "timeout")) {
+		return "The curator did not respond in time. Try again."
+	}
+	if err == nil {
+		return "Could not generate the exhibit: <nil>"
+	}
+	return fmt.Sprintf("Could not generate the exhibit: %s", err.Error())
+}
+
+func SelectedModel() string {
+	return strings.TrimSpace(os.Getenv("COPILOT_MODEL"))
 }
 
 func StreamExhibit(session *copilot.Session, prompt string, timeout time.Duration) (string, error) {
@@ -424,6 +521,15 @@ func ExtractSources(content string) SourceExtraction {
 		}
 	}
 	return extraction
+}
+
+func FormatSources(research SourceExtraction) string {
+	var formatted strings.Builder
+	formatted.WriteString("Consulted Wikipedia sources:")
+	for _, source := range research.Sources {
+		fmt.Fprintf(&formatted, "\n- %s: %s", source.Title, source.URL)
+	}
+	return formatted.String()
 }
 
 func ExhibitWritePermission(workingDirectory string) copilot.PermissionHandlerFunc {

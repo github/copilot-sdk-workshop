@@ -8,7 +8,8 @@ Real museum copy, in your terminal, in about ten minutes. You connect to the Cop
 one conversation, send a single prompt, and print what comes back.
 
 No system message. No facts catalog. No tools. No interfaces. Nothing to implement against — you
-call the SDK directly, and the pre-built curator helpers stay untouched until Step 2 needs them.
+call the SDK directly. Apart from the error handler the starter already wraps around your code, the
+pre-built curator helpers wait until Step 2 needs them.
 
 ## Meet the client and the session
 
@@ -34,158 +35,211 @@ what actually constrains this session, and Steps 6 and 7 replace it with narrow,
 
 ## Write the session
 
+Every code block from here on names a region in your entrypoint and says **INSERT** or
+**REPLACE**. INSERT fills an empty region. REPLACE means delete what is between the region's two
+marker lines, then paste. The [preflight](museum-00-preflight.md) shows the marker lines under
+"How edits work".
+
 :::language dotnet
-Open `Program.cs` and **replace the entire file**:
+Open `Program.cs`. Three regions change in this step.
+
+**REPLACE** region `imports` in `Program.cs`:
 
 ```csharp
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
+using MuseumExhibitStudio.Helpers;
+```
 
-Console.WriteLine("=== Museum Exhibit Studio ===");
-Console.WriteLine();
+**REPLACE** region `banner` in `Program.cs`:
 
-await using var client = new CopilotClient();
-await client.StartAsync();
+```csharp
+    Console.WriteLine("=== Museum Exhibit Studio ===");
+    Console.WriteLine();
+```
 
-await using var session = await client.CreateSessionAsync(new SessionConfig
-{
-    ClientName = "museum-exhibit-studio",
-    OnPermissionRequest = PermissionHandler.ApproveAll
-});
+**INSERT** region `generate` in `Program.cs`:
 
-var response = await session.SendAndWaitAsync(
-    "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
+```csharp
+    await using var client = new CopilotClient();
+    await client.StartAsync();
 
-if (response is null)
-{
-    throw new InvalidOperationException("The curator returned no content.");
-}
+    await using var session = await client.CreateSessionAsync(new SessionConfig
+    {
+        ClientName = "museum-exhibit-studio",
+        OnPermissionRequest = PermissionHandler.ApproveAll
+    });
 
-Console.WriteLine(response.Data.Content);
+    var response = await session.SendAndWaitAsync(
+        "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
 
-await client.StopAsync();
+    if (response is null)
+    {
+        throw new InvalidOperationException("The curator returned no content.");
+    }
+
+    Console.WriteLine(response.Data.Content);
+
+    await client.StopAsync();
 ```
 
 `SendAndWaitAsync` blocks until the session goes idle, so you get the finished answer in one call.
 `await using` disposes the session and the client on the way out. `PermissionHandler.ApproveAll`
 comes from `GitHub.Copilot.Rpc`, which is why the second `using` is there.
 
+The `try`/`catch`/`finally` around your regions shipped with the starter. If anything throws, it
+prints one message from `CuratorTerminal.DescribeFailure` and exits with a nonzero code.
+
 The pre-built helpers you start calling in Step 2 live in `Helpers/CuratorFacts.cs`,
-`Helpers/CuratorStreamer.cs`, `Helpers/CuratorValidation.cs`, `Helpers/CuratorSafety.cs`, and
-`Helpers/CuratorTerminal.cs`. You never edit those files — you read them.
+`Helpers/CuratorStreamer.cs`, `Helpers/CuratorValidation.cs`, `Helpers/CuratorSafety.cs`,
+`Helpers/CuratorPrompts.cs`, `Helpers/CuratorSystemMessages.cs`, and `Helpers/CuratorTerminal.cs`.
+You never edit those files — you read them.
 :::
 
 :::language nodejs
-Open `src/index.ts` and **replace the entire file**:
+Open `src/index.ts`. Three regions change in this step.
+
+**REPLACE** region `imports` in `src/index.ts`:
 
 ```typescript
 import { approveAll, CopilotClient } from "@github/copilot-sdk";
+import { closeTerminal, describeFailure } from "./curator.js";
+```
 
-async function main(): Promise<void> {
-  console.log("=== Museum Exhibit Studio ===");
-  console.log();
+**REPLACE** region `banner` in `src/index.ts`:
 
-  const client = new CopilotClient();
-  await client.start();
-  const session = await client.createSession({
-    clientName: "museum-exhibit-studio",
-    onPermissionRequest: approveAll,
-  });
+```typescript
+    console.log("=== Museum Exhibit Studio ===");
+    console.log();
+```
 
-  const response = await session.sendAndWait({
-    prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
-  });
-  console.log(response?.data && "content" in response.data ? response.data.content : response);
+**INSERT** region `generate` in `src/index.ts`:
 
-  await session.disconnect();
-  await client.stop();
-}
+```typescript
+    const client = new CopilotClient();
+    await client.start();
 
-void main();
+    const session = await client.createSession({
+      clientName: "museum-exhibit-studio",
+      onPermissionRequest: approveAll,
+    });
+
+    const response = await session.sendAndWait({
+      prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+    });
+    console.log(response?.data && "content" in response.data ? response.data.content : response);
+
+    await session.disconnect();
+    await client.stop();
 ```
 
 `sendAndWait` blocks until the session goes idle, so you get the finished answer in one call.
 `approveAll` is imported from the SDK alongside `CopilotClient`.
 
-`src/curator.ts` beside this file is the pre-built helper module you start calling in Step 2. You
-never edit it — you read it.
+The `try`/`catch`/`finally` around your regions shipped with the starter. If anything throws, it
+prints one message from `describeFailure` in `src/curator.ts` and sets a nonzero exit code.
+
+The pre-built helper module you start calling in Step 2 lives in `src/curator.ts`, and the system
+messages Step 3 uses are in `src/system-messages.ts`. You never edit those files — you read them.
 :::
 
 :::language python
-Open `main.py` and **replace the entire file**:
+Open `main.py`. Three regions change in this step.
+
+**REPLACE** region `imports` in `main.py`:
 
 ```python
+from __future__ import annotations
+
 import asyncio
+import sys
 
 from copilot import CopilotClient, PermissionHandler
 from copilot.session_events import AssistantMessageData, SessionErrorData, SessionIdleData
 
+from curator import describe_failure
+```
 
-async def main() -> None:
-    print("=== Museum Exhibit Studio ===")
-    print()
+**REPLACE** region `banner` in `main.py`:
 
-    async with CopilotClient() as client:
-        async with await client.create_session(
-            client_name="museum-exhibit-studio",
-            on_permission_request=PermissionHandler.approve_all,
-        ) as session:
-            done = asyncio.Event()
-            error: RuntimeError | None = None
+```python
+        print("=== Museum Exhibit Studio ===")
+        print()
+```
 
-            def on_event(event) -> None:
-                nonlocal error
-                match event.data:
-                    case AssistantMessageData(content=content):
-                        print(content)
-                    case SessionErrorData(message=message):
-                        error = RuntimeError(message)
-                        done.set()
-                    case SessionIdleData():
-                        done.set()
+**INSERT** region `generate` in `main.py`:
 
-            session.on(on_event)
-            await session.send(
-                "Write two sentences of museum wall text about the Apollo 11 Moon landing."
-            )
-            await done.wait()
-            if error is not None:
-                raise error
+```python
+        async with CopilotClient() as client:
+            async with await client.create_session(
+                client_name="museum-exhibit-studio",
+                on_permission_request=PermissionHandler.approve_all,
+            ) as session:
+                done = asyncio.Event()
+                error: RuntimeError | None = None
 
+                def on_event(event) -> None:
+                    nonlocal error
+                    match event.data:
+                        case AssistantMessageData(content=content):
+                            print(content)
+                        case SessionErrorData(message=message):
+                            error = RuntimeError(message)
+                            done.set()
+                        case SessionIdleData():
+                            done.set()
 
-if __name__ == "__main__":
-    asyncio.run(main())
+                session.on(on_event)
+                await session.send(
+                    "Write two sentences of museum wall text about the Apollo 11 Moon landing."
+                )
+                await done.wait()
+                if error is not None:
+                    raise error
 ```
 
 Python listens for session events rather than calling one blocking helper. Print the assistant
 message, treat a session error as a failure, and wait for idle before exiting. Step 2 replaces this
 whole listener with one helper call.
 
-`curator.py` beside this file is the pre-built helper module that owns that replacement. You never
-edit it — you read it.
+The `try`/`except` around your regions shipped with the starter. If anything throws, it prints one
+message from `describe_failure` in `curator.py` and exits with a nonzero code.
+
+`curator.py` beside this file is the pre-built helper module you start calling in Step 2, and
+`system_messages.py` holds the system messages Step 3 uses. You never edit those files — you read
+them.
 :::
 
 :::language go
-Open `main.go` and **replace the entire file**:
+Open `main.go`. Three regions change in this step.
+
+**REPLACE** region `imports` in `main.go`:
 
 ```go
-package main
-
 import (
 	"context"
 	"fmt"
+	"os"
 
 	copilot "github.com/github/copilot-sdk/go"
 )
 
-func main() {
+```
+
+**REPLACE** region `banner` in `main.go`:
+
+```go
 	fmt.Println("=== Museum Exhibit Studio ===")
 	fmt.Println()
+```
 
+**INSERT** region `generate` in `main.go`:
+
+```go
 	ctx := context.Background()
 	client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
 	if err := client.Start(ctx); err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = client.Stop() }()
 
@@ -194,7 +248,7 @@ func main() {
 		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = session.Disconnect() }()
 
@@ -202,35 +256,50 @@ func main() {
 		Prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if response == nil {
-		panic("The curator returned no content.")
+		return fmt.Errorf("The curator returned no content.")
 	}
 	if message, ok := response.Data.(*copilot.AssistantMessageData); ok {
 		fmt.Println(message.Content)
 	}
-}
 ```
 
-`curator.go` is already in this same `main` package, so its helpers are in scope the moment you
-need them. `SendAndWait` blocks until the session goes idle.
+`SendAndWait` blocks until the session goes idle, so you get the finished answer in one call.
+The deferred cleanup disconnects the session and stops the client on the way out.
+`copilot.PermissionHandler.ApproveAll` answers permission requests so the run does not stall.
+
+The `main`/`run` wrapper and error handler around your regions shipped with the starter. If
+anything returns an error, `main` prints one message from `DescribeFailure` in `curator.go` and
+exits with a nonzero code.
+
+The pre-built helpers you start calling in Step 2 live in `curator.go`, and the system messages
+Step 3 uses are in `system_messages.go`. You never edit those files — you read them.
 :::
 
 :::language rust
-Open `src/main.rs` and **replace the entire file**:
+Open `src/main.rs`. Three regions change in this step.
+
+**REPLACE** region `imports` in `src/main.rs`:
 
 ```rust
 use github_copilot_sdk::permission;
 use github_copilot_sdk::types::{MessageOptions, SessionConfig};
 use github_copilot_sdk::{Client, ClientOptions};
-use museum_exhibit_studio::RuntimeError;
+use museum_exhibit_studio::{RuntimeError, describe_failure};
+```
 
-#[tokio::main]
-async fn main() -> Result<(), RuntimeError> {
+**REPLACE** region `banner` in `src/main.rs`:
+
+```rust
     println!("=== Museum Exhibit Studio ===");
     println!();
+```
 
+**INSERT** region `generate` in `src/main.rs`:
+
+```rust
     let client = Client::start(ClientOptions::default()).await?;
     let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
     config.client_name = Some("museum-exhibit-studio".to_owned());
@@ -250,44 +319,51 @@ async fn main() -> Result<(), RuntimeError> {
 
     session.disconnect().await?;
     client.stop().await?;
-    Ok(())
-}
 ```
 
-`src/lib.rs` is the `museum_exhibit_studio` library crate that ships the pre-built helpers, and you
-never edit it. You import one name from it today: `RuntimeError`, the crate's alias for
-`Box<dyn Error + Send + Sync>`. Every helper you call from Step 2 onward reports failure with that
-type, so `main` returns it from the start and `?` keeps working as the lessons grow.
+`send_and_wait` blocks until the session goes idle, so you get the finished answer in one call.
+`with_permission_handler(permission::approve_all())` keeps tool requests from stalling while the
+session is still simple.
 
-`with_permission_handler` returns the updated config, so keep the remaining fields set on the value
-it hands back.
+The `main` wrapper, `run` function, exit code, and error handler around your regions shipped with
+the starter. If anything throws, the wrapper prints one message from `describe_failure` in
+`src/lib.rs` and exits with a nonzero code.
+
+The pre-built helpers you start calling in Step 2 live in `src/lib.rs`, and the system messages
+Step 3 uses are in `src/system_messages.rs`. You never edit those files — you read them.
 :::
 
 :::language java
-Open `src/main/java/workshop/MuseumExhibitStudio.java` and **replace the entire file**:
+Open `src/main/java/workshop/MuseumExhibitStudio.java`. Three regions change in this step.
+
+**INSERT** region `imports` in `src/main/java/workshop/MuseumExhibitStudio.java`:
 
 ```java
-package workshop;
-
 import com.github.copilot.CopilotClient;
+import com.github.copilot.CopilotSession;
 import com.github.copilot.rpc.MessageOptions;
 import com.github.copilot.rpc.PermissionHandler;
 import com.github.copilot.rpc.SessionConfig;
+```
 
-public final class MuseumExhibitStudio {
-    private MuseumExhibitStudio() {
-    }
+**REPLACE** region `banner` in `src/main/java/workshop/MuseumExhibitStudio.java`:
 
-    public static void main(String[] args) throws Exception {
+```java
         System.out.println("=== Museum Exhibit Studio ===");
         System.out.println();
+```
 
+**INSERT** region `generate` in `src/main/java/workshop/MuseumExhibitStudio.java`:
+
+```java
         try (var client = new CopilotClient()) {
             client.start().get();
-            var session = client.createSession(new SessionConfig()
-                    .setClientName("museum-exhibit-studio")
-                    .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+            CopilotSession session = null;
             try {
+                session = client.createSession(new SessionConfig()
+                        .setClientName("museum-exhibit-studio")
+                        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+
                 var response = session.sendAndWait(new MessageOptions().setPrompt(
                         "Write two sentences of museum wall text about the Apollo 11 Moon landing.")).get();
                 if (response == null) {
@@ -295,20 +371,19 @@ public final class MuseumExhibitStudio {
                 }
                 System.out.println(response.getData().content());
             } finally {
-                session.close();
+                if (session != null) {
+                    session.close();
+                }
                 client.stop().get();
             }
         }
-    }
-}
 ```
 
-`sendAndWait` blocks until the session goes idle. The try-with-resources block closes the client
-when `main` exits. `PermissionHandler.APPROVE_ALL` comes from `com.github.copilot.rpc`.
+`sendAndWait` blocks until the session goes idle, so you get the finished answer in one call. The client closes when the try-with-resources block exits, and the session is closed before `client.stop().get()` runs. `PermissionHandler.APPROVE_ALL` comes from `com.github.copilot.rpc`, which is why that import is there.
 
-The pre-built helpers you start calling in Step 2 sit beside your file in
-`src/main/java/workshop/`: `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`,
-`CuratorSafety.java`, and `CuratorTerminal.java`. You never edit those files — you read them.
+The `main`/`run` scaffolding, top-level `try`/`catch`/`finally`, and exit-code handling shipped with the starter. If anything throws, the error handler prints one message through `CuratorTerminal.describeFailure` and exits with a nonzero code.
+
+The pre-built helpers you start calling in Step 2 sit beside your file in `src/main/java/workshop/`: `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`, `CuratorSafety.java`, `CuratorPrompts.java`, `CuratorSystemMessages.java`, and `CuratorTerminal.java`. You never edit those files — you read them.
 :::
 
 ## Run it

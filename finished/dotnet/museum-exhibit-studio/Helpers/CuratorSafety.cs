@@ -96,6 +96,17 @@ public static class CuratorSafety
         return new ExtractedSources(body, sources.AsReadOnly());
     }
 
+    public static string FormatSources(ExtractedSources research)
+    {
+        ArgumentNullException.ThrowIfNull(research);
+
+        return string.Join(
+            Environment.NewLine,
+            research.Sources
+                .Select(source => $"- {source.Title}: {source.Url}")
+                .Prepend("Consulted Wikipedia sources:"));
+    }
+
     public static Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision>> ExhibitWritePermission(
         string workingDirectory)
     {

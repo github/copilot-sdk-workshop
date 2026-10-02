@@ -1,51 +1,91 @@
-# Museum Exhibit Studio — learner entrypoint.
+# Museum Exhibit Studio - learner entrypoint.
 #
-# The pre-built curator helpers live in curator.py. Do not edit that file: it is the
-# application-owned half of the workshop, and it must stay identical to the finished app's copy.
-# Everything below is yours to write, one lesson at a time.
+# HOW TO EDIT THIS FILE
 #
-# Step 1  First curator session .......... create the CopilotClient, create a session with
-#                                          on_permission_request=PermissionHandler.approve_all so
-#                                          requests get an answer, send a prompt, print the reply,
-#                                          then disconnect and stop.
-# Step 2  Stream the curator ............. swap the blocking send for stream_exhibit() so tokens
-#                                          and [tool:start] / [tool:done] events print live.
-# Step 3  Curator voice .................. add `SYSTEM_MESSAGE = """..."""` here and pass it as
-#                                          system_message={"mode": "replace", "content": ...}.
-# Step 4  Ground it in approved facts .... add build_exhibit_prompt(); register the pre-built tool
-#                                          with tools=[create_approved_fact_lookup(facts)] and
-#                                          available_tools=[APPROVED_FACT_LOOKUP_NAME]; the prompt
-#                                          tells the curator to call approved_fact_lookup first.
-#                                          Add generation_config() and run_session() with the
-#                                          generation timeout, blank-output rejection, and cleanup.
-# Step 5  Prove the structure ............ call format_validation(validate_exhibit(exhibit)).
-# Step 6  Wikipedia research ............. add research_config() with wikipedia_server() plus
-#                                          wikipedia_permission_handler(), run it through
-#                                          run_session(), and print sources after the exhibit.
-#                                          Retain the body and citations, conditionally register
-#                                          approved_wikipedia_fact_lookup, and request both
-#                                          lookups before generation. Approved facts win.
-# Step 7  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
-#                                          "builtin:create" allowlist and exhibit_write_permission(...).
+# Every place you write code is a named region between two marker lines:
+#
+#     >>> BEGIN <region> | Step 4: INSERT | Step 6: REPLACE
+#     <<< END <region>
+#
+# The BEGIN line lists every step that touches the region. Each lesson block names its region
+# and one of two actions:
+#
+#     INSERT   The region is empty. Paste the block between the two marker lines.
+#     REPLACE  The region already has code. Delete everything between the marker lines,
+#              then paste the block.
+#
+# A block is always the complete contents of its region. Never edit, move, or delete a marker
+# line, and leave the code outside the regions as it is.
+#
+# The pre-built curator helpers live in curator.py, and the system messages in
+# system_messages.py. Do not edit those files: they are the application-owned half of the
+# workshop, and they must stay identical to the finished app's copy.
 
-# Your imports from `curator` go here, and grow as the lessons progress.
+# >>> BEGIN imports | Steps 1-7: REPLACE
+from __future__ import annotations
 
-# Your SYSTEM_MESSAGE (Step 3) goes here.
+import asyncio
+import sys
 
-# Your prompt builders (Steps 4, 6, 7) go here.
-
-# Your session configuration builders (Steps 4, 6, 7) go here.
-
-# Your run_session() lifecycle function (Step 4) goes here.
+from curator import describe_failure
+# <<< END imports
 
 
-def main() -> None:
-    print("=== Museum Exhibit Studio starter ===")
-    print("Pre-built curator helpers are ready in curator.py.")
-    print("Continue with museum step 1 to write your first curator session.")
-    # Your run flow (Steps 1-7) replaces the banner above. It becomes `async def main() -> int`
-    # in Step 4, and the entrypoint below becomes raise SystemExit(asyncio.run(main())).
+# >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE
+# <<< END exhibit-prompt
+
+
+# >>> BEGIN html-prompt | Step 7: INSERT
+# <<< END html-prompt
+
+
+# >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+# <<< END generation-config
+
+
+# >>> BEGIN research-config | Step 6: INSERT
+# <<< END research-config
+
+
+# >>> BEGIN html-config | Step 7: INSERT
+# <<< END html-config
+
+
+# >>> BEGIN session-runner | Step 4: INSERT
+# <<< END session-runner
+
+
+async def main() -> int:
+    try:
+        # >>> BEGIN banner | Step 1: REPLACE
+        print("=== Museum Exhibit Studio starter ===")
+        print("Pre-built curator helpers are ready in curator.py.")
+        print("Continue with museum step 1 to write your first curator session.")
+        # <<< END banner
+
+        # >>> BEGIN choose-facts | Step 4: INSERT
+        # <<< END choose-facts
+
+        # >>> BEGIN research | Step 6: INSERT
+        # <<< END research
+
+        # >>> BEGIN generate | Step 1: INSERT | Steps 2-6: REPLACE
+        # <<< END generate
+
+        # >>> BEGIN validate | Step 5: INSERT
+        # <<< END validate
+
+        # >>> BEGIN sources | Step 6: INSERT
+        # <<< END sources
+
+        # >>> BEGIN exhibit-page | Step 7: INSERT
+        # <<< END exhibit-page
+
+        return 0
+    except Exception as error:
+        print(describe_failure(error), file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(asyncio.run(main()))

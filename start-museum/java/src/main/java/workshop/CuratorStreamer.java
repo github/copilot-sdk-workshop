@@ -8,12 +8,14 @@ import com.github.copilot.generated.SessionIdleEvent;
 import com.github.copilot.generated.ToolExecutionCompleteEvent;
 import com.github.copilot.generated.ToolExecutionStartEvent;
 import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.SessionConfig;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +26,17 @@ public final class CuratorStreamer {
     public static final Duration RESEARCH_TIMEOUT = Duration.ofSeconds(90);
 
     private CuratorStreamer() {
+    }
+
+    // Set COPILOT_MODEL to choose a model. Otherwise the config is returned unchanged and the
+    // Copilot runtime chooses.
+    public static SessionConfig withSelectedModel(SessionConfig config) {
+        Objects.requireNonNull(config, "config");
+        String model = System.getenv("COPILOT_MODEL");
+        if (model != null && !model.isBlank()) {
+            config.setModel(model.trim());
+        }
+        return config;
     }
 
     public static String streamExhibit(CopilotSession session, String prompt) throws Exception {

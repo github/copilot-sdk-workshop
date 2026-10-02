@@ -29,10 +29,13 @@ The seven hands-on steps take about 90 minutes. Complete them in order, then cel
 you built and explore the resources in the final step.
 
 The starter already ships the plumbing you should never have to write: the approved fact sets and
-their bounds, a streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server
-with its deny-by-default permission handler, the single-file `exhibit.html` write permission, and
-small terminal prompts. **You never edit the helper module.** You write the session setup, the two
-system messages, the prompt builders, one session runner, and `main`.
+their bounds, the fact-selection menu, a streaming printer, deterministic exhibit validation, the
+scoped Wikipedia MCP server with its deny-by-default permission handler, the single-file
+`exhibit.html` write permission, the system messages, the fixed prompt text for the exhibit
+structure, the research request, and the page requirements, and the error handling around your
+code. **You never edit the helper files.** You write the SDK code: the session setup, the tool
+registration and session configurations, the instructions in the exhibit and page prompts, and one
+session runner.
 
 You need an authenticated GitHub Copilot CLI, your language runtime, and a terminal. You work
 directly in the minimal project under `start-museum/<language>`, not the finished app. The completed
@@ -98,7 +101,8 @@ followed by `Pre-built curator helpers are ready in src/curator.ts.`
 You work in `start-museum/nodejs` for the rest of the workshop, so keep this terminal here. From
 this folder, enter `code .` to open it in VS Code, or open the folder in your favorite editor.
 
-Your helper module is `src/curator.ts`. You will write every lesson change in `src/index.ts`.
+Your helper module is `src/curator.ts`, and the system messages are in `src/system-messages.ts`.
+You will write every lesson change in `src/index.ts`.
 :::
 
 :::language python
@@ -120,7 +124,8 @@ followed by `Pre-built curator helpers are ready in curator.py.`
 You work in `start-museum/python` for the rest of the workshop, so keep this terminal here. From
 this folder, enter `code .` to open it in VS Code, or open the folder in your favorite editor.
 
-Your helper module is `curator.py`. You will write every lesson change in `main.py`.
+Your helper module is `curator.py`, and the system messages are in `system_messages.py`. You will
+write every lesson change in `main.py`.
 :::
 
 :::language go
@@ -139,8 +144,8 @@ followed by `Pre-built curator helpers are ready in curator.go.`
 You work in `start-museum/go` for the rest of the workshop, so keep this terminal here. From
 this folder, enter `code .` to open it in VS Code, or open the folder in your favorite editor.
 
-Your helper module is `curator.go`, in the same `main` package. You will write every lesson
-change in `main.go`.
+Your helper module is `curator.go`, and the system messages are in `system_messages.go`. Both are
+in the same `main` package. You will write every lesson change in `main.go`.
 :::
 
 :::language rust
@@ -160,8 +165,8 @@ Pass condition: Cargo leaves `Cargo.lock` unchanged and the program prints
 You work in `start-museum/rust` for the rest of the workshop, so keep this terminal here. From
 this folder, enter `code .` to open it in VS Code, or open the folder in your favorite editor.
 
-Your helper module is the `museum_exhibit_studio` library crate in `src/lib.rs`. You will write
-every lesson change in `src/main.rs`.
+Your helper module is the `museum_exhibit_studio` library crate in `src/lib.rs`, with the system
+messages in `src/system_messages.rs`. You will write every lesson change in `src/main.rs`.
 :::
 
 :::language java
@@ -184,6 +189,28 @@ this folder, enter `code .` to open it in VS Code, or open the folder in your fa
 Your helper module is `src/main/java/workshop/Curator*.java`. You will write every lesson change
 in `src/main/java/workshop/MuseumExhibitStudio.java`.
 :::
+
+## How edits work
+
+Open the entrypoint named at the end of your setup block above. Every place you write code is a
+named **region** between two marker comments:
+
+```text
+>>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+<<< END generation-config
+```
+
+The `BEGIN` line lists every step that touches the region, so the file doubles as a map of the
+workshop. Each code block in a lesson is introduced by a line that names its region and one of two
+actions:
+
+| Action | The region is | What you do |
+|---|---|---|
+| **INSERT** | Empty | Paste the block between the two marker lines. |
+| **REPLACE** | Holding code from an earlier step | Delete everything between the two marker lines, then paste the block. |
+
+A block is always the complete contents of its region, so you never merge code by hand. Leave the
+marker lines, and the code outside the regions, exactly as they are.
 
 ## Establish the trust boundary
 

@@ -53,6 +53,51 @@ public static class CuratorTerminal
         }
     }
 
+    // Lists the approved fact sets, lets the educator pick one or type their own, and returns the
+    // bounded list the rest of the run uses.
+    public static string[] ChooseApprovedFacts()
+    {
+        Console.WriteLine("Approved fact sets:");
+        for (var index = 0; index < CuratorFacts.FactSets.Count; index++)
+        {
+            Console.WriteLine($"{index + 1}. {CuratorFacts.FactSets[index].Label}");
+        }
+
+        Console.WriteLine();
+
+        var input = AskLine($"Choose a fact set [1-{CuratorFacts.FactSets.Count}, default 1]: ");
+        var selected = int.TryParse(input, out var selection) &&
+                       selection >= 1 &&
+                       selection <= CuratorFacts.FactSets.Count
+            ? CuratorFacts.FactSets[selection - 1]
+            : CuratorFacts.FactSets[0];
+
+        var facts = CuratorFacts.BoundFacts(selected.Facts);
+        for (var index = 0; index < facts.Length; index++)
+        {
+            Console.WriteLine($"{index + 1}. {facts[index]}");
+        }
+
+        Console.WriteLine();
+
+        if (!AskYesNo("Use these facts?", defaultYes: true))
+        {
+            facts = CuratorFacts.BoundFacts(ReadFacts());
+        }
+
+        return facts;
+    }
+
+    // The one message the entrypoint prints when a run fails.
+    public static string DescribeFailure(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+
+        return exception is TimeoutException
+            ? "The curator did not respond in time. Try again."
+            : $"Could not generate the exhibit: {exception.Message}";
+    }
+
     public static void CloseTerminal()
     {
     }

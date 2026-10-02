@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+import os
 from pathlib import Path
 import re
 from typing import Any
@@ -26,6 +27,26 @@ EXHIBIT_FILE_NAME = "exhibit.html"
 APPROVED_FACT_LOOKUP_NAME = "approved_fact_lookup"
 APPROVED_WIKIPEDIA_FACT_LOOKUP_NAME = "approved_wikipedia_fact_lookup"
 WIKIPEDIA_TOOLS = ["wikipedia-search", "wikipedia-readArticle"]
+EXHIBIT_STRUCTURE = """Return exactly this structure:
+
+# <an engaging exhibit title>
+## Narrative
+<100-140 words, excluding the title and questions>
+## Visitor questions
+1. <question>
+2. <question>
+3. <question>
+
+Write exactly three distinct visitor reflection questions. Do not add a preface,
+conclusion, software discussion, or facts the configured lookup tools did not return."""
+HTML_REQUIREMENTS = """Requirements:
+- Use semantic HTML.
+- Use embedded CSS and embedded JavaScript only; no external assets or libraries.
+- Include the exhibit title, the narrative, and the three visitor questions.
+- Include a visible caveat that unsupported claims require human review.
+- Add an accessible text filter over the visitor questions that updates a visible count.
+- Treat exhibit text as data and escape text before inserting it into HTML.
+- Make keyboard focus visible."""
 
 apollo11_facts = (
     "Apollo 11 launched July 16, 1969.",
@@ -165,6 +186,58 @@ def bound_facts(facts: Iterable[str]) -> list[str]:
     if any(len(fact) > MAXIMUM_FACT_LENGTH for fact in bounded):
         raise ValueError("Each approved fact must be 500 characters or fewer.")
     return bounded
+
+
+def choose_approved_facts() -> list[str]:
+    print("Approved fact sets:")
+    for index, fact_set in enumerate(FACT_SETS, start=1):
+        print(f"{index}. {fact_set.label}")
+    print()
+
+    choice = ask_line("Choose a fact set [1-3, default 1]: ")
+    try:
+        selected_index = int(choice) - 1
+    except ValueError:
+        selected_index = 0
+    if selected_index not in range(len(FACT_SETS)):
+        selected_index = 0
+
+    facts = bound_facts(FACT_SETS[selected_index].facts)
+    for index, fact in enumerate(facts, start=1):
+        print(f"{index}. {fact}")
+    print()
+
+    if not ask_yes_no("Use these facts?", True):
+        facts = bound_facts(read_facts())
+    return facts
+
+
+def describe_failure(error: BaseException) -> str:
+    if isinstance(error, TimeoutError):
+        return "The curator did not respond in time. Try again."
+    return f"Could not generate the exhibit: {error}"
+
+
+def selected_model() -> str | None:
+    model = os.getenv("COPILOT_MODEL", "").strip()
+    return model or None
+
+
+def build_research_prompt(approved_facts: Iterable[str]) -> str:
+    facts = bound_facts(approved_facts)
+    fact_list = "\n".join(f"- {fact}" for fact in facts)
+    return f"""Research background for a museum exhibit using only the configured Wikipedia tools.
+
+Supplied approved facts:
+{fact_list}
+
+Search first with the scoped search tool, then read at most a few of the most relevant
+articles with readArticle. Write a short, cited factual summary that the application can
+supply to the curator through a local lookup. Associate researched claims with the
+consulted articles. Do not modify the approved facts or write exhibit copy.
+
+End with a ## Sources section listing each consulted article as:
+- <article title>: <canonical Wikipedia URL>"""
 
 
 # The application owns the approved facts. This tool is the only way the curator can read them.
@@ -387,6 +460,12 @@ def extract_sources(content: str) -> ExtractedSources:
             title, url = match.groups()
             sources.append(Source(title.strip(), url.strip()))
     return ExtractedSources(body, tuple(sources))
+
+
+def format_sources(research: ExtractedSources) -> str:
+    lines = ["Consulted Wikipedia sources:"]
+    lines.extend(f"- {source.title}: {source.url}" for source in research.sources)
+    return "\n".join(lines)
 
 
 def exhibit_write_permission(working_directory: str) -> Callable[[Any, Any], PermissionDecision]:
