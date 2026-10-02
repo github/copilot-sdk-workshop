@@ -29,10 +29,13 @@ The seven hands-on steps take about 90 minutes. Complete them in order, then cel
 you built and explore the resources in the final step.
 
 The starter already ships the plumbing you should never have to write: the approved fact sets and
-their bounds, a streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server
-with its deny-by-default permission handler, the single-file `exhibit.html` write permission, and
-small terminal prompts. **You never edit the helper module.** You write the session setup, the two
-system messages, the prompt builders, one session runner, and `main`.
+their bounds, the fact-selection menu, a streaming printer, deterministic exhibit validation, the
+scoped Wikipedia MCP server with its deny-by-default permission handler, the single-file
+`exhibit.html` write permission, the fixed prompt text for the exhibit structure, the research
+request, and the page requirements, and the error handling around your code. **You never edit the
+helper module.** You write the SDK code: the session setup, the two system messages, the tool
+registration and session configurations, the instructions in the exhibit and page prompts, and one
+session runner.
 
 You need an authenticated GitHub Copilot CLI, your language runtime, and a terminal. You work
 directly in the minimal project under `start-museum/<language>`, not the finished app. The completed
@@ -184,6 +187,28 @@ this folder, enter `code .` to open it in VS Code, or open the folder in your fa
 Your helper module is `src/main/java/workshop/Curator*.java`. You will write every lesson change
 in `src/main/java/workshop/MuseumExhibitStudio.java`.
 :::
+
+## How edits work
+
+Open the entrypoint named at the end of your setup block above. Every place you write code is a
+named **region** between two marker comments:
+
+```text
+>>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+<<< END generation-config
+```
+
+The `BEGIN` line lists every step that touches the region, so the file doubles as a map of the
+workshop. Each code block in a lesson is introduced by a line that names its region and one of two
+actions:
+
+| Action | The region is | What you do |
+|---|---|---|
+| **INSERT** | Empty | Paste the block between the two marker lines. |
+| **REPLACE** | Holding code from an earlier step | Delete everything between the two marker lines, then paste the block. |
+
+A block is always the complete contents of its region, so you never merge code by hand. Leave the
+marker lines, and the code outside the regions, exactly as they are.
 
 ## Establish the trust boundary
 

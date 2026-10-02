@@ -1,51 +1,90 @@
 package main
 
-import "fmt"
-
 // Museum Exhibit Studio — learner entrypoint.
+//
+// HOW TO EDIT THIS FILE
+//
+// Every place you write code is a named region between two marker lines:
+//
+//     >>> BEGIN <region> | Step 4: INSERT | Step 6: REPLACE
+//     <<< END <region>
+//
+// The BEGIN line lists every step that touches the region. Each lesson block names its region
+// and one of two actions:
+//
+//     INSERT   The region is empty. Paste the block between the two marker lines.
+//     REPLACE  The region already has code. Delete everything between the two marker lines,
+//              then paste the block.
+//
+// A block is always the complete contents of its region. Never edit, move, or delete a marker
+// line, and leave the code outside the regions as it is.
 //
 // The pre-built curator helpers live in curator.go. Do not edit that file: it is the
 // application-owned half of the workshop, and it must stay identical to the finished app's copy.
-// Everything below is yours to write, one lesson at a time.
-//
-// Step 1  First curator session .......... create the client with copilot.NewClient, create a
-//                                          session with OnPermissionRequest:
-//                                          copilot.PermissionHandler.ApproveAll so requests get an
-//                                          answer, send a prompt, print the reply, then
-//                                          disconnect and stop.
-// Step 2  Stream the curator ............. swap the blocking send for StreamExhibit so tokens and
-//                                          [tool:start] / [tool:done] events print live.
-// Step 3  Curator voice .................. add `const systemMessage = ...` here and pass it as
-//                                          SystemMessage with Mode "replace".
-// Step 4  Ground it in approved facts .... add buildExhibitPrompt(); register the pre-built tool
-//                                          with Tools: []copilot.Tool{lookup} from
-//                                          ApprovedFactLookup(facts) and AvailableTools:
-//                                          []string{ApprovedFactLookupName}; the prompt tells the
-//                                          curator to call approved_fact_lookup first.
-//                                          Add generationConfig() and runSession() with the
-//                                          generation timeout, blank-output rejection, and cleanup.
-// Step 5  Prove the structure ............ call FormatValidation(ValidateExhibit(exhibit)).
-// Step 6  Wikipedia research ............. add researchConfig() with WikipediaServer() plus
-//                                          WikipediaPermissionHandler(), run it through
-//                                          runSession, and print sources after the exhibit.
-//                                          Retain the body and citations, conditionally register
-//                                          approved_wikipedia_fact_lookup, and request both
-//                                          lookups before generation. Approved facts win.
-// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
-//                                          "builtin:create" allowlist and ExhibitWritePermission(...).
 
-// Your system message (Step 3) goes here.
+// >>> BEGIN imports | Steps 1, 4, 6: REPLACE
+import (
+	"fmt"
+	"os"
+)
 
-// Your prompt builders (Steps 4, 6, 7) go here.
+// <<< END imports
 
-// Your session configuration builders (Steps 4, 6, 7) go here.
+// >>> BEGIN curator-system-message | Step 3: INSERT | Step 6: REPLACE
+// <<< END curator-system-message
 
-// Your runSession() lifecycle function (Step 4) goes here.
+// >>> BEGIN research-system-message | Step 6: INSERT
+// <<< END research-system-message
 
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, DescribeFailure(err))
+		os.Exit(1)
+	}
+}
+
+func run() error {
+	// >>> BEGIN banner | Step 1: REPLACE
 	fmt.Println("=== Museum Exhibit Studio starter ===")
 	fmt.Println("Pre-built curator helpers are ready in curator.go.")
 	fmt.Println("Continue with museum step 1 to write your first curator session.")
-	// Your run flow (Steps 1-7) replaces the banner above. In Step 4 main() becomes a thin
-	// wrapper over a run() error { ... } function so failures exit with status 1.
+	// <<< END banner
+
+	// >>> BEGIN choose-facts | Step 4: INSERT
+	// <<< END choose-facts
+
+	// >>> BEGIN research | Step 6: INSERT
+	// <<< END research
+
+	// >>> BEGIN generate | Step 1: INSERT | Steps 2-6: REPLACE
+	// <<< END generate
+
+	// >>> BEGIN validate | Step 5: INSERT
+	// <<< END validate
+
+	// >>> BEGIN sources | Step 6: INSERT
+	// <<< END sources
+
+	// >>> BEGIN exhibit-page | Step 7: INSERT
+	// <<< END exhibit-page
+
+	return nil
 }
+
+// >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE
+// <<< END exhibit-prompt
+
+// >>> BEGIN html-prompt | Step 7: INSERT
+// <<< END html-prompt
+
+// >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+// <<< END generation-config
+
+// >>> BEGIN research-config | Step 6: INSERT
+// <<< END research-config
+
+// >>> BEGIN html-config | Step 7: INSERT
+// <<< END html-config
+
+// >>> BEGIN session-runner | Step 4: INSERT
+// <<< END session-runner

@@ -94,7 +94,8 @@ bash scripts/validate-workshop.sh
 ```
 
 The command checks lesson structure, internal links, site behavior hooks, project coverage,
-and the introductory track's exact 30-minute lesson budget.
+and the introductory track's exact 30-minute lesson budget. It also applies the museum lessons to
+each museum starter and checks that the result is the finished entrypoint.
 It then runs browser-independent language-selection, site-flow, and completion tests and restores, builds, or syntax-checks every
 intro, accessibility, and museum starter, every finished project, and the Blazor target without authenticating
 Copilot, launching a browser, or sending a prompt. The museum projects ship no tests, mocks, or
@@ -137,14 +138,33 @@ to the deeper workshops. Review the generated podcast copy against its source be
 
 Museum Exhibit Studio starters live under `start-museum/<language>`, with completed references under
 `finished/<language>/museum-exhibit-studio`. Each starter ships one pre-built curator helper module
-that learners never edit: approved fact sets and their bounds, a streaming printer, deterministic
-exhibit validation, the scoped Wikipedia MCP server with its deny-by-default permission handler, the
-single-file `exhibit.html` write permission, and small terminal prompts.
+that learners never edit: approved fact sets, their bounds, and the fact-selection menu, a
+streaming printer, deterministic exhibit validation, the scoped Wikipedia MCP server with its
+deny-by-default permission handler, the single-file `exhibit.html` write permission, the fixed
+prompt text (exhibit structure, research request, page requirements), and the failure message the
+entrypoint prints.
 
 Learners work directly in `start-museum/<language>` and grow that one project across the
-lessons, running it at every step. They write only the session setup, the curator and research
-system messages, the prompt builders, one session runner that owns the lifecycle and timeout, and
-`main`. The finished sample is what a learner ends up with, not a separate reference architecture.
+lessons, running it at every step. They write the SDK code: the session setup, the curator and
+research system messages, tool registration and the three session configurations, the
+instructions in the exhibit and page prompts, and one session runner that owns the lifecycle and
+timeout. The finished sample is what a learner ends up with, not a separate reference architecture.
+
+Every place a learner writes code is a named region in the starter entrypoint, delimited by two
+marker comments whose `BEGIN` line lists the steps that touch it:
+
+```text
+>>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+<<< END generation-config
+```
+
+Each lesson code block is introduced by a line such as
+``**REPLACE** region `generation-config` in `Program.cs`:`` and holds the complete contents of that
+region. INSERT fills an empty region; REPLACE overwrites what an earlier step put there. Marker
+lines never move, and no lesson replaces the whole file. Content validation applies every lesson
+block to the starter and requires the result to equal the finished entrypoint, so a lesson cannot
+drift from the finished app. When you change museum lesson code, change the finished entrypoint to
+match, and the reverse.
 
 The learner-facing track begins at
 [`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through seven
