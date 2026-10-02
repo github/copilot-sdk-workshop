@@ -58,7 +58,7 @@ INTRO_RUN_COMMANDS = {
     "nodejs": ("npm start",),
     "python": (r".\.venv\Scripts\python.exe main.py", ".venv/bin/python main.py"),
     "go": ("go run .",),
-    "java": ("mvn compile exec:java",),
+    "java": ("./mvnw compile exec:java",),
     "rust": ("cargo run --locked",),
 }
 SDLC_LESSONS = (

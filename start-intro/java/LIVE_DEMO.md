@@ -7,7 +7,7 @@
 
 ```powershell
 cd start-intro/java
-mvn compile
+./mvnw compile
 ```
 
 ## Demo Pitch
@@ -113,7 +113,7 @@ Say: "That is the basic shape: start a client, create a session, listen for even
 Run this Hello World checkpoint now from the `java` folder:
 
 ```powershell
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 Expected output: a streamed one-sentence answer. `sendAndWait` waits for
@@ -189,7 +189,7 @@ Say: "The agent decides to call the episode tool, I approve the read-only lookup
 Run the completed Podcast Agent now from the `java` folder:
 
 ```powershell
-mvn compile exec:java
+./mvnw compile exec:java
 ```
 
 Expected milestones: model selection, ten-episode selection, tool execution, approval prompt, then grounded launch copy.
