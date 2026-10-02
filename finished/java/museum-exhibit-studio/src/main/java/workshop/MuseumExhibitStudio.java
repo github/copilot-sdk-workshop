@@ -53,9 +53,9 @@ public final class MuseumExhibitStudio {
         } finally {
             try {
                 CuratorTerminal.close();
-            } catch (Exception exception) {
-                exitCode = 1;
-                System.err.println(CuratorTerminal.describeFailure(exception));
+            } catch (Exception ignored) {
+                // A failure to close standard input cannot change the outcome of the run, and the
+                // run has already reported its own failure if it had one.
             }
         }
         if (exitCode != 0) {

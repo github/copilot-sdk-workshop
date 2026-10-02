@@ -78,8 +78,8 @@ accuracy. Human review remains necessary.
 ## Update the curator policy
 
 The curator may now be handed a second tool, so its system message has to say how the two sources
-rank. The system messages helper file already holds that version of the message. Its factual-source
-paragraph reads:
+rank. Until now the source rule lived only in your exhibit prompt. The system messages helper file
+holds a second curator message that adds it as standing policy:
 
 ```text
 Use only facts supplied by this application. Call approved_fact_lookup first;

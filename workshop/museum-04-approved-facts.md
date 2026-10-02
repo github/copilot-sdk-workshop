@@ -52,10 +52,11 @@ workshop:
 You need both. Naming only `approved_fact_lookup` also excludes every other tool: this session
 offers no file reader, shell, or browser.
 
-The prompt is the third piece, and it is the weakest one: it *asks* the model to call the tool. It
-does not make the call happen, and it cannot stop a call. Keep the explicit "call
-`approved_fact_lookup` first" instruction — at this stage you want the tool call to be reliable so
-you can see it.
+The prompt is the third piece, and it is the weakest one: it *asks* the model to call the tool and
+to use only what the tool returns. The Step 3 system message says nothing about sources, so this
+prompt is the first place the curator is told where its facts come from. A prompt does not make the
+call happen, and it cannot stop a call. Keep the explicit "call `approved_fact_lookup` first"
+instruction — at this stage you want the tool call to be reliable so you can see it.
 
 **Keep the run bounded:** pass the helper's existing **120-second generation timeout** explicitly
 to the session runner. The runner returns the exhibit text for later validation, rejects blank

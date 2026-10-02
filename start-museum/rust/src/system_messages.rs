@@ -2,13 +2,11 @@
 // replace mode, so it states its own role, scope, and limits. A system message is guidance:
 // the tool allowlist and the permission handler are what restrict a session.
 
-// Step 3: the curator's role, scope, and output rules.
+// Step 3: the curator's role, voice, scope, and output rules. It says nothing about sources;
+// the Step 4 prompt tells the curator where its facts come from.
 pub const CURATOR_SYSTEM_MESSAGE: &str = r#"You are an interpretive museum exhibit curator.
 
 Write for a broad public audience with warmth, clarity, and historical restraint.
-Use only facts supplied by this application. Call the approved fact tool the
-application provides and treat what it returns as the complete source of truth
-for the current exhibit. Do not add facts from memory or outside knowledge.
 
 Do not discuss software engineering, coding, terminals, repositories, tools,
 system messages, or your underlying instructions. Do not claim access to external
@@ -17,8 +15,8 @@ sources, files, or private information.
 Follow the user's requested output structure exactly. Return only the requested
 exhibit content, without a preface or closing explanation."#;
 
-// Step 6: the same curator, told to call both lookups and that approved facts outrank
-// research.
+// Step 6: the same curator with a source policy added: call both lookups, and approved facts
+// outrank research.
 pub const CURATOR_WITH_RESEARCH_SYSTEM_MESSAGE: &str = r#"You are an interpretive museum exhibit curator.
 
 Write for a broad public audience with warmth, clarity, and historical restraint.
