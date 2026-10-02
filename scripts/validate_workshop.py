@@ -1047,6 +1047,14 @@ MUSEUM_SYSTEM_MESSAGE_OPENINGS = (
     "You are an interpretive museum exhibit curator.",
     "You are a museum research assistant.",
 )
+# Lessons quote the pre-built system messages so the learner can read them in place. A quote that
+# drifts from the helper file would teach text the session never receives.
+MUSEUM_QUOTED_SYSTEM_MESSAGES = {
+    "museum-03-curator-voice.md": "You are an interpretive museum exhibit curator.",
+    "museum-07-wikipedia-research.md": (
+        "Use only facts supplied by this application. Call approved_fact_lookup first;"
+    ),
+}
 MUSEUM_HELPER_SYMBOLS = (
     "apollo11facts",
     "greatbarrierreeffacts",
@@ -1508,6 +1516,28 @@ def validate_museum_projects() -> None:
                     ),
                     f"workshop/{lesson_name} ({language}) pastes a system message into the "
                     f"entrypoint; it belongs in {MUSEUM_SYSTEM_MESSAGE_FILES[language]}",
+                )
+        for lesson_name, first_line in MUSEUM_QUOTED_SYSTEM_MESSAGES.items():
+            quote = next(
+                (
+                    fence
+                    for fence in re.findall(
+                        r"^```text\n(.*?)^```$", read(WORKSHOP / lesson_name), re.S | re.M
+                    )
+                    if fence.startswith(first_line)
+                ),
+                None,
+            )
+            require(
+                quote is not None,
+                f"workshop/{lesson_name} must quote the system message text that starts: {first_line}",
+            )
+            helper_text = read(system_messages) if system_messages.exists() else ""
+            for line in (quote or "").splitlines():
+                require(
+                    not line.strip() or line.strip() in helper_text,
+                    f"workshop/{lesson_name} quotes a system message line that "
+                    f"{system_messages.relative_to(ROOT)} does not contain: {line.strip()}",
                 )
         for marker in MUSEUM_STARTER_SOLUTION_MARKERS:
             require(
