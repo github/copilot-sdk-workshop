@@ -22,9 +22,11 @@ Start with SDK 101 if you are new to the SDK. Across the introductory and deeper
 4. Enforce capability, input, timeout, validation, and lifecycle boundaries in application code.
 5. Explain what the model can infer and what the application must prove.
 
-SDK 101 has exactly 30 minutes of guided lessons. Plan on about 90 minutes for Accessibility
-Reviewer or 75 minutes for Museum Exhibit Studio. Machine setup, authentication, and dependency
+SDK 101 has exactly 30 minutes of guided lessons.
+Plan on about 115 minutes for Accessibility Reviewer or 90 minutes for Museum Exhibit Studio.
+Machine setup, authentication, and dependency
 downloads happen separately in an untimed preflight for each workshop.
+The two deeper workshops include their interactive HTML lessons and end with a celebration and resources.
 
 ## Start the workshop
 
@@ -67,7 +69,7 @@ output, and troubleshooting.
 ```text
 copilot-sdk-workshop/
 |-- docs/                         GitHub Pages site and controlled target page
-|-- workshop/                     SDK 101 and two deeper tracks with optional extensions
+|-- workshop/                     SDK 101, two deeper tracks, and completion resources
 |-- start-intro/                  SDK 101 starters and podcast helpers in all six languages
 |-- start-accessibility/          Accessibility Reviewer starters in all six languages
 |-- start-museum/                 Museum Exhibit Studio starters in all six languages
@@ -93,7 +95,7 @@ bash scripts/validate-workshop.sh
 
 The command checks lesson structure, internal links, site behavior hooks, project coverage,
 and the introductory track's exact 30-minute lesson budget.
-It then runs browser-independent language-selection tests and restores, builds, or syntax-checks every
+It then runs browser-independent language-selection, site-flow, and completion tests and restores, builds, or syntax-checks every
 intro, accessibility, and museum starter, every finished project, and the Blazor target without authenticating
 Copilot, launching a browser, or sending a prompt. The museum projects ship no tests, mocks, or
 fixtures, so their targets only restore and build.
@@ -145,9 +147,10 @@ system messages, the prompt builders, one session runner that owns the lifecycle
 `main`. The finished sample is what a learner ends up with, not a separate reference architecture.
 
 The learner-facing track begins at
-[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through six core
+[`workshop/museum-00-preflight.md`](workshop/museum-00-preflight.md), then runs through seven
 steps — first session, streaming, curator voice, approved facts, structural checks, and
-Wikipedia MCP research — plus an optional interactive `exhibit.html` capstone.
+Wikipedia MCP research, followed by an interactive `exhibit.html` capstone — and finishes with
+[celebration and resources](workshop/museum-09-complete.md).
 
 When usable cited research exists, the curator calls `approved_fact_lookup` and the read-only
 `approved_wikipedia_fact_lookup` before writing the narrative and visitor questions. The second

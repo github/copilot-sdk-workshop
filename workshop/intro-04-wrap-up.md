@@ -71,9 +71,9 @@ Review the [hello-world](intro-02-hello-world.md) and
 Use **Hub** above to return to the workshop picker; it keeps your language
 selection. Choose:
 
-- **Accessibility Reviewer (90 minutes):** inspect a page, combine local
+- **Accessibility Reviewer (115 minutes):** inspect a page, combine local
   guidance with Playwright MCP, and produce an evidence-based report.
-- **Museum Exhibit Studio (75 minutes):** build a curator persona, use approved
+- **Museum Exhibit Studio (90 minutes):** build a curator persona, use approved
   facts, check structure, and add scoped Wikipedia research.
 
 Each longer workshop has its own preflight and starter. They are next steps,

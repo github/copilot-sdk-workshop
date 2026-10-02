@@ -1,4 +1,5 @@
 import { defineTool } from "@github/copilot-sdk";
+import { Parser } from "htmlparser2";
 import { z } from "zod";
 
 const feedUrl = "https://feeds.simplecast.com/ioCY0vfY";
@@ -75,7 +76,7 @@ function toEpisodeBrief(item: string): EpisodeBrief {
     title: value(item, "title"),
     published: value(item, "pubDate"),
     duration: valueByLocalName(item, "duration") || "Unknown",
-    description: stripHtml(value(item, "description")),
+    description: htmlToPlainText(value(item, "description")),
     episodeUrl: value(item, "link"),
     sourceFeedUrl: feedUrl,
   };
@@ -102,17 +103,38 @@ function valueByLocalName(item: string, localName: string): string {
   return decodeXml(match?.[1]?.trim() ?? "");
 }
 
-function stripHtml(value: string): string {
-  return decodeXml(value.replace(/<[^>]+>/g, "")).trim();
+function htmlToPlainText(value: string): string {
+  const text: string[] = [];
+  let ignoredDepth = 0;
+  const parser = new Parser({
+    onopentag(name) {
+      if (ignoredDepth > 0 || name === "script" || name === "style") {
+        ignoredDepth++;
+      }
+    },
+    onclosetag() {
+      if (ignoredDepth > 0) {
+        ignoredDepth--;
+      }
+    },
+    ontext(value) {
+      if (ignoredDepth === 0) {
+        text.push(value);
+      }
+    },
+  }, { decodeEntities: true });
+  parser.end(value);
+  return text.join("").trim();
 }
 
 function decodeXml(value: string): string {
-  return value
-    .replaceAll("<![CDATA[", "")
-    .replaceAll("]]>", "")
-    .replaceAll("&amp;", "&")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'");
+  // XML decoding preserves CDATA; description HTML is parsed in its own context.
+  const text: string[] = [];
+  const parser = new Parser({
+    ontext(value) {
+      text.push(value);
+    },
+  }, { xmlMode: true, decodeEntities: true });
+  parser.end(value);
+  return text.join("");
 }

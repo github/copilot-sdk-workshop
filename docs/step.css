@@ -788,6 +788,63 @@ button {
     }
 }
 
+.workshop-complete h1 {
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+}
+
+.workshop-complete > p:first-of-type {
+    max-width: 65ch;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+}
+
+.completion-confetti {
+    position: fixed;
+    z-index: 110;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.completion-confetti span {
+    position: absolute;
+    top: -1rem;
+    width: 0.45rem;
+    height: 0.8rem;
+    background: var(--accent);
+    animation: completion-confetti-fall 2800ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay) both;
+}
+
+.completion-confetti span:nth-child(3n) {
+    background: var(--violet);
+}
+
+.completion-confetti span:nth-child(3n + 1) {
+    background: var(--success-green);
+}
+
+@keyframes completion-confetti-fall {
+    from {
+        transform: translate3d(0, 0, 0) rotate(0);
+        opacity: 1;
+    }
+    to {
+        transform: translate3d(var(--drift), calc(100vh + 2rem), 0) rotate(var(--turn));
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .completion-confetti {
+        display: none;
+    }
+
+    .completion-confetti span {
+        animation: none;
+    }
+}
+
 /* Upstream workshop shell with the rebuilt curriculum behavior. */
 .header {
     position: sticky;

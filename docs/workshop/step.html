@@ -17,6 +17,7 @@
     <script src="../language-registry.js"></script>
     <script src="../language-navigation.js"></script>
     <script src="../markdown-language-preprocessor.js"></script>
+    <script src="../workshop-completion.js"></script>
 </head>
 <body>
     <a class="skip-link" href="#lessonContent">Skip to lesson</a>
@@ -66,9 +67,9 @@
             class="progress-track"
             id="progressTrack"
             role="progressbar"
-            aria-label="Core workshop progress"
+            aria-label="Workshop progress"
             aria-valuemin="0"
-            aria-valuemax="7"
+            aria-valuemax="10"
             aria-valuenow="0">
             <span id="progressFill"></span>
         </div>
@@ -232,7 +233,8 @@
                 file: 'workshop/08-model-selection.md',
                 title: 'Select a model',
                 navTitle: 'Model selection',
-                kind: 'optional',
+                kind: 'core',
+                number: 8,
                 time: '10 min'
             },
             {
@@ -240,8 +242,18 @@
                 file: 'workshop/09-interactive-html-report.md',
                 title: 'Generate an interactive HTML report',
                 navTitle: 'Interactive report',
-                kind: 'optional',
+                kind: 'core',
+                number: 9,
                 time: '15 min'
+            },
+            {
+                id: '10-complete',
+                file: 'workshop/10-complete.md',
+                title: 'You did it!',
+                navTitle: 'Celebrate and keep building',
+                kind: 'completion',
+                number: 10,
+                time: 'Resources'
             }
         ];
 
@@ -313,9 +325,18 @@
                 file: 'workshop/museum-08-interactive-exhibit-page.md',
                 title: 'Publish an interactive exhibit page',
                 navTitle: 'Exhibit page',
-                kind: 'optional',
+                kind: 'core',
                 number: 7,
                 time: '15 min'
+            },
+            {
+                id: 'museum-09-complete',
+                file: 'workshop/museum-09-complete.md',
+                title: 'You did it!',
+                navTitle: 'Celebrate and keep building',
+                kind: 'completion',
+                number: 8,
+                time: 'Resources'
             }
         ];
 
@@ -364,8 +385,9 @@
         const languageSelector = document.getElementById('languageSelector');
         const storageKey = 'copilot-sdk-workshop.language';
         let currentIndex = 0;
-        let lessonRequestId = 0;
         let focusBeforeNavigation;
+        let loadSequence = 0;
+        const celebration = WorkshopCompletion.createCelebration(window, document);
 
         function getPathSegments() {
             return window.location.pathname.split('/').filter(Boolean);
@@ -500,8 +522,7 @@
         function buildNavigation() {
             const groups = [
                 { label: 'Before you begin', steps: steps.filter(step => step.kind === 'preflight') },
-                { label: 'Core workshop', steps: steps.filter(step => step.kind === 'core') },
-                { label: 'Optional extension', steps: steps.filter(step => step.kind === 'optional') }
+                { label: 'Workshop', steps: steps.filter(step => step.kind !== 'preflight') }
             ];
 
             document.getElementById('workshopNavigation').innerHTML = groups.filter(group => group.steps.length > 0).map(group => `
@@ -510,7 +531,7 @@
                     ${group.steps.map(step => {
                         const index = steps.findIndex(candidate => candidate.id === step.id);
                         const active = index === currentIndex;
-                        const marker = step.kind === 'core' ? step.number : step.kind === 'optional' ? '+' : 'P';
+                        const marker = step.kind === 'preflight' ? 'P' : step.number;
                         return `
                             <a
                                 href="${stepUrl(step)}"
@@ -553,7 +574,7 @@
                     : '<span class="nav-footer-btn disabled" aria-disabled="true">← Previous</span>'}
                 ${next
                     ? `<a href="${stepUrl(next)}" class="nav-footer-btn">${next.navTitle} →</a>`
-                    : '<span class="nav-footer-btn disabled" aria-disabled="true">Next →</span>'}`;
+                    : `<a href="${homeUrl(getSelectedLanguage())}" class="nav-footer-btn">Back to workshop hub →</a>`}`;
         }
 
         function updateProgress(step) {
@@ -561,23 +582,20 @@
             const estimate = document.getElementById('stepEstimate');
             const track = document.getElementById('progressTrack');
             const fill = document.getElementById('progressFill');
-            const coreStepCount = steps.filter(candidate => candidate.kind === 'core').length;
+            const stepCount = steps.filter(candidate => candidate.kind !== 'preflight').length;
             let progressValue = 0;
 
-            if (step.kind === 'core') {
-                position.textContent = `Step ${step.number} of ${coreStepCount}`;
+            if (step.kind !== 'preflight') {
+                position.textContent = `Step ${step.number} of ${stepCount}`;
                 progressValue = step.number;
-            } else if (step.kind === 'optional') {
-                position.textContent = 'Optional extension';
-                progressValue = coreStepCount;
             } else {
                 position.textContent = 'Preflight';
             }
 
             estimate.textContent = step.time;
-            track.setAttribute('aria-valuemax', String(coreStepCount));
+            track.setAttribute('aria-valuemax', String(stepCount));
             track.setAttribute('aria-valuenow', String(progressValue));
-            fill.style.transform = `scaleX(${progressValue / coreStepCount})`;
+            fill.style.transform = `scaleX(${progressValue / stepCount})`;
         }
 
         function processMarkdown(markdown) {
@@ -733,7 +751,8 @@
         }
 
         async function loadStep() {
-            const requestId = ++lessonRequestId;
+            const requestId = ++loadSequence;
+            celebration.clear();
             const language = getSelectedLanguage();
             const stepId = getRequestedStepId();
             currentIndex = steps.findIndex(step => step.id === stepId);
@@ -776,6 +795,9 @@
                     fetch(getMarkdownUrl(step.file)),
                     step.demoAct ? fetch(getMarkdownUrl(demoFile)) : Promise.resolve(null)
                 ]);
+                if (requestId !== loadSequence) {
+                    return;
+                }
                 if (!response.ok) {
                     throw new Error(`Lesson request failed with HTTP ${response.status}.`);
                 }
@@ -787,18 +809,25 @@
                     response.text(),
                     demoResponse ? demoResponse.text() : Promise.resolve(null)
                 ]);
-                if (requestId !== lessonRequestId) return;
+                if (requestId !== loadSequence) {
+                    return;
+                }
                 const combined = step.demoAct
                     ? WorkshopMarkdown.includeLiveDemoAct(source, demoSource, step.demoAct)
                     : source;
                 const markdown = processMarkdown(combined);
                 container.innerHTML =
-                    `<article class="markdown">${marked.parse(markdown, { gfm: true })}</article>`;
+                    `<article class="markdown${step.kind === 'completion' ? ' workshop-complete' : ''}">${marked.parse(markdown, { gfm: true })}</article>`;
                 prepareRenderedLesson();
                 container.setAttribute('aria-busy', 'false');
-                status.textContent = `Loaded ${step.title}.`;
+                status.textContent = step.kind === 'completion'
+                    ? `${activeWorkshop.title} complete. You did it! Resources are ready below.`
+                    : `Loaded ${step.title}.`;
+                celebration.show(step);
             } catch (error) {
-                if (requestId === lessonRequestId) showLoadError(error);
+                if (requestId === loadSequence) {
+                    showLoadError(error);
+                }
             }
         }
 

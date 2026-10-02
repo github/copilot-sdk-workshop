@@ -1,7 +1,7 @@
-# Optional: Select a model
+# Step 8: Select a model
 
 > **Time:** 10 minutes  
-> **Prerequisite:** Complete the seven core steps first.
+> **Prerequisite:** Complete Step 7: Run and explain the application.
 
 ## What you'll customize
 
@@ -652,7 +652,7 @@ cargo run -- "{{TARGET_APP_URL}}"
 Enter the workshop target URL, then choose a model, and confirm the same scoped tools still run.
 
 <details>
-<summary>Troubleshooting this extension</summary>
+<summary>Troubleshooting this step</summary>
 
 | Symptom | Fix |
 |---|---|
@@ -663,7 +663,7 @@ Enter the workshop target URL, then choose a model, and confirm the same scoped 
 
 </details>
 
-> **The extension is complete when:** the selected model is named and the report still uses both
+> **This step is complete when:** the selected model is named and the report still uses both
 > scoped tool types.
 
 ## Check your understanding
@@ -687,5 +687,4 @@ you to a useful Copilot response sooner and keeps the first lesson focused on cl
 - [Azure managed identity](https://github.com/github/copilot-sdk/blob/main/docs/setup/azure-managed-identity.md):
   reaching Microsoft Foundry models without storing a key in the application.
 
-Continue to [Optional: Generate an interactive HTML report](09-interactive-html-report.md), or return
-to [Step 7: Run and explain the application](07-run-explain.md).
+Continue to [Step 9: Generate an interactive HTML report](09-interactive-html-report.md).

@@ -48,4 +48,6 @@ completion waits, close SDK resources, restrict hello world to an empty tool
 allowlist, and supply the missing Java/Rust streaming subscriptions. Go keeps
 one subscription instead of printing each text fragment twice. Node.js lets
 the bounded send propagate session errors instead of throwing from a callback.
+Its RSS helper uses parser-based XML decoding and HTML-to-plain-text extraction,
+with regression tests for CDATA, entity decoding, and script/style exclusion.
 The upstream repository is attribution, not a setup requirement.

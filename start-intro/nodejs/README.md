@@ -22,6 +22,8 @@ Continue with Act Two in the same guide for the podcast agent. Reuse
 `src/permission-prompt.ts` without editing them.
 
 Run `npm run build` to type-check without sending a Copilot prompt.
+Run `npm test` for RSS parsing regressions using mocked feed responses, without
+Copilot authentication or network requests.
 See [preflight](../../workshop/intro-00-preflight.md) for access checks and
 troubleshooting, and the [official Node.js SDK API](https://github.com/github/copilot-sdk/tree/main/nodejs)
 for reference.

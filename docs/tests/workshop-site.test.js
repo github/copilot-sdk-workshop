@@ -7,12 +7,13 @@ const vm = require('node:vm');
 const WorkshopLanguages = require('../language-registry.js');
 const WorkshopLanguageNavigation = require('../language-navigation.js');
 const WorkshopMarkdown = require('../markdown-language-preprocessor.js');
+const WorkshopCompletion = require('../workshop-completion.js');
 
 const docs = path.resolve(__dirname, '..');
 const homeHtml = fs.readFileSync(path.join(docs, 'index.html'), 'utf8');
 const lessonHtml = fs.readFileSync(path.join(docs, 'workshop', 'step.html'), 'utf8');
 const homeScript = fs.readFileSync(path.join(docs, 'homepage.js'), 'utf8');
-const lessonScript = [...lessonHtml.matchAll(/<script>([\s\S]*?)<\/script>/g)][0][1];
+const lessonScript = lessonHtml.match(/<script>([\s\S]*?)<\/script>/i)[1];
 
 class Element {
     constructor() {
@@ -95,14 +96,20 @@ function createPage(html, address, storedLanguage, blockedStorage = false, optio
             }
         },
         history: { replaceState: (_state, _title, url) => { window.location = new URL(url); } },
-        matchMedia: () => ({ matches: false, addEventListener: () => {} }),
+        matchMedia: () => ({
+            matches: false,
+            addEventListener: () => {},
+            removeEventListener: () => {}
+        }),
+        setTimeout,
+        clearTimeout,
         addEventListener: () => {}
     };
     const requests = [];
     const pendingGuides = new Map();
     const context = vm.createContext({
         window, document, URL, URLSearchParams, HTMLElement: Element, console,
-        WorkshopLanguages, WorkshopLanguageNavigation, WorkshopMarkdown,
+        WorkshopLanguages, WorkshopLanguageNavigation, WorkshopMarkdown, WorkshopCompletion,
         hljs: { highlightElement: () => {} },
         marked: { parse: markdown => markdown },
         fetch: async url => {
@@ -221,10 +228,10 @@ async function main() {
     }
 
     for (const [step, track, count] of [
-        ['00-preflight', 'sdlc', 7],
-        ['museum-00-preflight', 'museum', 6],
+        ['00-preflight', 'sdlc', 10],
+        ['museum-00-preflight', 'museum', 8],
         ['intro-04-wrap-up', 'intro', 4],
-        ['museum-01-curator-role', 'museum', 6],
+        ['museum-01-curator-role', 'museum', 8],
         ['intro-unknown', 'intro', 4]
     ]) {
         const page = createPage(lessonHtml,
