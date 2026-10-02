@@ -4,10 +4,11 @@
 
 ## What you'll build
 
-The same prompt, the same streaming call — but the answer now sounds like a museum instead of a
-chatbot. You give the session one
+The same streaming call and the same subject — but the answer now sounds like a museum instead of
+a chatbot. You give the session one
 [system message](https://github.com/github/copilot-sdk/blob/main/docs/getting-started.md#customize-the-system-message)
-and switch it into replace mode.
+and switch it into replace mode. You also ask for five sentences instead of two, so there is enough
+text to hear the difference.
 
 This is the first piece of **application-owned policy**. The prompt is task data that changes every
 run. The system message is a durable statement of who this agent is, what it may talk about, and
@@ -98,13 +99,14 @@ The message above is already written for you as `CuratorSystemMessages.Curator` 
 
     await CuratorStreamer.StreamExhibitAsync(
         session,
-        "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
+        "Write five sentences of museum wall text about the Apollo 11 Moon landing.");
 
     await client.StopAsync();
 ```
 
-One change in `generate`: the session config gains a `SystemMessage` in replace mode, with the
-pre-built message as its content. Everything else in the region is what Step 2 left there.
+Two changes in `generate`. The session config gains a `SystemMessage` in replace mode, with the
+pre-built message as its content. The prompt asks for five sentences instead of two, so there is
+enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `Helpers/CuratorSystemMessages.cs` holds every system message this application
 uses, so the long text stays out of `Program.cs`. `Curator` is the one you just passed to the
@@ -144,15 +146,16 @@ One new line: the import from `./system-messages.js`.
 
     await streamExhibit(
       session,
-      "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+      "Write five sentences of museum wall text about the Apollo 11 Moon landing.",
     );
 
     await session.disconnect();
     await client.stop();
 ```
 
-One change in `generate`: the session config gains a `systemMessage` in replace mode, with the
-pre-built message as its content. Everything else in the region is what Step 2 left there.
+Two changes in `generate`. The session config gains a `systemMessage` in replace mode, with the
+pre-built message as its content. The prompt asks for five sentences instead of two, so there is
+enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `src/system-messages.ts` holds every system message this application uses, so the
 long text stays out of `src/index.ts`. `curatorSystemMessage` is the one you just passed to the
@@ -194,12 +197,13 @@ One new line: the import from `system_messages`.
             ) as session:
                 await stream_exhibit(
                     session,
-                    "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+                    "Write five sentences of museum wall text about the Apollo 11 Moon landing.",
                 )
 ```
 
-One change in `generate`: the session config gains a `system_message` in replace mode, with the
-pre-built message as its content. Everything else in the region is what Step 2 left there.
+Two changes in `generate`. The session config gains a `system_message` in replace mode, with the
+pre-built message as its content. The prompt asks for five sentences instead of two, so there is
+enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `system_messages.py` holds every system message this application uses, so the
 long text stays out of `main.py`. `CURATOR_SYSTEM_MESSAGE` is the one you just passed to the
@@ -240,15 +244,16 @@ which is in the same `main` package.
 
 	if _, err := StreamExhibit(
 		session,
-		"Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+		"Write five sentences of museum wall text about the Apollo 11 Moon landing.",
 		GenerationTimeout,
 	); err != nil {
 		return err
 	}
 ```
 
-One change in `generate`: the session config gains a `SystemMessage` in replace mode, with the
-pre-built message as its content. Everything else in the region is what Step 2 left there.
+Two changes in `generate`. The session config gains a `SystemMessage` in replace mode, with the
+pre-built message as its content. The prompt asks for five sentences instead of two, so there is
+enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `system_messages.go` holds every system message this application uses, so the
 long text stays out of `main.go`. `CuratorSystemMessage` is the one you just passed to the session.
@@ -290,7 +295,7 @@ use museum_exhibit_studio::{
 
     stream_exhibit(
         &session,
-        "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+        "Write five sentences of museum wall text about the Apollo 11 Moon landing.",
         GENERATION_TIMEOUT,
     )
     .await?;
@@ -300,8 +305,9 @@ use museum_exhibit_studio::{
 ```
 
 Two new names in `imports`: `SystemMessageConfig` from the SDK and `CURATOR_SYSTEM_MESSAGE` from
-the crate. One change in `generate`: the session config gains a `system_message` in replace mode,
-with the pre-built message as its content. Everything else in the region is what Step 2 left there.
+the crate. Two changes in `generate`. The session config gains a `system_message` in replace mode,
+with the pre-built message as its content. The prompt asks for five sentences instead of two, so
+there is enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `src/system_messages.rs` holds every system message this application uses, so the
 long text stays out of `src/main.rs`. `CURATOR_SYSTEM_MESSAGE` is the one you just passed to the
@@ -342,7 +348,7 @@ import com.github.copilot.rpc.SystemMessageConfig;
                                 .setContent(CuratorSystemMessages.CURATOR))).get();
 
                 CuratorStreamer.streamExhibit(session,
-                        "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
+                        "Write five sentences of museum wall text about the Apollo 11 Moon landing.");
             } finally {
                 if (session != null) {
                     session.close();
@@ -352,7 +358,7 @@ import com.github.copilot.rpc.SystemMessageConfig;
         }
 ```
 
-Two new imports: `SystemMessageMode` and `SystemMessageConfig`. One change in `generate`: the session config gains a system message in `replace` mode, with the pre-built message as its content. Everything else in the region is what Step 2 left there.
+Two new imports: `SystemMessageMode` and `SystemMessageConfig`. Two changes in `generate`. The session config gains a system message in `replace` mode, with the pre-built message as its content. The prompt asks for five sentences instead of two, so there is enough text to hear the voice. Everything else in the region is what Step 2 left there.
 
 **Look inside:** `CuratorSystemMessages.java` holds every system message this application uses, so the long text stays out of your entrypoint. `CURATOR` is the one you just passed to the session. `CURATOR_WITH_RESEARCH` and `RESEARCH` are there for Step 6. The two-argument `CuratorStreamer.streamExhibit` you are calling applies `GENERATION_TIMEOUT`, the 120-second constant declared in `CuratorStreamer.java` alongside the 90-second `RESEARCH_TIMEOUT` that Step 6 uses.
 :::
@@ -395,10 +401,13 @@ The tone changes visibly. Compare a Step 2 answer with a Step 3 answer:
 ```text
 Before: Apollo 11 was NASA's first crewed Moon landing mission. Here's a quick overview...
 After:  Fifty years on, the ladder still hangs a metre above the dust. On 20 July 1969, two
-        travellers stepped down from it and the Earth held its breath.
+        travellers stepped down from it and the Earth held its breath. A third kept watch from
+        lunar orbit. They stayed on the surface for less than a day. What they carried home was
+        small: rock, film, and a new sense of how far people could go.
 ```
 
-The preface disappears, the register lifts, and the answer stops offering to help further.
+The answer is longer because you asked for five sentences. The change to notice is the voice: the
+preface disappears, the register lifts, and the answer stops offering to help further.
 
 ## Change the prompt
 
@@ -415,7 +424,7 @@ coding, terminals, or repositories, and in replace mode there is no coding perso
 
 Nothing in the runtime enforced that refusal. The model followed guidance, and guidance shapes
 behavior without authorizing or forbidding anything. Keep that distinction in mind for Step 4, then
-set the prompt back to the Apollo 11 text.
+set the prompt back to the five-sentence Apollo 11 text.
 
 ## Check your understanding
 
