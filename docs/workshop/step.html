@@ -489,6 +489,14 @@
             return WorkshopLocales.queryId(getSelectedLocale().id);
         }
 
+        function getLessonUi() {
+            return getSelectedLocale().ui.lesson;
+        }
+
+        function getStepNavTitle(step) {
+            return getLessonUi().stepLabels[step.id] ?? step.navTitle;
+        }
+
         function homeUrl(language) {
             return WorkshopLanguageNavigation.homeUrl(
                 language?.id, activeWorkshopId, selectedLocaleQueryId());
@@ -586,9 +594,10 @@
         }
 
         function buildNavigation() {
+            const lessonUi = getLessonUi();
             const groups = [
-                { label: 'Before you begin', steps: steps.filter(step => step.kind === 'preflight') },
-                { label: 'Workshop', steps: steps.filter(step => step.kind !== 'preflight') }
+                { label: lessonUi.beforeYouBegin, steps: steps.filter(step => step.kind === 'preflight') },
+                { label: lessonUi.workshop, steps: steps.filter(step => step.kind !== 'preflight') }
             ];
 
             document.getElementById('workshopNavigation').innerHTML = groups.filter(group => group.steps.length > 0).map(group => `
@@ -605,7 +614,7 @@
                                 ${active ? 'aria-current="step"' : ''}>
                                 <span class="flyout-number">${marker}</span>
                                 <span>
-                                    <strong>${step.navTitle}</strong>
+                                    <strong>${getStepNavTitle(step)}</strong>
                                     <small>${step.time}</small>
                                 </span>
                             </a>`;
@@ -617,6 +626,7 @@
         function updatePagination() {
             const previous = steps[currentIndex - 1];
             const next = steps[currentIndex + 1];
+            const lessonUi = getLessonUi();
             const previousHeaderLink = document.getElementById('previousHeaderLink');
             const nextHeaderLink = document.getElementById('nextHeaderLink');
 
@@ -624,23 +634,25 @@
             nextHeaderLink.hidden = !next;
             if (previous) {
                 previousHeaderLink.href = stepUrl(previous);
-                previousHeaderLink.textContent = '← Prev';
-                previousHeaderLink.setAttribute('aria-label', `Previous: ${previous.title}`);
+                previousHeaderLink.textContent = `← ${lessonUi.previousShort}`;
+                previousHeaderLink.setAttribute(
+                    'aria-label', lessonUi.previousAria.replace('{title}', getStepNavTitle(previous)));
             }
             if (next) {
                 nextHeaderLink.href = stepUrl(next);
-                nextHeaderLink.textContent = 'Next →';
-                nextHeaderLink.setAttribute('aria-label', `Next: ${next.title}`);
+                nextHeaderLink.textContent = `${lessonUi.nextShort} →`;
+                nextHeaderLink.setAttribute(
+                    'aria-label', lessonUi.nextAria.replace('{title}', getStepNavTitle(next)));
             }
 
             const footer = document.getElementById('lessonFooter');
             footer.innerHTML = `
                 ${previous
-                    ? `<a href="${stepUrl(previous)}" class="nav-footer-btn">← ${previous.navTitle}</a>`
-                    : '<span class="nav-footer-btn disabled" aria-disabled="true">← Previous</span>'}
+                    ? `<a href="${stepUrl(previous)}" class="nav-footer-btn">← ${getStepNavTitle(previous)}</a>`
+                    : `<span class="nav-footer-btn disabled" aria-disabled="true">← ${lessonUi.previous}</span>`}
                 ${next
-                    ? `<a href="${stepUrl(next)}" class="nav-footer-btn">${next.navTitle} →</a>`
-                    : `<a href="${homeUrl(getSelectedLanguage())}" class="nav-footer-btn">Back to workshop hub →</a>`}`;
+                    ? `<a href="${stepUrl(next)}" class="nav-footer-btn">${getStepNavTitle(next)} →</a>`
+                    : `<a href="${homeUrl(getSelectedLanguage())}" class="nav-footer-btn">${lessonUi.backToHub} →</a>`}`;
         }
 
         function updateProgress(step) {

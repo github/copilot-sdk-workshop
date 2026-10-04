@@ -2550,7 +2550,7 @@ def validate_completion_pages() -> None:
         "Completion celebration must run only after the lesson successfully renders",
     )
     require(
-        "Back to workshop hub" in viewer and "homeUrl(getSelectedLanguage())" in viewer,
+        "lessonUi.backToHub" in viewer and "homeUrl(getSelectedLanguage())" in viewer,
         "Final pagination must offer a language-preserving workshop hub exit",
     )
 

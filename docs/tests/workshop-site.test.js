@@ -296,6 +296,11 @@ async function main() {
         assert.equal(korean.context.document.documentElement.lang, 'ko');
         assert.equal(korean.elements.get('hubLink').href,
             '../index.html?lang=nodejs&workshop=intro&locale=ko-kr');
+        assert.equal(korean.elements.get('previousHeaderLink').textContent, '← 이전');
+        assert.equal(korean.elements.get('nextHeaderLink').textContent, '다음 →');
+        assert.match(korean.elements.get('lessonFooter').innerHTML, /← SDK 기본 사항/);
+        assert.match(korean.elements.get('lessonFooter').innerHTML, /팟캐스트 에이전트 →/);
+        assert.match(korean.elements.get('workshopNavigation').innerHTML, /시작하기 전에/);
         assert.match(korean.elements.get('nextHeaderLink').href,
             /^\?step=intro-03-podcast-agent&lang=nodejs&locale=ko-kr$/);
         assert.doesNotMatch(korean.elements.get('markdownContent').innerHTML, /<!-- LIVE_DEMO -->/);
@@ -310,6 +315,14 @@ async function main() {
     await vm.runInContext(lessonScript, defaultLocale.context);
     assert.equal(defaultLocale.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
     assert.equal(defaultLocale.elements.get('hubLink').href, '../index.html?lang=go&workshop=intro');
+    assert.equal(defaultLocale.elements.get('previousHeaderLink').textContent, '← Prev');
+    assert.equal(defaultLocale.elements.get('nextHeaderLink').textContent, 'Next →');
+
+    const koreanFirstStep = createPage(lessonHtml,
+        'http://localhost:8000/docs/workshop/step.html?step=museum-00-preflight&lang=dotnet&locale=ko-kr');
+    await vm.runInContext(lessonScript, koreanFirstStep.context);
+    assert.match(koreanFirstStep.elements.get('lessonFooter').innerHTML, /← 이전/);
+    assert.match(koreanFirstStep.elements.get('lessonFooter').innerHTML, /첫 번째 세션 →/);
 
     const storedLocale = createPage(lessonHtml,
         'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=go',
