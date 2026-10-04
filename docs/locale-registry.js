@@ -340,9 +340,9 @@ System message: replace
                         capabilities: '클라이언트 및 세션 · 스트리밍 · 사전 제작 로컬 도구 · 승인',
                         previewTitle: 'start-intro',
                         preview: `클라이언트 → 스트리밍 Hello World
-       → 팟캐스트 에피소드 선택
-       → RSS 도구 승인
-       → 헤드라인 및 게시물 작성
+           → 팟캐스트 에피소드 선택
+           → RSS 도구 승인
+           → 헤드라인 및 게시물 작성
 
 [도구] get_github_podcast_episode
 
@@ -358,8 +358,8 @@ System message: replace
                         capabilities: '스트리밍 · 로컬 도구 · Playwright MCP · 권한',
                         previewTitle: 'accessibility-reviewer',
                         preview: `URL → Playwright 검사
-     → WCAG 조회
-     → 구조화된 보고서
+    → WCAG 조회
+    → 구조화된 보고서
 
 [도구] playwright-browser_navigate
 [도구] accessibility_rule_lookup
@@ -376,8 +376,8 @@ System message: replace
                         capabilities: '사용자 지정 페르소나 · 애플리케이션 소유 도구 하나 · 검증 · 평가',
                         previewTitle: 'museum-exhibit-studio',
                         preview: `승인된 사실 → 큐레이터 세션
-          → 전시 검증
-          → 방문객용 문구
+            → 전시 검증
+            → 방문객용 문구
 
 사용 가능한 도구: []
 시스템 메시지: replace
