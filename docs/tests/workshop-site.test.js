@@ -319,8 +319,8 @@ async function main() {
     }
 
     const koreanLocale = WorkshopLocales.getLocale('ko-kr');
-    assert.equal(koreanLocale.ui.theme.light, '☀️ 라이트');
-    assert.equal(koreanLocale.ui.theme.dark, '🌙 다크');
+    assert.equal(koreanLocale.ui.theme.light, '☀️ 밝게');
+    assert.equal(koreanLocale.ui.theme.dark, '🌙 어둡게');
     assert.equal(WorkshopLocales.defaultLocale.ui.theme.light, '☀️ Light');
 
     // An unselected or default locale keeps the canonical English URLs unqualified.

@@ -315,10 +315,10 @@ System message: replace
                     }
                 },
                 theme: {
-                    dark: '🌙 다크',
-                    light: '☀️ 라이트',
-                    switchToDark: '다크 테마로 전환',
-                    switchToLight: '라이트 테마로 전환'
+                    dark: '🌙 어둡게',
+                    light: '☀️ 밝게',
+                    switchToDark: '어두운 테마로 전환',
+                    switchToLight: '밝은 테마로 전환'
                 },
                 previewAriaLabel: '선택한 워크숍 미리 보기',
                 previewEmptyTitle: '워크숍 미리 보기',
@@ -376,8 +376,8 @@ System message: replace
                         capabilities: '사용자 지정 페르소나 · 애플리케이션 소유 도구 하나 · 검증 · 평가',
                         previewTitle: 'museum-exhibit-studio',
                         preview: `승인된 사실 → 큐레이터 세션
-               → 전시 검증
-               → 방문객용 문구
+          → 전시 검증
+          → 방문객용 문구
 
 사용 가능한 도구: []
 시스템 메시지: replace

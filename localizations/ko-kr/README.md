@@ -58,9 +58,16 @@ docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
 `localizations/<locale>/` 아래에 있으며, 선택한 값은 `localStorage`에 저장됩니다. 번역된
 페이지가 없으면 뷰어가 영어 본문으로 대체합니다.
 
-사용할 수 있는 로캘은 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
-정의되어 있습니다. 로캘을 추가하려면 여기에 항목을 추가하고 `localizations/` 아래에
+사용할 수 있는 로케일은 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
+정의되어 있습니다. 로케일을 추가하려면 여기에 항목을 추가하고 `localizations/` 아래에
 번역된 트리를 만들면 됩니다.
+
+사이트의 라틴 문자 웹폰트에는 한글이 없으므로, 한국어 페이지는
+[`docs/korean-typography.css`](../../docs/korean-typography.css)로 한국어 글꼴 스택을
+적용합니다. 본문에는 나눔고딕(Google Fonts)을 플랫폼 기본 한국어 글꼴보다 앞에 두고,
+코드에는 D2Coding을 사용합니다. D2Coding은
+[SIL Open Font License 1.1](../../docs/fonts/LICENSE-D2Coding.txt)에 따라 `docs/fonts/`에
+직접 호스팅하며, 한글 영역만 서브셋했기 때문에 영어 페이지에서는 내려받지 않습니다.
 
 ## 필수 조건
 

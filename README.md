@@ -62,6 +62,12 @@ English is the default and is omitted from the URL. Translated lessons live unde
 Available locales are declared in [`docs/locale-registry.js`](docs/locale-registry.js); adding a
 locale means adding an entry there plus the translated tree under `localizations/`.
 
+Korean pages swap in Korean font stacks via [`docs/korean-typography.css`](docs/korean-typography.css),
+because the site's Latin webfonts carry no Hangul. Prose uses Nanum Gothic (Google Fonts)
+ahead of the platform Korean fonts, and code uses D2Coding, self-hosted under `docs/fonts/`
+under the [SIL Open Font License 1.1](docs/fonts/LICENSE-D2Coding.txt) and subset to Hangul
+so English pages never download it.
+
 ## Prerequisites
 
 Install the runtime for your chosen language, not all six. Each track's preflight provides
