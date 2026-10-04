@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../light-theme.css">
     <script src="../theme-toggle.js"></script>
     <script src="../language-registry.js"></script>
+    <script src="../locale-registry.js"></script>
     <script src="../language-navigation.js"></script>
     <script src="../markdown-language-preprocessor.js"></script>
     <script src="../workshop-completion.js"></script>
@@ -49,6 +50,8 @@
                     <option value="python">Python</option>
                     <option value="rust">Rust</option>
                 </select>
+                <label class="language-select-label" for="localeSelector">Docs</label>
+                <select class="language-select" id="localeSelector" aria-label="Documentation language"></select>
                 <a href="../index.html" class="nav-btn" id="hubLink">🏠 Hub</a>
                 <a class="nav-btn" id="headerDocsLink" target="_blank" rel="noopener" hidden>📚 Docs ↗</a>
                 <button class="theme-toggle" type="button" onclick="toggleTheme()">☀️ Light</button>
@@ -383,7 +386,9 @@
         const closeNavigationButton = document.getElementById('closeNavigationButton');
         const compactNavigation = window.matchMedia('(max-width: 900px)');
         const languageSelector = document.getElementById('languageSelector');
+        const localeSelector = document.getElementById('localeSelector');
         const storageKey = 'copilot-sdk-workshop.language';
+        const localeStorageKey = 'copilot-sdk-workshop.locale';
         let currentIndex = 0;
         let focusBeforeNavigation;
         let loadSequence = 0;
@@ -407,6 +412,23 @@
                 return new URL(`../../${file}`, window.location.href);
             }
             return new URL(file, getSiteRootUrl());
+        }
+
+        function getLocalizedMarkdownUrl(file, locale) {
+            return getMarkdownUrl(WorkshopLocales.contentUrlPath(file, locale.id));
+        }
+
+        // Falls back to the canonical English source whenever a locale has no translation yet.
+        async function fetchLocalizedMarkdown(file, locale) {
+            const response = await fetch(getLocalizedMarkdownUrl(file, locale));
+            if (response.ok || locale.id === WorkshopLocales.defaultLocale.id) {
+                return { response, locale };
+            }
+            const fallbackLocale = WorkshopLocales.defaultLocale;
+            return {
+                response: await fetch(getLocalizedMarkdownUrl(file, fallbackLocale)),
+                locale: fallbackLocale
+            };
         }
 
         function getRequestedStepId() {
@@ -439,8 +461,37 @@
             );
         }
 
+        function getStoredLocaleId() {
+            try {
+                return window.localStorage.getItem(localeStorageKey);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function storeLocaleId(localeId) {
+            try {
+                window.localStorage.setItem(localeStorageKey, localeId);
+            } catch (error) {
+                // The workshop remains usable when local storage is unavailable.
+            }
+        }
+
+        function getSelectedLocale() {
+            return WorkshopLanguageNavigation.resolveLocale(
+                window.location.search,
+                getStoredLocaleId(),
+                WorkshopLocales.getLocale
+            ) ?? WorkshopLocales.defaultLocale;
+        }
+
+        function selectedLocaleQueryId() {
+            return WorkshopLocales.queryId(getSelectedLocale().id);
+        }
+
         function homeUrl(language) {
-            return WorkshopLanguageNavigation.homeUrl(language?.id, activeWorkshopId);
+            return WorkshopLanguageNavigation.homeUrl(
+                language?.id, activeWorkshopId, selectedLocaleQueryId());
         }
 
         function updateLanguageControls(language) {
@@ -457,9 +508,24 @@
             document.getElementById('hubLink').href = homeUrl(language);
         }
 
+        function populateLocaleControls() {
+            WorkshopLocales.locales.forEach(locale => {
+                const option = document.createElement('option');
+                option.value = locale.id;
+                option.textContent = locale.displayName;
+                localeSelector.append(option);
+            });
+        }
+
+        function updateLocaleControls(locale) {
+            localeSelector.value = locale.id;
+            document.documentElement.lang = locale.htmlLang;
+        }
+
         function stepUrl(step) {
             const language = getSelectedLanguage();
-            return WorkshopLanguageNavigation.lessonUrl(step.id, language?.id);
+            return WorkshopLanguageNavigation.lessonUrl(
+                step.id, language?.id, selectedLocaleQueryId());
         }
 
         function setNavigationOpen(open) {
@@ -754,6 +820,7 @@
             const requestId = ++loadSequence;
             celebration.clear();
             const language = getSelectedLanguage();
+            const locale = getSelectedLocale();
             const stepId = getRequestedStepId();
             currentIndex = steps.findIndex(step => step.id === stepId);
             const step = steps[currentIndex];
@@ -761,6 +828,7 @@
             const status = document.getElementById('lessonStatus');
 
             updateLanguageControls(language);
+            updateLocaleControls(locale);
             document.querySelector('.header-title').textContent = activeWorkshop.title;
             document.getElementById('navigationTitle').textContent = `${activeWorkshop.title} steps`;
             if (!language) {
@@ -791,29 +859,30 @@
 
             try {
                 const demoFile = `start-intro/${language.id}/LIVE_DEMO.md`;
-                const [response, demoResponse] = await Promise.all([
-                    fetch(getMarkdownUrl(step.file)),
-                    step.demoAct ? fetch(getMarkdownUrl(demoFile)) : Promise.resolve(null)
+                const [lesson, demo] = await Promise.all([
+                    fetchLocalizedMarkdown(step.file, locale),
+                    step.demoAct ? fetchLocalizedMarkdown(demoFile, locale) : Promise.resolve(null)
                 ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
-                if (!response.ok) {
-                    throw new Error(`Lesson request failed with HTTP ${response.status}.`);
+                if (!lesson.response.ok) {
+                    throw new Error(`Lesson request failed with HTTP ${lesson.response.status}.`);
                 }
-                if (demoResponse && !demoResponse.ok) {
-                    throw new Error(`${demoFile} request failed with HTTP ${demoResponse.status}.`);
+                if (demo && !demo.response.ok) {
+                    throw new Error(`${demoFile} request failed with HTTP ${demo.response.status}.`);
                 }
 
                 const [source, demoSource] = await Promise.all([
-                    response.text(),
-                    demoResponse ? demoResponse.text() : Promise.resolve(null)
+                    lesson.response.text(),
+                    demo ? demo.response.text() : Promise.resolve(null)
                 ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
                 const combined = step.demoAct
-                    ? WorkshopMarkdown.includeLiveDemoAct(source, demoSource, step.demoAct)
+                    ? WorkshopMarkdown.includeLiveDemoAct(
+                        source, demoSource, step.demoAct, demo.locale.demoActHeadings)
                     : source;
                 const markdown = processMarkdown(combined);
                 container.innerHTML =
@@ -848,8 +917,23 @@
             window.history.replaceState({}, '', url);
             loadStep();
         });
-        window.addEventListener('popstate', loadStep);
-        document.addEventListener('keydown', event => {
+        localeSelector.addEventListener('change', () => {
+            const locale = WorkshopLocales.getLocale(localeSelector.value);
+            if (!locale) {
+                return;
+            }
+            storeLocaleId(locale.id);
+            const url = new URL(window.location.href);
+            const queryId = WorkshopLocales.queryId(locale.id);
+            if (queryId) {
+                url.searchParams.set('locale', queryId);
+            } else {
+                url.searchParams.delete('locale');
+            }
+            window.history.replaceState({}, '', url);
+            loadStep();
+        });
+        window.addEventListener('popstate', loadStep);        document.addEventListener('keydown', event => {
             if (navigationPanel.classList.contains('open') && event.key === 'Escape') {
                 event.preventDefault();
                 setNavigationOpen(false);
@@ -859,6 +943,7 @@
         });
 
         setNavigationOpen(false);
+        populateLocaleControls();
         loadStep();
     </script>
 </body>

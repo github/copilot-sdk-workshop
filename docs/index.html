@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="light-theme.css">
     <script src="theme-toggle.js"></script>
     <script src="language-registry.js"></script>
+    <script src="locale-registry.js"></script>
     <script src="language-navigation.js"></script>
 </head>
 <body>
@@ -25,6 +26,8 @@
             <span>GitHub Copilot SDK Workshop</span>
         </a>
         <nav class="site-nav" aria-label="Workshop resources">
+            <label class="locale-select-label" for="localeSelector">Docs</label>
+            <select class="locale-select" id="localeSelector" aria-label="Documentation language"></select>
             <a id="targetAppLink" href="target-app/index.html" target="_blank" rel="noopener" hidden>Target app ↗</a>
             <a id="sdkDocsLink" target="_blank" rel="noopener" aria-disabled="true">📚 SDK docs ↗</a>
             <button class="theme-toggle" type="button" onclick="toggleTheme()">☀️ Light</button>

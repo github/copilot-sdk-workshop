@@ -44,6 +44,24 @@ python3 -m http.server 8000
 <http://localhost:8000/docs/>를 엽니다. 브라우저가 수업 뷰어에서 사용하는 Markdown 요청을
 차단하므로 `step.html`을 `file://` URL로 열지 않습니다.
 
+## 다른 언어로 워크숍 읽기
+
+사이트에는 서로 독립적인 두 개의 선택기가 있습니다. **Language**는 프로그래밍 언어를
+선택하며 URL에 `?lang=`으로 전달됩니다(`dotnet`, `nodejs`, `python`, `go`, `rust`,
+`java`). **Docs**는 수업 본문의 자연어를 선택하며 `?locale=`로 전달됩니다.
+
+```text
+docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
+```
+
+영어가 기본값이며 URL에서 생략됩니다. 번역된 수업은 원본 디렉터리 구조를 그대로 따라
+`localizations/<locale>/` 아래에 있으며, 선택한 값은 `localStorage`에 저장됩니다. 번역된
+페이지가 없으면 뷰어가 영어 본문으로 대체합니다.
+
+사용할 수 있는 로캘은 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
+정의되어 있습니다. 로캘을 추가하려면 여기에 항목을 추가하고 `localizations/` 아래에
+번역된 트리를 만들면 됩니다.
+
 ## 필수 조건
 
 6개 언어의 런타임을 모두 설치하지 말고 선택한 언어의 런타임만 설치합니다. 각 트랙의 사전 준비에서
@@ -81,6 +99,7 @@ copilot-sdk-workshop/
 |-- finished/rust/                Completed Rust projects
 |-- finished/java/                Completed Maven Java projects
 |-- src/BlazorApp/                Source counterpart of the deployed target
+|-- localizations/<locale>/       Translated lessons mirroring the source layout
 |-- scripts/                      Deterministic content and build validation
 `-- .github/workflows/            Validation and Pages deployment
 ```
@@ -164,7 +183,8 @@ Rust 검사는 모든 워크숍 프로젝트에서 하나의 Cargo 대상 디렉
 
 검증을 통과하면 `main`에 푸시합니다.
 [Pages 워크플로](../../.github/workflows/deploy.yml)는 `docs/`와 `workshop/`의 Markdown
-수업을 게시합니다. 빌드 및 콘텐츠 검증은 검증 워크플로에서 별도로 실행합니다.
+수업, 그리고 `localizations/` 아래의 번역본을 게시합니다. 빌드 및 콘텐츠 검증은 검증
+워크플로에서 별도로 실행합니다.
 
 리포지토리 설정에서 GitHub Pages를 사용하도록 설정하고 소스로 **GitHub Actions**를 선택합니다.
 배포 작업은 환경에 정식 워크숍 URL을 보고합니다.

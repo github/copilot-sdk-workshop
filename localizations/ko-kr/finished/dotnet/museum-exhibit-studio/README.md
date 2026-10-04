@@ -42,7 +42,7 @@ replace-mode 시스템 메시지는 승인된 사실에 우선권을 주고 도�
 `## Sources` 목록을 작성합니다. 애플리케이션은 인용된 출처 제목과 URL을 추출하고
 요약 본문은 유지합니다. `CuratorFacts.CreateApprovedWikipediaFactLookup`는 네트워크
 접근 없이 해당 본문과 인용의 캡처된 스냅샷을 반환합니다. 조사는 보충 자료일 뿐이며
-교육자가 승인한 사실과 결합되지 않습니다. 여기서 "approved"는 사람이 검증했다는 뜻이
+교육자가 승인한 사실과 결합되지 않습니다. 여기서 "승인된"은 사람이 검증했다는 뜻이
 아니라 애플리케이션이 수용했다는 뜻입니다. 조사를 거부하면 단일 도구 경로가 유지됩니다.
 조사가 실패하거나 인용이 없는 요약이 반환되면 경고를 출력하고 동일한 대체 경로를
 따릅니다. 출처는 전시 뒤에도 계속 출력됩니다.
@@ -73,4 +73,3 @@ replace-mode 시스템 메시지는 승인된 사실에 우선권을 주고 도�
 유지합니다. 조사, 생성, 선택적 HTML 단계는 서로 다른 세션 구성을 사용하면서 이 실행기를
 재사용합니다. 다음 트랙을 따라가십시오.
 [`workshop/museum-00-preflight.md`](https://github.com/github/copilot-sdk-workshop/blob/main/workshop/museum-00-preflight.md).
-

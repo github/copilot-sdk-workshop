@@ -15,6 +15,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 WORKSHOP = ROOT / "workshop"
+LOCALIZATIONS = ROOT / "localizations"
 
 
 def public_paths() -> list[str]:
@@ -31,7 +32,12 @@ def public_paths() -> list[str]:
         path.relative_to(ROOT).as_posix()
         for path in (ROOT / "start-intro").glob("*/LIVE_DEMO.md")
     )
-    return ["", *sorted(site_files), *sorted(lessons), *sorted(demo_guides)]
+    localized = (
+        path.relative_to(ROOT).as_posix()
+        for pattern in ("*/workshop/*.md", "*/start-intro/*/LIVE_DEMO.md")
+        for path in LOCALIZATIONS.glob(pattern)
+    )
+    return ["", *sorted(site_files), *sorted(lessons), *sorted(demo_guides), *sorted(localized)]
 
 
 def normalize_base_url(value: str) -> str:

@@ -8,7 +8,7 @@ GitHub Copilot SDK를 사용하면 애플리케이션에서 Copilot 대화를 �
 특정 애플리케이션 함수를 도구로 제공할 수 있습니다.
 
 SDK는 직접 호스팅하는 모델이 아닙니다. 애플리케이션은 모델 요청과 도구 호출을 조율하는
-**Copilot 런타임(Runtime)**에 연결됩니다.
+**Copilot 런타임**(Runtime)에 연결됩니다.
 
 | 용어 | 이 워크숍에서 하는 일 |
 | --- | --- |
@@ -33,7 +33,7 @@ Your app -> tool result        -> next model response
 
 ## 애플리케이션 열기
 
-아래 진입점과 함께 **`LIVE_DEMO.md`**를 엽니다. 이 파일의 **Act One**이 워크숍에서
+아래 진입점과 함께 **`LIVE_DEMO.md`** 파일을 엽니다. 이 파일의 **Act One**이 워크숍에서
 직접 수행할 순서입니다.
 
 1. 클라이언트를 시작합니다.

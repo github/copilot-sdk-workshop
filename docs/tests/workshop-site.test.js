@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const WorkshopLanguages = require('../language-registry.js');
+const WorkshopLocales = require('../locale-registry.js');
 const WorkshopLanguageNavigation = require('../language-navigation.js');
 const WorkshopMarkdown = require('../markdown-language-preprocessor.js');
 const WorkshopCompletion = require('../workshop-completion.js');
@@ -68,6 +69,7 @@ function createPage(html, address, storedLanguage, blockedStorage = false, optio
         Object.assign(new Element(), { dataset: { workshop: input.value } }));
     const document = {
         body: new Element(),
+        documentElement: new Element(),
         getElementById: id => {
             assert.ok(elements.has(id), `Missing element: ${id}`);
             return elements.get(id);
@@ -82,7 +84,10 @@ function createPage(html, address, storedLanguage, blockedStorage = false, optio
         createElement: () => new Element(),
         addEventListener: () => {}
     };
-    const storage = new Map(storedLanguage ? [['copilot-sdk-workshop.language', storedLanguage]] : []);
+    const storage = new Map([
+        ...(storedLanguage ? [['copilot-sdk-workshop.language', storedLanguage]] : []),
+        ...(options.storedLocale ? [['copilot-sdk-workshop.locale', options.storedLocale]] : [])
+    ]);
     const window = {
         location: new URL(address),
         localStorage: {
@@ -109,24 +114,33 @@ function createPage(html, address, storedLanguage, blockedStorage = false, optio
     const pendingGuides = new Map();
     const context = vm.createContext({
         window, document, URL, URLSearchParams, HTMLElement: Element, console,
-        WorkshopLanguages, WorkshopLanguageNavigation, WorkshopMarkdown, WorkshopCompletion,
+        WorkshopLanguages, WorkshopLocales, WorkshopLanguageNavigation, WorkshopMarkdown, WorkshopCompletion,
         hljs: { highlightElement: () => {} },
         marked: { parse: markdown => markdown },
         fetch: async url => {
             requests.push(url.href);
+            const localeMatch = url.pathname.match(/\/localizations\/([^/]+)\//);
+            if (localeMatch && options.localizedFailure) {
+                return { ok: false, status: 404 };
+            }
+            const localeRoot = localeMatch ? path.join('localizations', localeMatch[1]) : '.';
             const guideMatch = url.pathname.match(/\/start-intro\/([^/]+)\/LIVE_DEMO\.md$/);
             if (guideMatch) {
                 if (options.guideFailure) return { ok: false, status: 404 };
-                const markdown = options.guideContent ?? fs.readFileSync(
-                    path.join(docs, '..', 'start-intro', guideMatch[1], 'LIVE_DEMO.md'), 'utf8');
+                const guidePath = path.join(
+                    docs, '..', localeRoot, 'start-intro', guideMatch[1], 'LIVE_DEMO.md');
+                if (!fs.existsSync(guidePath)) return { ok: false, status: 404 };
+                const markdown = options.guideContent ?? fs.readFileSync(guidePath, 'utf8');
                 const response = { ok: true, text: async () => markdown };
                 if (options.deferGuideFor === guideMatch[1]) {
                     return new Promise(resolve => pendingGuides.set(guideMatch[1], () => resolve(response)));
                 }
                 return response;
             }
-            const file = path.basename(url.pathname);
-            const markdown = fs.readFileSync(path.join(docs, '..', 'workshop', file), 'utf8');
+            const lessonPath = path.join(
+                docs, '..', localeRoot, 'workshop', path.basename(url.pathname));
+            if (!fs.existsSync(lessonPath)) return { ok: false, status: 404 };
+            const markdown = fs.readFileSync(lessonPath, 'utf8');
             return { ok: true, text: async () => markdown };
         }
     });
@@ -167,6 +181,24 @@ async function main() {
         'workshop/step.html?step=museum-00-preflight&lang=rust');
     choose(home.workshops, 'intro');
     assert.equal(home.elements.get('startWorkshopLink').textContent, 'Start SDK 101');
+    assert.deepEqual(home.elements.get('localeSelector').children.map(option => option.value),
+        ['en', 'ko-kr']);
+    home.elements.get('localeSelector').value = 'ko-kr';
+    home.elements.get('localeSelector').emit('change');
+    assert.equal(home.elements.get('startWorkshopLink').href,
+        'workshop/step.html?step=intro-00-preflight&lang=rust&locale=ko-kr');
+    assert.equal(home.context.document.documentElement.lang, 'ko');
+    home.elements.get('localeSelector').value = 'en';
+    home.elements.get('localeSelector').emit('change');
+    assert.equal(home.elements.get('startWorkshopLink').href,
+        'workshop/step.html?step=intro-00-preflight&lang=rust');
+
+    const koreanHome = createPage(homeHtml,
+        'http://localhost:8000/docs/index.html?workshop=museum&lang=python&locale=ko-kr');
+    vm.runInContext(homeScript, koreanHome.context);
+    assert.equal(koreanHome.elements.get('localeSelector').value, 'ko-kr');
+    assert.equal(koreanHome.elements.get('startWorkshopLink').href,
+        'workshop/step.html?step=museum-00-preflight&lang=python&locale=ko-kr');
 
     for (const language of WorkshopLanguages.languages) {
         const queryHome = createPage(homeHtml,
@@ -247,9 +279,73 @@ async function main() {
             assert.match(page.requests[0], /intro-00-preflight\.md$/);
         }
     }
+    for (const [address, markdownRoot] of [
+        ['http://localhost:8000/docs/workshop/step.html', 'http://localhost:8000/'],
+        ['https://workshop.example.com/workshop/step.html', 'https://workshop.example.com/']
+    ]) {
+        const korean = createPage(lessonHtml,
+            `${address}?step=intro-02-hello-world&lang=nodejs&locale=ko-kr`);
+        await vm.runInContext(lessonScript, korean.context);
+        assert.equal(korean.requests[0],
+            `${markdownRoot}localizations/ko-kr/workshop/intro-02-hello-world.md`);
+        assert.equal(korean.requests[1],
+            `${markdownRoot}localizations/ko-kr/start-intro/nodejs/LIVE_DEMO.md`);
+        assert.equal(korean.elements.get('localeSelector').value, 'ko-kr');
+        assert.equal(korean.context.document.documentElement.lang, 'ko');
+        assert.equal(korean.elements.get('hubLink').href,
+            '../index.html?lang=nodejs&workshop=intro&locale=ko-kr');
+        assert.match(korean.elements.get('nextHeaderLink').href,
+            /^\?step=intro-03-podcast-agent&lang=nodejs&locale=ko-kr$/);
+        assert.doesNotMatch(korean.elements.get('markdownContent').innerHTML, /<!-- LIVE_DEMO -->/);
+        assert.deepEqual([...korean.elements.get('markdownContent').innerHTML.matchAll(/^### (\d+)\./gm)]
+            .map(match => match[1]), ['1', '2', '3', '4']);
+        assert.match(korean.elements.get('markdownContent').innerHTML, /[가-힣]/);
+    }
+
+    // An unselected or default locale keeps the canonical English URLs unqualified.
+    const defaultLocale = createPage(lessonHtml,
+        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=go&locale=en');
+    await vm.runInContext(lessonScript, defaultLocale.context);
+    assert.equal(defaultLocale.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
+    assert.equal(defaultLocale.elements.get('hubLink').href, '../index.html?lang=go&workshop=intro');
+
+    const storedLocale = createPage(lessonHtml,
+        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=go',
+        undefined, false, { storedLocale: 'ko-kr' });
+    await vm.runInContext(lessonScript, storedLocale.context);
+    assert.equal(storedLocale.requests[0],
+        'http://localhost:8000/localizations/ko-kr/workshop/intro-01-sdk-basics.md');
+
+    const switched = createPage(lessonHtml,
+        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=go');
+    await vm.runInContext(lessonScript, switched.context);
+    assert.equal(switched.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
+    const localeSelector = switched.elements.get('localeSelector');
+    assert.deepEqual(localeSelector.children.map(option => option.value), ['en', 'ko-kr']);
+    localeSelector.value = 'ko-kr';
+    localeSelector.emit('change');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(switched.window.location.searchParams.get('locale'), 'ko-kr');
+    assert.equal(switched.requests[1],
+        'http://localhost:8000/localizations/ko-kr/workshop/intro-01-sdk-basics.md');
+    localeSelector.value = 'en';
+    localeSelector.emit('change');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(switched.window.location.searchParams.get('locale'), null);
+
+    // A locale without a translation for a lesson falls back to the English source.
+    const fallback = createPage(lessonHtml,
+        'http://localhost:8000/docs/workshop/step.html?step=intro-02-hello-world&lang=java&locale=ko-kr',
+        undefined, false, { localizedFailure: true });
+    await vm.runInContext(lessonScript, fallback.context);
+    assert.ok(fallback.requests.includes(
+        'http://localhost:8000/localizations/ko-kr/workshop/intro-02-hello-world.md'));
+    assert.ok(fallback.requests.includes('http://localhost:8000/workshop/intro-02-hello-world.md'));
+    assert.match(fallback.elements.get('markdownContent').innerHTML, /Streaming hello world/);
+    assert.doesNotMatch(fallback.elements.get('markdownContent').innerHTML, /<!-- LIVE_DEMO -->/);
+
     const noLanguage = createPage(lessonHtml,
-        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=invalid');
-    await vm.runInContext(lessonScript, noLanguage.context);
+        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=invalid');    await vm.runInContext(lessonScript, noLanguage.context);
     assert.equal(noLanguage.requests.length, 0);
     assert.equal(noLanguage.elements.get('hubLink').href, '../index.html?workshop=intro');
     assert.equal(noLanguage.elements.get('lessonStatus').textContent,

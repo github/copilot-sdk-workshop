@@ -8,7 +8,7 @@
 [system message](https://github.com/github/copilot-sdk/blob/main/docs/getting-started.md#customize-the-system-message)
 하나를 작성하고 세션을 replace 모드로 전환합니다.
 
-이것이 **애플리케이션 소유 정책(application-owned policy)**의 첫 번째 조각입니다. 프롬프트는
+이것이 **애플리케이션 소유 정책**(application-owned policy)의 첫 번째 조각입니다. 프롬프트는
 실행마다 바뀌는 작업 데이터입니다. 시스템 메시지는 이 에이전트가 누구인지, 무엇을 말해도 되는지,
 출력은 어떤 형태여야 하는지를 오래 유지되는 방식으로 선언합니다.
 

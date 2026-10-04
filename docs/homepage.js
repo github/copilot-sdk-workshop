@@ -2,7 +2,9 @@
     'use strict';
 
     const storageKey = 'copilot-sdk-workshop.language';
+    const localeStorageKey = 'copilot-sdk-workshop.locale';
     const picker = document.getElementById('languagePicker');
+    const localeSelector = document.getElementById('localeSelector');
     const languageInputs = [...document.querySelectorAll('input[name="language"]')];
     const startLink = document.getElementById('startWorkshopLink');
     const docsLink = document.getElementById('sdkDocsLink');
@@ -78,6 +80,26 @@ System message: replace
         }
     }
 
+    function getStoredLocaleId() {
+        try {
+            return window.localStorage.getItem(localeStorageKey);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storeLocaleId(localeId) {
+        try {
+            window.localStorage.setItem(localeStorageKey, localeId);
+        } catch (error) {
+            // Local storage can be unavailable in private browsing contexts.
+        }
+    }
+
+    function getSelectedLocale() {
+        return WorkshopLocales.getLocale(localeSelector.value) ?? WorkshopLocales.defaultLocale;
+    }
+
     function updateSelection(languageId) {
         const language = WorkshopLanguages.getLanguage(languageId);
         const hasLanguage = language !== null;
@@ -91,7 +113,8 @@ System message: replace
         startLink.classList.toggle('disabled', !ready);
         startLink.setAttribute('aria-disabled', String(!ready));
         startLink.href = ready
-            ? WorkshopLanguageNavigation.firstLessonUrl(language.id, selectedWorkshopId)
+            ? WorkshopLanguageNavigation.firstLessonUrl(
+                language.id, selectedWorkshopId, WorkshopLocales.queryId(getSelectedLocale().id))
             : workshop ? '#language-picker' : '#workshop-picker';
         startLink.textContent = ready ? `Start ${workshop.name}` : 'Start selected workshop';
         targetAppLink.hidden = selectedWorkshopId !== 'sdlc';
@@ -137,6 +160,28 @@ System message: replace
             languageInputs[0].focus();
         }
     }
+
+    WorkshopLocales.locales.forEach(locale => {
+        const option = document.createElement('option');
+        option.value = locale.id;
+        option.textContent = locale.displayName;
+        localeSelector.append(option);
+    });
+
+    const initialLocale = WorkshopLanguageNavigation.resolveLocale(
+        window.location.search,
+        getStoredLocaleId(),
+        WorkshopLocales.getLocale
+    ) ?? WorkshopLocales.defaultLocale;
+    localeSelector.value = initialLocale.id;
+    document.documentElement.lang = initialLocale.htmlLang;
+
+    localeSelector.addEventListener('change', () => {
+        const locale = getSelectedLocale();
+        storeLocaleId(locale.id);
+        document.documentElement.lang = locale.htmlLang;
+        updateSelection(languageInputs.find(input => input.checked)?.value ?? null);
+    });
 
     languageInputs.forEach(input => {
         input.addEventListener('change', () => {

@@ -8,7 +8,7 @@
 
 ## 애플리케이션이 소유한 도구를 Copilot에 제공
 
-**도구 호출(Tool calling)**을 사용하면 모델이 답변을 작성하는 동안 기능을 요청할 수 있습니다. [**로컬 도구(Local tool)**](https://github.com/github/copilot-sdk/blob/main/docs/getting-started.md#how-tools-work)는 애플리케이션 프로세스 내에서 실행됩니다. 모델이 도구를 요청할 시점을 결정하지만 데이터, 유효성 검사, 실행, 결과는 계속 코드에서 관리합니다.
+**도구 호출**(Tool calling)을 사용하면 모델이 답변을 작성하는 동안 기능을 요청할 수 있습니다. [**로컬 도구(Local tool)**](https://github.com/github/copilot-sdk/blob/main/docs/getting-started.md#how-tools-work)는 애플리케이션 프로세스 내에서 실행됩니다. 모델이 도구를 요청할 시점을 결정하지만 데이터, 유효성 검사, 실행, 결과는 계속 코드에서 관리합니다.
 
 이 단계에서는 애플리케이션이 소유한 WCAG 지침을 `accessibility_rule_lookup`으로 공개하고, 해당 도구를 세션에 등록한 후 모델에서 사용할 수 있도록 명시적으로 설정합니다.
 

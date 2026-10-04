@@ -45,6 +45,23 @@ python3 -m http.server 8000
 Open <http://localhost:8000/docs/>. Do not open `step.html` with a `file://` URL; browsers block
 the Markdown requests used by the lesson viewer.
 
+## Reading the workshop in another language
+
+The site has two independent selectors. **Language** picks the programming language and is
+carried in the URL as `?lang=` (`dotnet`, `nodejs`, `python`, `go`, `rust`, `java`). **Docs**
+picks the human language of the lesson text and is carried as `?locale=`.
+
+```text
+docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
+```
+
+English is the default and is omitted from the URL. Translated lessons live under
+`localizations/<locale>/`, mirroring the source layout, and the selection is remembered in
+`localStorage`. If a translated page is missing, the viewer falls back to the English text.
+
+Available locales are declared in [`docs/locale-registry.js`](docs/locale-registry.js); adding a
+locale means adding an entry there plus the translated tree under `localizations/`.
+
 ## Prerequisites
 
 Install the runtime for your chosen language, not all six. Each track's preflight provides
@@ -83,6 +100,7 @@ copilot-sdk-workshop/
 |-- finished/rust/                Completed Rust projects
 |-- finished/java/                Completed Maven Java projects
 |-- src/BlazorApp/                Source counterpart of the deployed target
+|-- localizations/<locale>/       Translated lessons mirroring the source layout
 |-- scripts/                      Deterministic content and build validation
 `-- .github/workflows/            Validation and Pages deployment
 ```
@@ -165,7 +183,8 @@ dependency compilation.
 
 After validation passes, push to `main`. The
 [Pages workflow](.github/workflows/deploy.yml) publishes `docs/` plus the Markdown lessons in
-`workshop/`. Build and content validation run separately in the validation workflow.
+`workshop/` and their translations under `localizations/`. Build and content validation run
+separately in the validation workflow.
 
 Enable GitHub Pages in repository settings and choose **GitHub Actions** as the source. The
 deployment job reports the canonical workshop URL in its environment.
