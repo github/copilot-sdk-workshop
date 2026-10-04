@@ -1,32 +1,22 @@
 #!/usr/bin/env python3
-"""Detect English docs changes and prepare a localization review report.
-
-This script intentionally stays conservative: it records which tracked English
-source files changed and which Korean locale targets need review, without guessing
-translation content. The repo-level localization skill remains the human/AI
-translation step; this automation captures the change set and opens a PR for
-review.
-"""
+"""List English documentation sources changed between two Git revisions."""
 
 from __future__ import annotations
 
-import os
+import argparse
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGET_LOCALE = "ko-kr"
-WATCHED_PATHS = (
-    "README.md",
-    "docs/locale-registry.js",
+MARKDOWN_ROOTS = (
     "finished",
     "start-intro",
     "start-museum",
     "start-accessibility",
     "workshop",
 )
-REPORT_PATH = ROOT / ".github" / "localization-update-report.md"
+EXACT_SOURCES = {"README.md", "docs/locale-registry.js"}
+ALLOWED_OUTPUTS = {"docs/locale-registry.js"}
 
 
 def git_output(*args: str) -> str:
@@ -38,118 +28,114 @@ def git_output(*args: str) -> str:
         check=False,
     )
     if result.returncode != 0:
-        return ""
-    return result.stdout.strip()
+        raise RuntimeError(result.stderr.strip() or f"git {' '.join(args)} failed")
+    return result.stdout
 
 
-def changed_files() -> list[str]:
-    event_name = os.environ.get("GITHUB_EVENT_NAME")
-    ref_name = os.environ.get("GITHUB_BASE_REF")
-
-    if event_name == "pull_request" and ref_name:
-        base_ref = f"origin/{ref_name}"
-        output = git_output("diff", "--name-only", f"{base_ref}...HEAD")
-    elif event_name in {"push", "workflow_dispatch"}:
-        output = git_output("diff", "--name-only", "HEAD~1", "HEAD")
-    else:
-        output = git_output("status", "--porcelain")
-        if output:
-            lines = []
-            for line in output.splitlines():
-                if not line.strip():
-                    continue
-                path = line[3:].strip()
-                if path.startswith("\"") and path.endswith("\""):
-                    path = path[1:-1]
-                lines.append(path)
-            output = "\n".join(lines)
-
-    files = []
-    for path in output.splitlines():
-        path = path.strip()
-        if not path:
-            continue
-        if path.startswith("::"):
-            continue
-        files.append(path)
-
-    return files
+def normalize(path: str) -> str:
+    return path.strip().replace("\\", "/")
 
 
 def is_watched(path: str) -> bool:
-    normalized = path.strip().replace("\\", "/")
-    if normalized == "README.md":
+    path = normalize(path)
+    if path in EXACT_SOURCES:
         return True
-    if normalized == "docs/locale-registry.js":
-        return True
-    for root in WATCHED_PATHS[2:]:
-        if normalized == root:
-            return True
-        if normalized.startswith(f"{root}/"):
-            return True
-    return False
+    if not path.lower().endswith(".md"):
+        return False
+    return any(path.startswith(f"{root}/") for root in MARKDOWN_ROOTS)
 
 
-def localized_target_for(path: str) -> str:
-    normalized = path.strip().replace("\\", "/")
-    return str((ROOT / "localizations" / TARGET_LOCALE / normalized).resolve())
+def resolve_base(base: str | None, head: str) -> str:
+    if base and set(base) != {"0"}:
+        return base
+    return f"{head}^"
 
 
-def write_report(changed: list[str]) -> None:
-    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    entries = [
-        "# Localization update review",
-        "",
-        "This review was generated because the English source files below changed and may require a matching refresh under `localizations/ko-kr/`.",
-        "",
-        "## Changed English source files",
-        "",
-    ]
+def changed_files(base: str, head: str) -> list[str]:
+    output = git_output("diff", "--name-only", "--diff-filter=ACDMRT", base, head)
+    return sorted({normalize(path) for path in output.splitlines() if is_watched(path)})
 
-    if not changed:
-        entries.append("No watched English source files changed.")
-    else:
-        for path in changed:
-            entries.append(f"- `{path}`")
 
-    entries.extend(["", "## Localized targets to review", ""])
-    if not changed:
-        entries.append("None.")
-    else:
-        for path in changed:
-            localized = (ROOT / "localizations" / TARGET_LOCALE / path)
-            status = "present" if localized.exists() else "missing"
-            entries.append(f"- `{path}` -> `localizations/{TARGET_LOCALE}/{path}` ({status})")
+def working_tree_paths() -> list[str]:
+    result = subprocess.run(
+        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+        cwd=ROOT,
+        capture_output=True,
+        check=True,
+    )
+    entries = result.stdout.decode("utf-8", errors="surrogateescape").split("\0")
+    paths: list[str] = []
+    index = 0
 
-    entries.extend([
-        "",
-        "The repo-local localization skill in `.github/skills/localizations/` remains the source-of-truth for translation quality. This report is intended to trigger a review PR when the source English docs change.",
-        "",
-    ])
+    while index < len(entries):
+        entry = entries[index]
+        index += 1
+        if not entry:
+            continue
 
-    REPORT_PATH.write_text("\n".join(entries) + "\n", encoding="utf-8")
+        status = entry[:2]
+        paths.append(normalize(entry[3:]))
+        if "R" in status or "C" in status:
+            if index < len(entries) and entries[index]:
+                paths.append(normalize(entries[index]))
+                index += 1
+
+    return sorted(set(paths))
+
+
+def is_allowed_output(path: str) -> bool:
+    return path in ALLOWED_OUTPUTS or path.startswith("localizations/")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--base", help="Base Git revision. Defaults to HEAD^.")
+    parser.add_argument("--head", default="HEAD", help="Head Git revision.")
+    parser.add_argument("--write-list", type=Path, help="Write changed paths to this file.")
+    parser.add_argument(
+        "--validate-outputs",
+        action="store_true",
+        help="Validate that all working-tree changes are localization outputs.",
+    )
+    return parser.parse_args()
 
 
 def main() -> int:
-    files = [path for path in changed_files() if is_watched(path)]
-    files = sorted(dict.fromkeys(files))
+    args = parse_args()
 
-    if os.environ.get("WRITE_REPORT") == "1" or "--write-report" in sys.argv:
-        write_report(files)
-
-    if not files:
-        print("No watched English source files changed. No localization update required.")
+    if args.validate_outputs:
+        files = working_tree_paths()
+        invalid = [path for path in files if not is_allowed_output(path)]
+        if args.write_list:
+            args.write_list.write_text(
+                "".join(f"{path}\n" for path in files),
+                encoding="utf-8",
+            )
+        if invalid:
+            for path in invalid:
+                print(
+                    f"::error file={path}::Copilot changed a path outside "
+                    "the permitted localization outputs."
+                )
+            return 1
+        print(f"Validated {len(files)} localization output path(s).")
         return 0
 
-    print("Changed English source files:")
-    for path in files:
-        print(f"- {path}")
+    base = resolve_base(args.base, args.head)
+    files = changed_files(base, args.head)
 
-    print("\nLocalized review targets:")
-    for path in files:
-        target = ROOT / "localizations" / TARGET_LOCALE / path
-        status = "present" if target.exists() else "missing"
-        print(f"- {path} -> localizations/{TARGET_LOCALE}/{path} [{status}]")
+    if args.write_list:
+        args.write_list.write_text(
+            "".join(f"{path}\n" for path in files),
+            encoding="utf-8",
+        )
+
+    if files:
+        print(f"Watched English documentation changed between {base} and {args.head}:")
+        for path in files:
+            print(f"- {path}")
+    else:
+        print(f"No watched English documentation changed between {base} and {args.head}.")
 
     return 0
 
