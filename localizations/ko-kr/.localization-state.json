@@ -2,237 +2,237 @@
   "version": 1,
   "files": {
     "finished/dotnet/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "92a3a865a7d716a258a67ac86f2ce591b45b39056ee5715ffb220ccd7b563dec",
       "localized_sha256": "58cdbab22fe218555720978411da1045e2718fafc662ecf8368940d273ec824c"
     },
     "finished/go/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "3f752313417f588c0098522d0c24cca03c4e62346998a208495c0491b2b5f3d0",
       "localized_sha256": "8328a8a356bfdf2b4650fbddb78e0cda39dd4b7f96fd02e358a7a978bf8a53b6"
     },
     "finished/java/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "7a7ad8adda838e5ad4d669ec85c7e9b9fac028640c2dffbfcaaac9da7df33cdc",
       "localized_sha256": "6266a4a3068c8830029a01015f1624594bcbe5f974cfea5fce0915743ca2a600"
     },
     "finished/nodejs/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "c30d5a7c133ac08a59b45d6379ca218bf32d499bb6ec0fb11b126e76da377cac",
       "localized_sha256": "d1072dc6079ee210d2a826de8c3ff5802ec7063a34dafc21aed953860758b47f"
     },
     "finished/python/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "f61f169c36cccbc080e2ae09679f81c7d1193049c6b9790935eb77bd352c441b",
       "localized_sha256": "52c807bf451a8503ee202cf117a219ab3dce144f565925691d677e841ee9b33c"
     },
     "finished/rust/museum-exhibit-studio/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "aece4fd6ecafed833feed3abdad151621b7b2725f74b021ef3d8edb31781573f",
       "localized_sha256": "c1742e808e67286455db8b19814f1aca1ac4054d2c2cf03f0da436f916f46506"
     },
     "README.md": {
-      "source_commit": null,
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "99d916ba533a59106dd348d0ee9a633f993c25a19d5ac2485899c799ea9e4548",
       "localized_sha256": "2607f7f19110b76ea1e4c2dbc7306f11da948c803b223978541404f14f084702"
     },
     "start-accessibility/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "8f1826ac9b470328c4b29106e7aa353df1ce165fff1943ac29206123b2d7e9cc",
       "localized_sha256": "3475101347dcac86b107df48243c20d92728015a85b2346c82c28ac28797ff43"
     },
     "start-intro/dotnet/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "8a064be9bdf22dd594fb8033ed2b4670a1ffc2167cb292bf38741e8080ee3740",
       "localized_sha256": "e724d011b44dab53c947a2fed837f701de658d243d77ee5ce49bb9622201ce47"
     },
     "start-intro/dotnet/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "768979d6d8d706ffcf32f90bbce8a538f594d0a8c14ca8630c40af1e58586990",
       "localized_sha256": "2f958fb85da47dd4f801ee83ec2d7fd11d33d62a1239647ebb6653d9bdc8fd3e"
     },
     "start-intro/go/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "53251d6e74279c31f172d4d955e7c0347cbed96864090250d9f2e168a7cc047d",
       "localized_sha256": "4cabb495d1c1687722f0c4c99dc45af85e39303657af6b46c19d76a7739ea05e"
     },
     "start-intro/go/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "e6677894a9d9bbdd727b4db70826b0d59b10312cb6b0d27234de67d870a6ed9d",
       "localized_sha256": "b205e011365a654cab583b859b3d688128de8401c232e517a80686dce98cc4dd"
     },
     "start-intro/java/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "fefaa841cfa2d7beb56c74d455f5aaa2d0a839300a1a3a92f96b22a7ce21e3d8",
       "localized_sha256": "1dc4c952df5375af3f262736337c8e8410b67cf631786301120998ddca5ed660"
     },
     "start-intro/java/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "c1cd500c9ed179d035d5455fa4947f41b274ff285e08fbd79afceb048ea12292",
       "localized_sha256": "a15fb604b98df42ed184b8b6ea6ef4908b3e40d15194917547e868ee264442dc"
     },
     "start-intro/nodejs/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "42d649ada4fb8055e3424186b4f02febbada53d23a093e0e6eba573aed06a91e",
       "localized_sha256": "90e5bdaa182f52bb0a702dca76a34cd500227b76346a79f1958236787b484be2"
     },
     "start-intro/nodejs/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "0dcccffced18b4c28c37906888e57d4f58736b030ddea9a2cb9de6e20ca3a87c",
       "localized_sha256": "8c16096c3f025e47e0dce63dfb24d4ec2ede1b17d47b07bb61682d354fdc5407"
     },
     "start-intro/python/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "aabc990950d6ec5a0e62415e9bf6d70d8606115b132528e9b08fe8bd89199a9b",
       "localized_sha256": "474679d0ee56836940289814504ea109861f11700b9c1cad36d883e5a7318ca2"
     },
     "start-intro/python/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "e9651232435f946aa00e348de7b81c92e1d2903ce627f50edb5d8c9b3120fe9f",
       "localized_sha256": "bdc010e21ea7b3d929a60c5fd395d210421edba4eb619fd11849998f22566848"
     },
     "start-intro/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "a16e948ccf67ac41694adb1839755a3ebf54471319e063d59b8ab4e2bae14830",
       "localized_sha256": "058801899982bac7df45a79f0d71078ff7ec4d4eaa8b007a2d9fdb244f4cf67c"
     },
     "start-intro/rust/LIVE_DEMO.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "e18d6bf592d05364a30d1c6c14f1fc61ae3e75a146d1c7071864faf16329b74b",
       "localized_sha256": "c2154a0cad2cf7173755e0e3ee4862033bdca6d820d06a1e69638773d4cdf448"
     },
     "start-intro/rust/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "39d4b8c87ff2f1dbfd21b81f69284d84733cfc1675fba4361f7b2ec8626d827f",
       "localized_sha256": "9d07cc6244e6f1dd79932e69fb99fdd0d31ea93d8ea4e0c4f6834e274bbeeef9"
     },
     "start-museum/README.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "32ac1ea3ecdf75961736c8932630244883bfbfb81f16926c7bc1bdab12b3a7d6",
       "localized_sha256": "5d222190bf7b4838004a17d0e9c45c21dc4647b27b2e2aa637185239417b726b"
     },
     "workshop/00-preflight.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "60579b55489803004dea298904588630873e371c6df09bcc1eae4371a7837da2",
       "localized_sha256": "c30dbf55549245ee71e1d9ddef2cf929f12cefd727a00719ee8347f24ca17e9d"
     },
     "workshop/01-first-session.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "5f025391fd92d9ec6ed779285007ce279b918265fcca265bc83f8b8db450d4f4",
       "localized_sha256": "f92f7e731538d0c8ba04550a70d2009ec2574b166e66fef80bfd8bc8f1d0a1da"
     },
     "workshop/02-streaming.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "3661a58657f49aef0edf94c59403cbcc4946818433faecb125e2b119ec1a0b4c",
       "localized_sha256": "fac9f5e7aca9c35e0e01ec7a91a396970bb8bdf148b25859cb235a2e0f0a4c55"
     },
     "workshop/03-local-tool.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "10fe6a2c80075e298b1fd92be61bcefbb874884f5d86954f75e5a6c9f6c9ae17",
       "localized_sha256": "b19e015e9230ec124dabb052d3b3ee0f8717fb129ae68e6499b81c937b23c968"
     },
     "workshop/04-mcp-safety.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "ca45f2b9b3a5b88911a9f6bd0560b2ec960670ee30eae0528edae107dc4aa596",
       "localized_sha256": "bfba8aeda9508871ca651c3cceb09467f5332fd4d0ce8bb719734b34c4786627"
     },
     "workshop/05-combine-tools.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "4fb915016a414f7b7a7cf06d5a89c61504efe18e9a3a26a84c0cab85f07b85cb",
       "localized_sha256": "131d6f71e834ff920f310c190cbbb6b580b9026d3b82498512c8d100a7dd6000"
     },
     "workshop/06-structured-report.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "bc96063f7a2f1e6a72a61b2a99b3e86abf5ed505826f84007f55692f3c0eafb4",
       "localized_sha256": "e42d9d002556ccfe5b9548c057a21fc01ff51547f331dcf97eec474a200ebf58"
     },
     "workshop/07-run-explain.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "bf4cb1d6026cd3a085a89a9c8f854cf5568e92884e1f705faf68f909f0cf0435",
       "localized_sha256": "292353a8e3e422ed69f981b0ca846c1811cb1a6e624e7243f592f6a8b72ee73c"
     },
     "workshop/08-model-selection.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "d285069e0f7f3829c2e6f78102dff6402026fbcc72a846c3e5fbb4f5fd96d979",
       "localized_sha256": "f564d94aa7ff2da05a3fc97e89cdd3073cd7cf6dd41d426f5114be3db9ae364c"
     },
     "workshop/09-interactive-html-report.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "eba9ce17fb51f714a431bfd411d5e1e05b6ec9f1275272ef5ded9c35288d2a03",
       "localized_sha256": "0f48a6bfa20df1177e06348d280a1df5128fbee2b7eb6c85e91867220c656cdd"
     },
     "workshop/10-complete.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "561eb69fe554a37ff0cfe8283d0b3c9966e546d8fc7f844058b37614d0be47b5",
       "localized_sha256": "3d7c13b3cf996dead6cbea7eae9c9d233762c9a26115d2d0f904546d9c6dd1ed"
     },
     "workshop/intro-00-preflight.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "a80d4bf2167083672daff75dd160212801d2b36868408f7ca630759abbfbe150",
       "localized_sha256": "9f5237b3e3a4a17b624cc21cbbddb689875cf446ed5130993ef1d128e58759d5"
     },
     "workshop/intro-01-sdk-basics.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "e08b14fc073e65cd061d57808e8ce6b6eb37c2dd810bbb761d43468325ba23a3",
       "localized_sha256": "0e1391b077acd7588e6711c6b4b951556dc4329e69d86fb0729d6880a3b9fafc"
     },
     "workshop/intro-02-hello-world.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "f3d854bbb49486e0608915e3503fb75ac4b8574f7b067debd870202976d85d61",
       "localized_sha256": "6ec617274fd988b52bebe22b13752fcba3ff0e0fc4d79285cada90a2ae048337"
     },
     "workshop/intro-03-podcast-agent.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "8fe755c5d4a50851cf1d647057c785c3b4208a9cac7fc6d24742ac1e1673f10f",
       "localized_sha256": "ccf8f9793f2ae76d26e9033a3634b941cfc164a5771528f48d0a47d18354e1e7"
     },
     "workshop/intro-04-wrap-up.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "61c72ec6152b918c4d459193230537bc69706ab2228c8659109a45c59a289a4a",
       "localized_sha256": "ef91b8635b53d07f712f13d10433e87cc0ba62a3c5a47dd5c56d980be53e3ffa"
     },
     "workshop/museum-00-preflight.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "ed800141333156739757e46c9251974ea06ac1bc1a8143a7d896b519bbc346b3",
       "localized_sha256": "7f0d149380670f22b189a1c61d83acf6e976b15e9f9ae257e69064c57eac1559"
     },
     "workshop/museum-01-first-curator-session.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "afe8570dbe5a09e1ca837deac3b9ea12ab133555f7472c5a18fda5bfe66da113",
       "localized_sha256": "cc0d94ddb7fac54b2d163ae46bc10e6fabb475f63b239ace47d9cf1afad883c6"
     },
     "workshop/museum-02-stream-the-curator.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "51323c50aa7d907a2e14ee00c8032785c441262b142e4b6e9bdd560c6007c21a",
       "localized_sha256": "834d403d94b75d1936190f8725deb46b06b8d68c65ecdb7f669d2ee893516c0f"
     },
     "workshop/museum-03-curator-voice.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "4953b2c169bbdd7c82857306a29d9bb0b1c45d34a2fe91a35331588fdea282b9",
       "localized_sha256": "d2ea86da271aafc2ddee3b2af8538b3ed7130fc8464a2407d9e0d99605a1916b"
     },
     "workshop/museum-04-approved-facts.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "28a9b1895f2eaef30bc0d03f2b6b2e52b8ea942ad87c6fbed80add4ab9023072",
       "localized_sha256": "8133b181b7553b7b269d582dc31436351e9bb9e8aba9c8035421688914dacd08"
     },
     "workshop/museum-06-prove-the-structure.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "2d70c2588b5c6963a4fd4ccfc8789a93de6ea94b96b229a6d852433515023418",
       "localized_sha256": "8d147f74dfc6172088f3dfcab90a128effc4e1fc7d12b8dd533dffb8e82efd0f"
     },
     "workshop/museum-07-wikipedia-research.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "9152f8de12778bf75ec423f5c532fa5e3798d7844c8d6a908c4c1bf9a1d395f8",
       "localized_sha256": "a6c3742cf6011d9c96225968bc4d775a7c96ee8bcc26d65c21bd9b58b4553667"
     },
     "workshop/museum-08-interactive-exhibit-page.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "67af68a9c40d19348c41b5b15d243a63bdde31faed0776a8e59630d02eb75b1e",
       "localized_sha256": "525e6951bba66a9bab6a67588f74b2146818c894430530f2f260074819689810"
     },
     "workshop/museum-09-complete.md": {
-      "source_commit": "19effbb2f458e5c040c7676b897e957e261ce058",
+      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
       "source_sha256": "0fc2662a019ee15b01b25b54845a1b0daa5a67c9751a6e4c57e6beb14cc63947",
       "localized_sha256": "aad869fba9d0195f8e7b90ba5f8ed590be38271cd9657974fd49c36ec5906640"
     }
