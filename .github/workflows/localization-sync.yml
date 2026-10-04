@@ -1,0 +1,73 @@
+name: Localization sync review
+
+on:
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/locale-registry.js'
+      - 'finished/**'
+      - 'start-intro/**'
+      - 'start-museum/**'
+      - 'start-accessibility/**'
+      - 'workshop/**'
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/locale-registry.js'
+      - 'finished/**'
+      - 'start-intro/**'
+      - 'start-museum/**'
+      - 'start-accessibility/**'
+      - 'workshop/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  localization-review:
+    name: Create or refresh localization review PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Detect relevant doc updates
+        id: detect
+        run: |
+          python3 scripts/check_localization_updates.py --write-report
+          if git diff --quiet -- .github/localization-update-report.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create localization review PR
+        if: steps.detect.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@271a8d0340265f0a1cec5f9f4e8f0f3a1c5f6443 # v7.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: localization-update/ko-kr
+          base: main
+          title: "docs: review Korean localization updates"
+          commit-message: "docs: add localization review summary"
+          body: |
+            This PR was created because the English workshop source files changed and the repo-local localization skill should be reviewed for `ko-kr`.
+
+            The source changes are tracked in `.github/localization-update-report.md`.
+
+            Review the generated report, apply any required translation updates under `localizations/ko-kr/`, and merge once the localized content matches the English source.
+
+            Changed source areas:
+            - `README.md`
+            - `docs/locale-registry.js`
+            - `workshop/**`
+            - `start-intro/**`
+            - `start-museum/**`
+            - `start-accessibility/**`
+            - `finished/**`
+          labels: localization, docs
