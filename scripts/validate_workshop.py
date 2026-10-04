@@ -1825,7 +1825,7 @@ def validate_site_behavior() -> None:
     require("language-navigation.js" in index and "language-navigation.js" in step, "Homepage and lessons must share language navigation")
     require("resolveLanguage" in navigation and "lessonUrl" in navigation and "firstLessonUrl" in navigation, "Language navigation must preserve URL propagation")
     require("localStorage" in read(DOCS / "homepage.js") and "localStorage" in step, "Homepage and lessons must persist language selection")
-    require("Choose a workshop language" in step and "if (!language)" in step, "Lessons must not load without a valid language")
+    require("lessonUi.chooseLanguageHeading" in step and "if (!language)" in step, "Lessons must not load without a valid language")
     require("preprocessLanguageDirectives" in step, "Lesson viewer must filter language directives")
     require("workshopTracks" in step and "activeWorkshopId" in step,
             "Lesson viewer must scope navigation to the active workshop")

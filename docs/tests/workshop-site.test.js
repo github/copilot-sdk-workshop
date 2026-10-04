@@ -307,7 +307,21 @@ async function main() {
         assert.deepEqual([...korean.elements.get('markdownContent').innerHTML.matchAll(/^### (\d+)\./gm)]
             .map(match => match[1]), ['1', '2', '3', '4']);
         assert.match(korean.elements.get('markdownContent').innerHTML, /[가-힣]/);
+        assert.equal(korean.elements.get('hubLink').textContent, '🏠 허브');
+        assert.equal(korean.elements.get('headerDocsLink').textContent, '📚 Node.js 문서 ↗');
+        assert.equal(korean.elements.get('skipLink').textContent, '수업 내용으로 건너뛰기');
+        assert.equal(korean.elements.get('languageSelectorLabel').textContent, '언어');
+        assert.equal(korean.elements.get('chooseLanguageOption').textContent, '언어 선택');
+        assert.equal(korean.elements.get('stepPosition').textContent, '4단계 중 2단계');
+        assert.equal(korean.elements.get('stepEstimate').textContent, '10분');
+        assert.equal(korean.elements.get('navigationTitle').textContent, 'SDK 101 단계');
+        assert.equal(korean.elements.get('menuButton').getAttribute('aria-label'), '목차 열기');
     }
+
+    const koreanLocale = WorkshopLocales.getLocale('ko-kr');
+    assert.equal(koreanLocale.ui.theme.light, '☀️ 라이트');
+    assert.equal(koreanLocale.ui.theme.dark, '🌙 다크');
+    assert.equal(WorkshopLocales.defaultLocale.ui.theme.light, '☀️ Light');
 
     // An unselected or default locale keeps the canonical English URLs unqualified.
     const defaultLocale = createPage(lessonHtml,
