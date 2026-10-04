@@ -2,17 +2,21 @@
  * Korean typography.
  *
  * The site's Latin webfonts (Instrument Sans / IBM Plex Mono) carry no Hangul,
- * so Korean text silently falls back to whatever the OS picks. These rules add
- * Korean families to the font stacks, but only when `html[lang="ko"]` is set by
- * the locale switcher.
+ * so Korean text silently fell back to whatever the OS picked. These rules swap
+ * the font stacks for Korean families, but only when the locale switcher sets
+ * `html[lang="ko"]`; every other locale keeps the Latin stacks untouched.
  *
- * The Latin webfont stays first in every stack on purpose: Latin glyphs keep the
- * site's visual identity and only Hangul falls through to the Korean family.
+ * Korean families lead both stacks, with the site's Latin webfont right behind
+ * them as a second choice. D2Coding and Nanum Gothic cover Latin as well as
+ * Hangul, so code and prose render in a single typeface instead of splitting
+ * glyphs across two fonts mid-line; the platform Korean fonts sit further down
+ * as fallbacks.
  *
- * D2Coding is self-hosted (OFL 1.1 - see fonts/LICENSE-D2Coding.txt) and subset
- * to Hangul plus CJK punctuation, so the `unicode-range` below keeps browsers
- * from downloading it on English pages. Nanum Gothic comes from Google Fonts,
- * which serves Korean as unicode-range subsets for the same reason.
+ * D2Coding is self-hosted (OFL 1.1 - see fonts/LICENSE-D2Coding.txt), subset
+ * from the naver/d2-coding-font release to Latin, Hangul, and the punctuation,
+ * arrows, and box-drawing characters the lessons use. English pages never
+ * reference the family, so they never download it. Nanum Gothic comes from the
+ * shared Google Fonts link.
  */
 
 @font-face {
@@ -20,8 +24,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("D2Coding"), url("fonts/d2coding-korean-regular.woff2") format("woff2");
-    unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
+    src: local("D2Coding"), url("fonts/d2coding-regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -29,11 +32,10 @@
     font-style: normal;
     font-weight: 600 700;
     font-display: swap;
-    src: local("D2Coding Bold"), url("fonts/d2coding-korean-bold.woff2") format("woff2");
-    unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
+    src: local("D2Coding Bold"), url("fonts/d2coding-bold.woff2") format("woff2");
 }
 
 html[lang="ko"] {
-    --font-sans: "Instrument Sans", "Nanum Gothic", "NanumGothic", "나눔고딕", "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "AppleGothic", "Noto Sans KR", "Noto Sans CJK KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-mono: "IBM Plex Mono", "D2Coding", "D2Coding ligature", "굴림체", "GulimChe", "Gulim", "SFMono-Regular", Consolas, monospace;
+    --font-sans: "Nanum Gothic", "NanumGothic", "나눔고딕", "Instrument Sans", "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "AppleGothic", "Noto Sans CJK KR", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "D2Coding", "IBM Plex Mono", "GulimChe", "굴림체", "Gulim", "굴림", "SFMono-Regular", Consolas, monospace;
 }

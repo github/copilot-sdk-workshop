@@ -63,10 +63,12 @@ Available locales are declared in [`docs/locale-registry.js`](docs/locale-regist
 locale means adding an entry there plus the translated tree under `localizations/`.
 
 Korean pages swap in Korean font stacks via [`docs/korean-typography.css`](docs/korean-typography.css),
-because the site's Latin webfonts carry no Hangul. Prose uses Nanum Gothic (Google Fonts)
-ahead of the platform Korean fonts, and code uses D2Coding, self-hosted under `docs/fonts/`
-under the [SIL Open Font License 1.1](docs/fonts/LICENSE-D2Coding.txt) and subset to Hangul
-so English pages never download it.
+because the site's Latin webfonts carry no Hangul. Prose leads with Nanum Gothic (Google Fonts)
+and code leads with D2Coding, each followed by the site's Latin webfont and then the platform
+Korean fonts. Both Korean families cover Latin as well as Hangul, so a line of code or prose
+stays in one typeface. D2Coding is self-hosted under `docs/fonts/` under the
+[SIL Open Font License 1.1](docs/fonts/LICENSE-D2Coding.txt); English pages never reference it,
+so they never download it.
 
 ## Prerequisites
 

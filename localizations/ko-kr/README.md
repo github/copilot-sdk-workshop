@@ -64,10 +64,11 @@ docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
 
 사이트의 라틴 문자 웹폰트에는 한글이 없으므로, 한국어 페이지는
 [`docs/korean-typography.css`](../../docs/korean-typography.css)로 한국어 글꼴 스택을
-적용합니다. 본문에는 나눔고딕(Google Fonts)을 플랫폼 기본 한국어 글꼴보다 앞에 두고,
-코드에는 D2Coding을 사용합니다. D2Coding은
+적용합니다. 본문은 나눔고딕(Google Fonts)을, 코드는 D2Coding을 맨 앞에 두고, 그 뒤에
+사이트의 라틴 문자 웹폰트와 플랫폼 기본 한국어 글꼴을 차례로 배치합니다. 두 한국어 글꼴 모두
+한글과 라틴 문자를 함께 포함하므로 한 줄 안에서 글꼴이 섞이지 않습니다. D2Coding은
 [SIL Open Font License 1.1](../../docs/fonts/LICENSE-D2Coding.txt)에 따라 `docs/fonts/`에
-직접 호스팅하며, 한글 영역만 서브셋했기 때문에 영어 페이지에서는 내려받지 않습니다.
+직접 호스팅하며, 영어 페이지에서는 참조하지 않으므로 내려받지 않습니다.
 
 ## 필수 조건
 
