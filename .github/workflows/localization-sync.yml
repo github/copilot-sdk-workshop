@@ -63,7 +63,7 @@ jobs:
 
       - name: Install GitHub Copilot CLI
         if: steps.detect.outputs.changed == 'true'
-        run: npm install --global @github/copilot@1.0.91
+        run: npm install --global @github/copilot
 
       - name: Apply localization skill
         if: steps.detect.outputs.changed == 'true'
