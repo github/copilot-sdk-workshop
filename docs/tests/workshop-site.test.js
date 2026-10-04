@@ -185,11 +185,13 @@ async function main() {
         ['en', 'ko-kr']);
     home.elements.get('localeSelector').value = 'ko-kr';
     home.elements.get('localeSelector').emit('change');
+    assert.equal(home.window.location.searchParams.get('locale'), 'ko-kr');
     assert.equal(home.elements.get('startWorkshopLink').href,
         'workshop/step.html?step=intro-00-preflight&lang=rust&locale=ko-kr');
     assert.equal(home.context.document.documentElement.lang, 'ko');
     home.elements.get('localeSelector').value = 'en';
     home.elements.get('localeSelector').emit('change');
+    assert.equal(home.window.location.searchParams.get('locale'), null);
     assert.equal(home.elements.get('startWorkshopLink').href,
         'workshop/step.html?step=intro-00-preflight&lang=rust');
 
