@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <link rel="stylesheet" href="../step.css">
     <link rel="stylesheet" href="../light-theme.css">
-    <script src="../theme-toggle.js"></script>
+    <script src="../theme-toggle.js?v=2"></script>
     <script src="../language-registry.js"></script>
     <script src="../locale-registry.js"></script>
     <script src="../language-navigation.js"></script>
@@ -545,7 +545,7 @@
                 loadingMessage.textContent = lessonUi.loadingLessonProgress;
             }
             if (typeof updateToggleIcon === 'function') {
-                updateToggleIcon();
+                updateToggleIcon(locale);
             }
         }
 

@@ -11,9 +11,9 @@ function toggleTheme() {
     updateToggleIcon();
 }
 
-function updateToggleIcon() {
+function updateToggleIcon(locale) {
     const isLight = document.documentElement.dataset.theme === 'light';
-    const labels = resolveThemeLabels();
+    const labels = locale?.ui?.theme ?? resolveThemeLabels();
     document.querySelectorAll('.theme-toggle').forEach(button => {
         button.textContent = isLight ? labels.dark : labels.light;
         button.setAttribute('aria-label', isLight ? labels.switchToDark : labels.switchToLight);

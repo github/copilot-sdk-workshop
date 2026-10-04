@@ -102,7 +102,7 @@ System message: replace
         });
         document.documentElement.lang = locale.htmlLang;
         if (typeof updateToggleIcon === 'function') {
-            updateToggleIcon();
+            updateToggleIcon(locale);
         }
     }
 
