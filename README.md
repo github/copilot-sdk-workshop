@@ -45,30 +45,14 @@ python3 -m http.server 8000
 Open <http://localhost:8000/docs/>. Do not open `step.html` with a `file://` URL; browsers block
 the Markdown requests used by the lesson viewer.
 
-## Reading the workshop in another language
+## Workshop in your language
 
-The site has two independent selectors. **Language** picks the programming language and is
-carried in the URL as `?lang=` (`dotnet`, `nodejs`, `python`, `go`, `rust`, `java`). **Docs**
-picks the human language of the lesson text and is carried as `?locale=`.
+This workshop provides multiple languages in your locale:
 
-```text
-docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
-```
+English | [한국어](./localizations/ko-kr/README.md)
 
-English is the default and is omitted from the URL. Translated lessons live under
-`localizations/<locale>/`, mirroring the source layout, and the selection is remembered in
-`localStorage`. If a translated page is missing, the viewer falls back to the English text.
-
-Available locales are declared in [`docs/locale-registry.js`](docs/locale-registry.js); adding a
-locale means adding an entry there plus the translated tree under `localizations/`.
-
-Korean pages swap in Korean font stacks via [`docs/korean-typography.css`](docs/korean-typography.css),
-because the site's Latin webfonts carry no Hangul. Prose leads with Nanum Gothic (Google Fonts)
-and code leads with D2Coding, each followed by the site's Latin webfont and then the platform
-Korean fonts. Both Korean families cover Latin as well as Hangul, so a line of code or prose
-stays in one typeface. D2Coding is self-hosted under `docs/fonts/` under the
-[SIL Open Font License 1.1](docs/fonts/LICENSE-D2Coding.txt); English pages never reference it,
-so they never download it.
+If you want to add more language support, add more locale to [`docs/locale-registry.js`](docs/locale-registry.js)
+then add localised documents under the `localizations/` directory.
 
 ## Prerequisites
 

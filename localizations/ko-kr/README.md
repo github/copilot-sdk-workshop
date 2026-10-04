@@ -44,31 +44,14 @@ python3 -m http.server 8000
 <http://localhost:8000/docs/>를 엽니다. 브라우저가 수업 뷰어에서 사용하는 Markdown 요청을
 차단하므로 `step.html`을 `file://` URL로 열지 않습니다.
 
-## 다른 언어로 워크숍 읽기
+## 원하는 언어로 워크숍 진행
 
-사이트에는 서로 독립적인 두 개의 선택기가 있습니다. **Language**는 프로그래밍 언어를
-선택하며 URL에 `?lang=`으로 전달됩니다(`dotnet`, `nodejs`, `python`, `go`, `rust`,
-`java`). **Docs**는 수업 본문의 자연어를 선택하며 `?locale=`로 전달됩니다.
+이 워크숍은 다음 로케일에서 여러 언어를 제공합니다.
 
-```text
-docs/workshop/step.html?step=intro-02-hello-world&lang=nodejs&locale=ko-kr
-```
+[English](../../README.md) | 한국어
 
-영어가 기본값이며 URL에서 생략됩니다. 번역된 수업은 원본 디렉터리 구조를 그대로 따라
-`localizations/<locale>/` 아래에 있으며, 선택한 값은 `localStorage`에 저장됩니다. 번역된
-페이지가 없으면 뷰어가 영어 본문으로 대체합니다.
-
-사용할 수 있는 로케일은 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
-정의되어 있습니다. 로케일을 추가하려면 여기에 항목을 추가하고 `localizations/` 아래에
-번역된 트리를 만들면 됩니다.
-
-사이트의 라틴 문자 웹폰트에는 한글이 없으므로, 한국어 페이지는
-[`docs/korean-typography.css`](../../docs/korean-typography.css)로 한국어 글꼴 스택을
-적용합니다. 본문은 나눔고딕(Google Fonts)을, 코드는 D2Coding을 맨 앞에 두고, 그 뒤에
-사이트의 라틴 문자 웹폰트와 플랫폼 기본 한국어 글꼴을 차례로 배치합니다. 두 한국어 글꼴 모두
-한글과 라틴 문자를 함께 포함하므로 한 줄 안에서 글꼴이 섞이지 않습니다. D2Coding은
-[SIL Open Font License 1.1](../../docs/fonts/LICENSE-D2Coding.txt)에 따라 `docs/fonts/`에
-직접 호스팅하며, 영어 페이지에서는 참조하지 않으므로 내려받지 않습니다.
+더 많은 언어 지원을 추가하려면 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
+로케일을 추가한 다음 `localizations/` 디렉터리 아래에 현지화된 문서를 추가하세요.
 
 ## 필수 조건
 

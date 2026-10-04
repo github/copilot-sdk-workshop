@@ -32,9 +32,9 @@
       "localized_sha256": "c1742e808e67286455db8b19814f1aca1ac4054d2c2cf03f0da436f916f46506"
     },
     "README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "99d916ba533a59106dd348d0ee9a633f993c25a19d5ac2485899c799ea9e4548",
-      "localized_sha256": "2607f7f19110b76ea1e4c2dbc7306f11da948c803b223978541404f14f084702"
+      "source_commit": null,
+      "source_sha256": "b043ff40516cfd249bc29cdf8e2eef34b80fd7fb85aecf966a19ca75c89e1eca",
+      "localized_sha256": "fdf018582a917a8edf02016335294ca948a01401c27b2f606698f65feb1d6c8f"
     },
     "start-accessibility/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
