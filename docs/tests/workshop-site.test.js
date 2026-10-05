@@ -154,7 +154,63 @@ function choose(inputs, value) {
     selected.emit('change');
 }
 
+// Every locale must offer the same interface strings as English, with the same placeholders.
+function shape(value, prefix = '') {
+    if (Array.isArray(value)) {
+        return value.flatMap((item, index) => shape(item, `${prefix}.${index}`));
+    }
+    if (value && typeof value === 'object') {
+        return Object.keys(value).flatMap(key => shape(value[key], prefix ? `${prefix}.${key}` : key));
+    }
+    return [[prefix, value]];
+}
+
+function assertLocaleCompleteness() {
+    const english = WorkshopLocales.defaultLocale;
+    const optional = /^lesson\.(workshopTitles|stepLabels|stepTitles)\./;
+    const reference = new Map(shape(english.ui).filter(([key]) => !optional.test(key)));
+    const repository = path.join(docs, '..');
+    for (const locale of WorkshopLocales.locales.slice(1)) {
+        const strings = new Map(shape(locale.ui));
+        for (const [key, source] of reference) {
+            assert.ok(strings.has(key), `${locale.id} is missing ${key}`);
+            const value = strings.get(key);
+            assert.equal(typeof value, 'string', `${locale.id} ${key} must be text`);
+            assert.ok(value.trim(), `${locale.id} ${key} is empty`);
+            assert.deepEqual((value.match(/\{\w+\}/g) ?? []).sort(), (source.match(/\{\w+\}/g) ?? []).sort(),
+                `${locale.id} ${key} must keep its placeholders`);
+        }
+        for (const key of strings.keys()) {
+            assert.ok(reference.has(key) || optional.test(key), `${locale.id} has an unknown string ${key}`);
+        }
+        assert.match(locale.contentPath, /^localizations\/[a-z]{2}-[a-z]{2}\/$/);
+        assert.equal(locale.contentPath, `localizations/${locale.id}/`);
+        const content = path.join(repository, locale.contentPath);
+        assert.ok(fs.existsSync(path.join(content, 'README.md')), `${locale.id} has no localized README`);
+        for (const lesson of fs.readdirSync(path.join(repository, 'workshop')).filter(name => name.endsWith('.md'))) {
+            assert.ok(fs.existsSync(path.join(content, 'workshop', lesson)),
+                `${locale.id} is missing workshop/${lesson}`);
+            const stepId = lesson.replace(/\.md$/, '');
+            assert.ok(locale.ui.lesson.stepLabels[stepId], `${locale.id} has no navigation label for ${stepId}`);
+            assert.ok(locale.ui.lesson.stepTitles[stepId], `${locale.id} has no title for ${stepId}`);
+        }
+        // The lesson viewer finds each demo act by its localized heading.
+        for (const language of WorkshopLanguages.languages) {
+            const guide = fs.readFileSync(
+                path.join(content, 'start-intro', language.id, 'LIVE_DEMO.md'), 'utf8');
+            for (const heading of Object.values(locale.demoActHeadings)) {
+                assert.ok(guide.split(/\r?\n/).includes(heading),
+                    `${locale.id} ${language.id} demo guide must contain "${heading}"`);
+            }
+        }
+    }
+}
+
 async function main() {
+    assertLocaleCompleteness();
+    const localeIds = WorkshopLocales.locales.map(locale => locale.id);
+    assert.deepEqual(localeIds.slice(0, 2), ['en', 'ko-kr']);
+    assert.equal(new Set(localeIds).size, localeIds.length);
     const home = createPage(homeHtml, 'http://localhost:8000/docs/index.html');
     vm.runInContext(homeScript, home.context);
     assert.equal(home.elements.get('languagePicker').disabled, true);
@@ -195,7 +251,7 @@ async function main() {
     choose(home.workshops, 'intro');
     assert.equal(home.elements.get('startWorkshopLink').textContent, 'Start SDK 101');
     assert.deepEqual(home.elements.get('localeSelector').children.map(option => option.value),
-        ['en', 'ko-kr']);
+        localeIds);
     home.elements.get('localeSelector').value = 'ko-kr';
     home.elements.get('localeSelector').emit('change');
     assert.equal(home.window.location.searchParams.get('locale'), 'ko-kr');
@@ -388,7 +444,7 @@ async function main() {
     await vm.runInContext(lessonScript, switched.context);
     assert.equal(switched.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
     const localeSelector = switched.elements.get('localeSelector');
-    assert.deepEqual(localeSelector.children.map(option => option.value), ['en', 'ko-kr']);
+    assert.deepEqual(localeSelector.children.map(option => option.value), localeIds);
     localeSelector.value = 'ko-kr';
     localeSelector.emit('change');
     await new Promise(resolve => setImmediate(resolve));

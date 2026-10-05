@@ -178,8 +178,8 @@ System message: replace
             ? 'git clone https://github.com/github/copilot-sdk-workshop.git'
             : language.installCommand;
         runtimeNote.textContent = selectedWorkshopId === 'intro'
-            ? `Work in start-intro/${language.id}. Preflight covers its runtime and dependency setup.`
-            : language.runtimeNote;
+            ? ui.introRuntimeNote.replace('{language}', language.id)
+            : ui.runtimeNotes[language.id];
         startGuidance.textContent = workshop?.guidance ?? ui.chooseWorkshopContinue;
     }
 

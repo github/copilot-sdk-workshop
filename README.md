@@ -49,7 +49,7 @@ the Markdown requests used by the lesson viewer.
 
 This workshop provides multiple languages in your locale:
 
-English | [한국어](./localizations/ko-kr/README.md)
+English | [한국어](./localizations/ko-kr/README.md) | [日本語](./localizations/ja-jp/README.md) | [Português (Brasil)](./localizations/pt-br/README.md) | [Español](./localizations/es-es/README.md) | [Français](./localizations/fr-fr/README.md) | [Deutsch](./localizations/de-de/README.md)
 
 If you want to add more language support, add more locale to [`docs/locale-registry.js`](docs/locale-registry.js)
 then add localised documents under the `localizations/` directory.

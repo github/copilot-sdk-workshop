@@ -42,6 +42,15 @@
                 chooseLanguageFor: 'Now choose a language for {name}.',
                 workshopUsesLanguage: '{name} will use the {language} SDK.',
                 chooseWorkshopContinue: 'Choose a workshop to continue.',
+                introRuntimeNote: 'Work in start-intro/{language}. Preflight covers its runtime and dependency setup.',
+                runtimeNotes: {
+                    dotnet: 'Requires the .NET SDK and a supported C# runtime.',
+                    go: 'Requires a supported Go toolchain and module.',
+                    java: 'Requires a supported JDK and a Maven or Gradle project.',
+                    nodejs: 'Requires a current Node.js LTS release.',
+                    python: 'Requires Python and an isolated virtual environment.',
+                    rust: 'Requires Rust and Cargo from rustup.'
+                },
                 lesson: {
                     previous: 'Previous',
                     previousShort: 'Prev',
@@ -204,6 +213,15 @@ System message: replace
                 chooseLanguageFor: '{name}에 사용할 언어를 선택하세요.',
                 workshopUsesLanguage: '{name}에서 {language} SDK를 사용합니다.',
                 chooseWorkshopContinue: '계속하려면 워크숍을 선택하세요.',
+                introRuntimeNote: 'start-intro/{language}에서 작업합니다. 런타임과 종속성 설정은 사전 점검에서 다룹니다.',
+                runtimeNotes: {
+                    dotnet: '.NET SDK와 지원되는 C# 런타임이 필요합니다.',
+                    go: '지원되는 Go 도구 체인과 모듈이 필요합니다.',
+                    java: '지원되는 JDK와 Maven 또는 Gradle 프로젝트가 필요합니다.',
+                    nodejs: '최신 Node.js LTS 릴리스가 필요합니다.',
+                    python: 'Python과 격리된 가상 환경이 필요합니다.',
+                    rust: 'rustup으로 설치한 Rust와 Cargo가 필요합니다.'
+                },
                 lesson: {
                     previous: '이전',
                     previousShort: '이전',
