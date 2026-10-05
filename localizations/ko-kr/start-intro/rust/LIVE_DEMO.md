@@ -1,9 +1,9 @@
-# GitHub Podcast 라이브 데모: Rust: Rust
+# GitHub Podcast 라이브 데모: Rust
 
 ## 세션 전 준비
 
 1. 이 컴퓨터가 아직 인증되지 않았다면 `copilot auth login`을 실행합니다.
-2. 포함된 스타터에서 종속성을 다운로드하고 확인합니다 before the timed session:
+2. 세션 시간 측정 전에 포함된 스타터에서 종속성을 다운로드하고 확인합니다:
 
 ```powershell
 cd start-intro/rust
@@ -18,20 +18,20 @@ cargo check --locked
 
 ## 1막: Hello World
 
-`src\main.rs`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `is_authenticated`, and the session.
+`src\main.rs`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `is_authenticated`, 및 세션.
 
-Add this import:
+이 가져오기를 추가합니다:
 
 ```rust
 use std::time::Duration;
 use github_copilot_sdk::types::{MessageOptions, SessionConfig};
 ```
 
-다음으로 교체합니다 the existing `SessionConfig` import; keep `std::io::{self, Write}`.
+기존 `SessionConfig` 가져오기를 바꿉니다. `std::io::{self, Write}`는 유지합니다.
 
 ### 1. 클라이언트 시작
 
-다음으로 교체합니다 the client placeholder with:
+클라이언트 자리 표시자를 다음으로 바꿉니다:
 
 ```rust
 let client = Client::start(ClientOptions::default()).await?;
@@ -41,7 +41,7 @@ let client = Client::start(ClientOptions::default()).await?;
 
 ### 2. 인증 확인
 
-다음으로 교체합니다 `let is_authenticated = false;` and its `if` block with:
+`let is_authenticated = false;`와 해당 `if` 블록을 다음으로 바꿉니다:
 
 ```rust
 let is_authenticated = client.get_auth_status().await?.is_authenticated;
@@ -55,8 +55,8 @@ if !is_authenticated {
 
 ### 3. 세션 만들기
 
-다음으로 교체합니다 `let session_is_created = false;` and the empty
-`if session_is_created { ... }` block with:
+`let session_is_created = false;`와 빈
+`if session_is_created { ... }` 블록을 다음으로 바꿉니다:
 
 ```rust
 let mut config = SessionConfig::default();
@@ -67,14 +67,14 @@ config.permission_handler = Some(github_copilot_sdk::permission::approve_all());
 let session = client.create_session(config).await?;
 ```
 
-다음과 같이 말합니다: "세션은 대화입니다. I chose the model and enabled streaming."
+다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다."
 
 다음과 같이 말합니다: "이 처리기는 권한 요청에 응답합니다. 빈 도구 허용 목록은 이 실습에서 도구 기능을 제거합니다. approve-all만으로는 안전 경계가 되지 않습니다."
 
 ### 4. Hello World 전송
 
-Under `// Step 5: Send the first message.`, replace the three `let _ = ...`
-placeholder lines with:
+`// Step 5: Send the first message.` 아래에서 세 개의 `let _ = ...`
+자리 표시자 줄을 다음으로 바꿉니다:
 
 ```rust
 let prompt = "Hello world! In one sentence, say what the Copilot SDK helps a Rust app do.".to_owned();
@@ -125,17 +125,17 @@ errors 또는 60초 제한 시간 세션과 클라이언트를 닫은 후
 
 다음과 같이 말합니다: "기본 형태는 다음과 같습니다: start a client, create a session, subscribe to events, and send a message. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
 
-다음 Hello World 확인 단계를 실행합니다 now `rust` 폴더에서:
+`rust` 폴더에서 다음 Hello World 확인 단계를 실행합니다:
 
 ```powershell
 cargo run --locked
 ```
 
-예상 출력: a one-sentence answer streamed to the terminal, then program exit.
+예상 출력: 터미널에 한 문장 답변이 스트리밍된 후 프로그램이 종료됩니다.
 
 ## 2막: 팟캐스트 에이전트로 전환
 
-After Hello World, use the prewritten code in `src\workshop.rs` 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
+Hello World 이후 `src\workshop.rs`의 미리 작성된 코드를 사용하여 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
 
 다음과 같이 말합니다: "대화가 작동합니다. 이제 이를 팟캐스트 에이전트로 전환합니다: 선택한 GitHub Podcast 에피소드를 조사하고 사실을 만들지 않고 출시 문구를 준비하는 전문 도우미입니다."
 
@@ -147,13 +147,13 @@ Add:
 mod workshop;
 ```
 
-Add `SystemMessageConfig` to the existing types import:
+기존 types 가져오기에 `SystemMessageConfig`를 추가합니다:
 
 ```rust
 use github_copilot_sdk::types::{MessageOptions, SessionConfig, SystemMessageConfig};
 ```
 
-After authentication, before constructing `config`:
+인증 후 `config`를 구성하기 전에 다음을 추가합니다:
 
 ```rust
 let selected_model = workshop::select_model(&client, MODEL).await?;
@@ -187,7 +187,7 @@ config = config.with_system_message(
 let session = client.create_session(config).await?;
 ```
 
-다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다, and swap Hello World's approve-all handler for `workshop::permission_prompt`, which denies anything that is not one of these tools and asks me on stdin before one runs."
+다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다. 또한 `workshop::permission_prompt`로 Hello World의 approve-all 처리기를 바꿉니다. 이 처리기는 지정된 도구가 아니면 거부하고 실행 전에 표준 입력으로 사용자에게 묻습니다."
 
 다음과 같이 말합니다: "이 도구가 있어 일반 챗봇이 아니라 에이전트가 됩니다: 애플리케이션이 제어하는 신뢰할 수 있는 데이터 원본에 대해 작업을 수행할 수 있습니다."
 
@@ -195,8 +195,8 @@ let session = client.create_session(config).await?;
 
 ### 3. 프롬프트 교체
 
-다음으로 교체합니다 only the `let prompt = ...` line. Keep the streaming loop,
-timeout, and cleanup:
+`let prompt = ...` 줄만 다음으로 바꿉니다. 스트리밍 루프,
+제한 시간 및 정리는 유지합니다:
 
 ```rust
 let prompt = format!(
@@ -207,11 +207,11 @@ let prompt = format!(
 
 다음과 같이 말합니다: "에이전트가 에피소드 도구를 호출하면 읽기 전용 조회를 승인합니다. 응답은 만든 세부 정보가 아니라 공식 피드에 근거합니다."
 
-완성된 팟캐스트 에이전트를 실행합니다 now `rust` 폴더에서:
+`rust` 폴더에서 완성된 팟캐스트 에이전트를 실행합니다:
 
 ```powershell
 cargo run --locked
 ```
 
-예상 단계: model selection, ten-episode selection, tool execution, approval prompt, then grounded launch copy.
+예상 단계: 모델 선택, 에피소드 10개 중 선택, 도구 실행, 승인 프롬프트, 그리고 근거 기반 출시 문구입니다.
 

@@ -42,9 +42,9 @@
       "localized_sha256": "3475101347dcac86b107df48243c20d92728015a85b2346c82c28ac28797ff43"
     },
     "start-intro/dotnet/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "8a064be9bdf22dd594fb8033ed2b4670a1ffc2167cb292bf38741e8080ee3740",
-      "localized_sha256": "e724d011b44dab53c947a2fed837f701de658d243d77ee5ce49bb9622201ce47"
+      "localized_sha256": "04fc9077f2f9e999399711f4302baef90e46e808403b0f35fd8a42abaa93e17b"
     },
     "start-intro/dotnet/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -52,9 +52,9 @@
       "localized_sha256": "2f958fb85da47dd4f801ee83ec2d7fd11d33d62a1239647ebb6653d9bdc8fd3e"
     },
     "start-intro/go/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "53251d6e74279c31f172d4d955e7c0347cbed96864090250d9f2e168a7cc047d",
-      "localized_sha256": "4cabb495d1c1687722f0c4c99dc45af85e39303657af6b46c19d76a7739ea05e"
+      "localized_sha256": "691afe1a0c0ba4e5b45b6ee2e367c79c629b62b0916479a70006dcf80937ade3"
     },
     "start-intro/go/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -62,9 +62,9 @@
       "localized_sha256": "b205e011365a654cab583b859b3d688128de8401c232e517a80686dce98cc4dd"
     },
     "start-intro/java/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "fefaa841cfa2d7beb56c74d455f5aaa2d0a839300a1a3a92f96b22a7ce21e3d8",
-      "localized_sha256": "1dc4c952df5375af3f262736337c8e8410b67cf631786301120998ddca5ed660"
+      "localized_sha256": "4e4370573c8d0856c8dc7858ef202e9703b36a4409632fcee78d3b58fb420c2b"
     },
     "start-intro/java/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -72,9 +72,9 @@
       "localized_sha256": "a15fb604b98df42ed184b8b6ea6ef4908b3e40d15194917547e868ee264442dc"
     },
     "start-intro/nodejs/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "42d649ada4fb8055e3424186b4f02febbada53d23a093e0e6eba573aed06a91e",
-      "localized_sha256": "90e5bdaa182f52bb0a702dca76a34cd500227b76346a79f1958236787b484be2"
+      "localized_sha256": "0beb7a0a562e11f758062ee9a437edcfa14519a4bc4be9ba9d6893be294bcc6f"
     },
     "start-intro/nodejs/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -82,9 +82,9 @@
       "localized_sha256": "8c16096c3f025e47e0dce63dfb24d4ec2ede1b17d47b07bb61682d354fdc5407"
     },
     "start-intro/python/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "aabc990950d6ec5a0e62415e9bf6d70d8606115b132528e9b08fe8bd89199a9b",
-      "localized_sha256": "474679d0ee56836940289814504ea109861f11700b9c1cad36d883e5a7318ca2"
+      "localized_sha256": "6aa7d1e30408f2e8d9b091ef24654b478a0bb021e73207583fbbd9ee738b7a6f"
     },
     "start-intro/python/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -97,9 +97,9 @@
       "localized_sha256": "058801899982bac7df45a79f0d71078ff7ec4d4eaa8b007a2d9fdb244f4cf67c"
     },
     "start-intro/rust/LIVE_DEMO.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "40df5b7b60d5a0b9cb12d9818c8a149877da525c",
       "source_sha256": "e18d6bf592d05364a30d1c6c14f1fc61ae3e75a146d1c7071864faf16329b74b",
-      "localized_sha256": "c2154a0cad2cf7173755e0e3ee4862033bdca6d820d06a1e69638773d4cdf448"
+      "localized_sha256": "6e6f8ff9ef3725f2c7a9ccae8ea966658733deffe181ff531a38b10a31d5b9a0"
     },
     "start-intro/rust/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",

@@ -1,9 +1,9 @@
-# GitHub Podcast 라이브 데모: Go: Go
+# GitHub Podcast 라이브 데모: Go
 
 ## 세션 전 준비
 
 1. 이 컴퓨터가 아직 인증되지 않았다면 `copilot auth login`을 실행합니다.
-2. 종속성을 다운로드합니다 in the included starter before the timed session:
+2. 세션 시간 측정 전에 포함된 스타터에서 종속성을 다운로드합니다:
 
 ```powershell
 cd start-intro/go
@@ -19,11 +19,11 @@ go mod verify
 
 ## 1막: Hello World
 
-`main.go`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `isAuthenticated`, and `session`. 이벤트 처리기는 그대로 둡니다.
+`main.go`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `isAuthenticated`, 및 `session`. 이벤트 처리기는 그대로 둡니다.
 
 ### 1. 클라이언트 시작
 
-다음으로 교체합니다 `var client *copilot.Client` and the following `_ = client` with:
+`var client *copilot.Client`와 다음 `_ = client`를 바꿉니다:
 
 ```go
 client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
@@ -37,7 +37,7 @@ defer client.Stop()
 
 ### 2. 인증 확인
 
-다음으로 교체합니다 `isAuthenticated := false` with:
+`isAuthenticated := false`를 다음으로 바꿉니다:
 
 ```go
 authStatus, err := client.GetAuthStatus(context.Background())
@@ -51,7 +51,7 @@ isAuthenticated := authStatus.IsAuthenticated
 
 ### 3. 세션 만들기
 
-다음으로 교체합니다 the session placeholder with:
+세션 자리 표시자를 다음으로 바꿉니다:
 
 ```go
 session, err := client.CreateSession(context.Background(), &copilot.SessionConfig{
@@ -66,14 +66,14 @@ if err != nil {
 defer session.Disconnect()
 ```
 
-다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, and the event handler below prints each text fragment as it arrives."
+다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, 아래 이벤트 처리기는 도착하는 각 텍스트 조각을 출력합니다."
 
 다음과 같이 말합니다: "이 처리기는 권한 요청에 응답합니다. 빈 도구 허용 목록은 이 실습에서 도구 기능을 제거합니다. approve-all만으로는 안전 경계가 되지 않습니다."
 
 ### 4. Hello World 전송
 
-Add `"time"` to the imports. Under `// Step 5: Send the first message.`,
-replace `_ = context.Background()` with:
+가져오기에 `"time"`을 추가합니다. `// Step 5: Send the first message.` 아래에서
+`_ = context.Background()`를 다음으로 바꿉니다:
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -86,22 +86,22 @@ if _, err := session.SendAndWait(ctx, copilot.MessageOptions{
 fmt.Println()
 ```
 
-기존 항목을 유지합니다 event subscription. `streamResponse`도 호출하지 않습니다.
-해당 도우미는 두 번째 구독을 추가하여 각 텍스트 조각을 두 번 출력합니다.
+기존 이벤트 구독을 유지합니다. `streamResponse`도 호출하지 않습니다.
+해당 도우미는 두 번째 구독을 추가하므로 각 텍스트 조각이 두 번 출력됩니다.
 
-다음과 같이 말합니다: "기본 형태는 다음과 같습니다: start a client, create a session, listen for events, and send a message. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
+다음과 같이 말합니다: "기본 형태는 다음과 같습니다. 클라이언트를 시작하고 세션을 만든 다음 이벤트를 수신하면서 메시지를 보냅니다. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
 
-다음 Hello World 확인 단계를 실행합니다 now `go` 폴더에서:
+`go` 폴더에서 다음 Hello World 확인 단계를 실행합니다:
 
 ```powershell
 go run .
 ```
 
-예상 출력: a streamed one-sentence answer, followed by `SendAndWait` completing the turn.
+예상 출력: 한 문장으로 스트리밍되는 답변과 `SendAndWait`에 따른 턴 완료입니다.
 
 ## 2막: 팟캐스트 에이전트로 전환
 
-Hello World 이후 미리 작성된 도우미를 사용하여 in `helpers.go` and `permission_prompt.go` 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
+Hello World 이후 `helpers.go`와 `permission_prompt.go`의 미리 작성된 도우미를 사용하여 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
 
 다음과 같이 말합니다: "대화가 작동합니다. 이제 이를 팟캐스트 에이전트로 전환합니다: 선택한 GitHub Podcast 에피소드를 조사하고 사실을 만들지 않고 출시 문구를 준비하는 전문 도우미입니다."
 
@@ -155,7 +155,7 @@ if err != nil {
 defer session.Disconnect()
 ```
 
-다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다, and swap Hello World's approve-all handler for `permissionPrompt` in `permission_prompt.go`, which denies anything that is not one of these tools and asks me on stdin before one runs."
+다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다. 또한 `permission_prompt.go`의 `permissionPrompt`로 Hello World의 approve-all 처리기를 바꿉니다. 이 처리기는 지정된 도구가 아니면 거부하고 실행 전에 표준 입력으로 사용자에게 묻습니다."
 
 다음과 같이 말합니다: "이 도구가 있어 일반 챗봇이 아니라 에이전트가 됩니다: 애플리케이션이 제어하는 신뢰할 수 있는 데이터 원본에 대해 작업을 수행할 수 있습니다."
 
@@ -163,23 +163,23 @@ defer session.Disconnect()
 
 ### 3. 프롬프트 교체
 
-Build the prompt immediately before the existing bounded send:
+기존 제한된 전송 바로 앞에서 프롬프트를 구성합니다:
 
 ```go
 prompt := fmt.Sprintf("Use get_github_podcast_episode for the episode titled %q. Return exactly a social headline and a sponsor-safe post under 280 characters. Use only facts returned by the tool; do not invent guests, sponsors, topics, or links.", selectedEpisode.Title)
 ```
 
-`MessageOptions` 필드를 다음으로 변경합니다 `Prompt: prompt`. Update the model-status
-line to print `selectedModel`. 기존 항목을 유지합니다 subscription, bounded context,
-error check, and deferred cleanup; do not add a second subscription.
+`MessageOptions` 필드를 `Prompt: prompt`로 변경합니다. 모델 상태
+줄이 `selectedModel`을 출력하도록 합니다. 기존 구독, 제한된 컨텍스트,
+error check, 지연된 정리를 유지합니다. 두 번째 구독은 추가하지 않습니다.
 
 다음과 같이 말합니다: "에이전트가 에피소드 도구를 호출하면 읽기 전용 조회를 승인합니다. 응답은 만든 세부 정보가 아니라 공식 피드에 근거합니다."
 
-완성된 팟캐스트 에이전트를 실행합니다 now `go` 폴더에서:
+`go` 폴더에서 완성된 팟캐스트 에이전트를 실행합니다:
 
 ```powershell
 go run .
 ```
 
-예상 단계: model selection, ten-episode selection, `[Tool call started]`, approval prompt, `[Tool call complete]`, then streamed launch copy.
+예상 단계: 모델 선택, 에피소드 10개 중 선택, `[Tool call started]`, 승인 프롬프트, `[Tool call complete]`, 그리고 스트리밍되는 출시 문구입니다.
 

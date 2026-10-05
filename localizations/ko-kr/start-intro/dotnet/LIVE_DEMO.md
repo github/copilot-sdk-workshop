@@ -3,7 +3,7 @@
 ## 세션 전 준비
 
 1. 이 컴퓨터가 아직 인증되지 않았다면 `copilot auth login`을 실행합니다.
-2. 포함된 스타터에서 작업합니다 and restore dependencies before the timed session:
+2. 포함된 스타터에서 작업하고 세션 시간 측정 전에 종속성을 복원합니다:
 
 ```powershell
 cd start-intro/dotnet
@@ -18,11 +18,11 @@ dotnet restore
 
 ## 1막: Hello World
 
-`Program.cs`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `isAuthenticated`, and `session`. 스트리밍 이벤트 처리기와 완료 대기는 그대로 둡니다.
+`Program.cs`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `isAuthenticated`, 및 `session`. 스트리밍 이벤트 처리기와 완료 대기는 그대로 둡니다.
 
 ### 1. 클라이언트 시작
 
-다음으로 교체합니다 `CopilotClient client;` with:
+`CopilotClient client;`를 다음으로 바꿉니다:
 
 ```csharp
 await using var client = new CopilotClient();
@@ -33,7 +33,7 @@ await client.StartAsync();
 
 ### 2. 인증 확인
 
-다음으로 교체합니다 `var isAuthenticated = false;` with:
+`var isAuthenticated = false;`를 다음으로 바꿉니다:
 
 ```csharp
 var isAuthenticated = (await client.GetAuthStatusAsync()).IsAuthenticated;
@@ -43,8 +43,8 @@ var isAuthenticated = (await client.GetAuthStatusAsync()).IsAuthenticated;
 
 ### 3. 세션 만들기
 
-Add `using GitHub.Copilot.Rpc;` 파일 상단에 추가합니다. 다음으로 교체합니다
-`CopilotSession session = null!;` with:
+파일 상단에 `using GitHub.Copilot.Rpc;`를 추가합니다. 다음으로 바꿉니다
+`CopilotSession session = null!;`으로 바꿉니다:
 
 ```csharp
 await using var session = await client.CreateSessionAsync(new SessionConfig
@@ -56,13 +56,13 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 });
 ```
 
-다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, and the event handler below already prints each text fragment as it arrives."
+다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, 아래 이벤트 처리기는 도착하는 각 텍스트 조각을 이미 출력합니다."
 
 다음과 같이 말합니다: "이 처리기는 권한 요청에 응답합니다. 빈 도구 허용 목록은 이 실습에서 도구 기능을 제거합니다. approve-all만으로는 안전 경계가 되지 않습니다."
 
 ### 4. Hello World 전송
 
-Under `// Step 5: Send the first message.`, type:
+`// Step 5: Send the first message.` 아래에 입력합니다:
 
 ```csharp
 await session.SendAsync(new MessageOptions
@@ -71,20 +71,20 @@ await session.SendAsync(new MessageOptions
 });
 ```
 
-다음으로 교체합니다 the final `await complete.Task;` with:
+마지막 `await complete.Task;`를 다음으로 바꿉니다:
 
 ```csharp
 await complete.Task.WaitAsync(TimeSpan.FromSeconds(60));
 Console.WriteLine();
 ```
 
-기존 event handler 이미 제공됩니다; it is not a fifth editing
-exercise. It prints deltas, surfaces session errors, and finishes on idle.
-`await using` closes the client and session after the run.
+기존 이벤트 처리기는 이미 제공되므로 다섯 번째 편집
+연습이 아닙니다. 델타를 출력하고 세션 오류를 표시하며 idle 이벤트에서 완료됩니다.
+`await using`은 실행이 끝난 후 클라이언트와 세션을 닫습니다.
 
-다음과 같이 말합니다: "기본 형태는 다음과 같습니다: start a client, create a session, listen for events, and send a message. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
+다음과 같이 말합니다: "기본 형태는 다음과 같습니다. 클라이언트를 시작하고 세션을 만든 다음 이벤트를 수신하면서 메시지를 보냅니다. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
 
-예상 출력: a streamed one-sentence answer, followed by the existing `SessionIdleEvent` completing the program.
+예상 출력: 한 문장으로 스트리밍되는 답변과 기존 `SessionIdleEvent`에 따른 프로그램 완료입니다.
 
 다음 Hello World 확인 단계를 실행합니다 from `start-intro/dotnet`:
 
@@ -94,13 +94,13 @@ dotnet run
 
 ## 2막: 팟캐스트 에이전트로 전환
 
-After Hello World, add the prewritten helpers in `Helpers` and `Tools` 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
+Hello World 이후 `Helpers`와 `Tools`의 미리 작성된 도우미를 추가하여 같은 세션을 근거 기반 팟캐스트 흐름으로 전환합니다.
 
 다음과 같이 말합니다: "대화가 작동합니다. 이제 이를 팟캐스트 에이전트로 전환합니다: 선택한 GitHub Podcast 에피소드를 조사하고 사실을 만들지 않고 출시 문구를 준비하는 전문 도우미입니다."
 
 ### 1. 발표자가 선택하도록 설정
 
-Add usings for the prewritten helpers:
+미리 작성된 도우미의 using을 추가합니다:
 
 ```csharp
 using CopilotSdkLiveDemo.Helpers;
@@ -108,7 +108,7 @@ using CopilotSdkLiveDemo.Tools;
 ```
 
 인증 후 완료 신호와 세션을 만들기 전에 선택기를 추가합니다
-and 최신 에피소드 10개 중 하나를 선택합니다:
+그리고 최신 에피소드 10개 중 하나를 선택합니다:
 
 ```csharp
 var model = await ModelSelector.PickAsync(client, Model);
@@ -128,8 +128,8 @@ var episodeTool = GitHubPodcastEpisodeTool.CreateEpisodeTool();
 var latestEpisodesTool = GitHubPodcastEpisodeTool.CreateLatestEpisodesTool();
 ```
 
-다음으로 교체합니다 the hello-world `SessionConfig` fields with these, keeping
-`await using var session = await client.CreateSessionAsync(...)`:
+Hello World의 `SessionConfig` 필드를 다음으로 바꾸되
+`await using var session = await client.CreateSessionAsync(...)` 블록은 유지합니다:
 
 ```csharp
 Model = model,
@@ -144,11 +144,11 @@ SystemMessage = new SystemMessageConfig
 }
 ```
 
-다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다, and swap Hello World's approve-all handler for one that prompts me, so I remain the approval point before a tool executes."
+다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다. 또한 Hello World의 approve-all 처리기를 사용자에게 묻는 처리기로 바꾸어 도구가 실행되기 전에 제가 승인하도록 합니다."
 
 다음과 같이 말합니다: "이 도구가 있어 일반 챗봇이 아니라 에이전트가 됩니다: 애플리케이션이 제어하는 신뢰할 수 있는 데이터 원본에 대해 작업을 수행할 수 있습니다."
 
-다음과 같이 말합니다: "The system message uses 다음으로 교체합니다, not Append. 기본 프롬프트를 상속하지 않고 애플리케이션이 이 세션의 에이전트 정체성과 근거 규칙을 완전히 제공합니다."
+다음과 같이 말합니다: "시스템 메시지는 Append가 아니라 Replace를 사용합니다. 기본 프롬프트를 상속하지 않고 애플리케이션이 이 세션의 에이전트 정체성과 근거 규칙을 완전히 제공합니다."
 
 ### 3. 프롬프트 교체
 
@@ -163,10 +163,10 @@ await session.SendAsync(new MessageOptions
 
 다음과 같이 말합니다: "에이전트가 에피소드 도구를 호출하면 읽기 전용 조회를 승인합니다. 응답은 만든 세부 정보가 아니라 공식 피드에 근거합니다."
 
-예상 단계: model selection, ten-episode selection, `[Tool call started]`, approval prompt, `[Tool call complete]`, then streamed launch copy.
+예상 단계: 모델 선택, 에피소드 10개 중 선택, `[Tool call started]`, 승인 프롬프트, `[Tool call complete]`, 그리고 스트리밍되는 출시 문구입니다.
 
-모델 상태 줄을 업데이트하여 to use the selected `model`, not `Model`.
-이벤트 처리기를 유지합니다, bounded completion wait, and `await using` declarations.
+모델 상태 줄이 `Model`이 아닌 선택한 `model`을 사용하도록 업데이트합니다.
+이벤트 처리기, 제한된 완료 대기 및 `await using` 선언을 유지합니다.
 
 완성된 팟캐스트 에이전트를 실행합니다 같은 폴더에서:
 

@@ -1,9 +1,9 @@
-# GitHub Podcast 라이브 데모: Python: Python
+# GitHub Podcast 라이브 데모: Python
 
 ## 세션 전 준비
 
 1. 이 컴퓨터가 아직 인증되지 않았다면 `copilot auth login`을 실행합니다.
-2. 포함된 스타터에서 환경을 만듭니다 before the timed session:
+2. 세션 시간 측정 전에 포함된 스타터에서 환경을 만듭니다:
 
 ```powershell
 cd start-intro/python
@@ -21,11 +21,11 @@ macOS/Linux에서는 다음을 사용합니다: `.venv/bin/python` instead of `.
 
 ## 1막: Hello World
 
-`main.py`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `is_authenticated`, and `session`. 스트리밍 이벤트 처리기와 완료 대기는 그대로 둡니다.
+`main.py`에서 시작합니다. 여기에는 의도적으로 이름이 지정된 자리 표시자가 있습니다: `client`, `is_authenticated`, 및 `session`. 스트리밍 이벤트 처리기와 완료 대기는 그대로 둡니다.
 
 ### 1. 클라이언트 시작
 
-다음으로 교체합니다 `client: CopilotClient` with:
+`client: CopilotClient`를 다음으로 바꿉니다:
 
 ```python
 client = CopilotClient()
@@ -36,7 +36,7 @@ await client.start()
 
 ### 2. 인증 확인
 
-다음으로 교체합니다 `is_authenticated = False` and its `if` block with:
+`is_authenticated = False`와 해당 `if` 블록을 다음으로 바꿉니다:
 
 ```python
 is_authenticated = (await client.get_auth_status()).isAuthenticated
@@ -49,7 +49,7 @@ if not is_authenticated:
 
 ### 3. 세션 만들기
 
-다음으로 교체합니다 `session = None` with:
+`session = None`을 다음으로 바꿉니다:
 
 ```python
 session = await client.create_session(
@@ -60,21 +60,21 @@ session = await client.create_session(
 )
 ```
 
-Widen the SDK import at the top of the file:
+파일 상단의 SDK 가져오기를 다음과 같이 확장합니다:
 
 ```python
 from copilot import CopilotClient, PermissionHandler
 ```
 
-다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, and the event handler below already prints each text fragment as it arrives."
+다음과 같이 말합니다: "세션은 대화입니다. 모델을 선택하고 스트리밍을 활성화했습니다, 아래 이벤트 처리기는 도착하는 각 텍스트 조각을 이미 출력합니다."
 
 다음과 같이 말합니다: "이 처리기는 권한 요청에 응답합니다. 빈 도구 허용 목록은 이 실습에서 도구 기능을 제거합니다. approve-all만으로는 안전 경계가 되지 않습니다."
 
 ### 4. Hello World 전송
 
-다음으로 교체합니다 everything from `# Step 5: Send the first message.` to the end of
-`main()` with this indented block. Keep the module's
-`if __name__ == "__main__":` block:
+`# Step 5: Send the first message.`부터
+`main()` 끝까지를 이 들여쓰기된 블록으로 바꿉니다. 모듈의
+`if __name__ == "__main__":` 블록은 유지합니다:
 
 ```python
     try:
@@ -92,19 +92,19 @@ from copilot import CopilotClient, PermissionHandler
 
 다음과 같이 말합니다: "기본 형태는 다음과 같습니다: start a client, create a session, listen for events, and send a message. 이 흐름이 작동하면 팟캐스트 에이전트로 발전시킬 수 있습니다."
 
-다음 Hello World 확인 단계를 실행합니다 `start-intro/python`에서:
+`start-intro/python`에서 다음 Hello World 확인 단계를 실행합니다:
 
 ```powershell
 .\.venv\Scripts\python.exe main.py
 ```
 
-On macOS/Linux:
+macOS/Linux에서는 다음을 실행합니다:
 
 ```bash
 .venv/bin/python main.py
 ```
 
-예상 출력: a streamed one-sentence answer, followed by `SessionIdleData` completing the program.
+예상 출력: 한 문장으로 스트리밍되는 답변과 `SessionIdleData`에 따른 프로그램 완료입니다.
 
 ## 2막: 팟캐스트 에이전트로 전환
 
@@ -127,7 +127,7 @@ from model_selector import select_model
 from permission_prompt import permission_prompt
 ```
 
-Narrow the SDK import back, since `permission_prompt` replaces `PermissionHandler` below:
+아래에서 `permission_prompt`가 `PermissionHandler`를 대체하므로 SDK 가져오기를 다시 좁힙니다:
 
 ```python
 from copilot import CopilotClient
@@ -145,7 +145,7 @@ selected_episode = pick_episode(latest_episodes)
 
 ### 2. 세션에 기능 부여
 
-Create the session with tools:
+도구를 사용하여 세션을 만듭니다:
 
 ```python
 session = await client.create_session(
@@ -161,7 +161,7 @@ session = await client.create_session(
 )
 ```
 
-다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다, and swap Hello World's approve-all handler for one that prompts me, so I remain the approval point before a tool executes."
+다음과 같이 말합니다: "모델에 애플리케이션에 대한 임의의 접근 권한을 주지 않습니다. 범위가 좁고 형식이 지정된 기능 두 개를 부여하고 이름으로 허용 목록에 추가합니다. 또한 Hello World의 approve-all 처리기를 사용자에게 묻는 처리기로 바꾸어 도구가 실행되기 전에 제가 승인하도록 합니다."
 
 다음과 같이 말합니다: "이 도구가 있어 일반 챗봇이 아니라 에이전트가 됩니다: 애플리케이션이 제어하는 신뢰할 수 있는 데이터 원본에 대해 작업을 수행할 수 있습니다."
 
@@ -169,7 +169,7 @@ session = await client.create_session(
 
 ### 3. 프롬프트 교체
 
-다음으로 교체합니다 the prompt with:
+프롬프트를 다음으로 바꿉니다:
 
 ```python
 await session.send(
@@ -181,21 +181,20 @@ await session.send(
 
 다음과 같이 말합니다: "에이전트가 에피소드 도구를 호출하면 읽기 전용 조회를 승인합니다. 응답은 만든 세부 정보가 아니라 공식 피드에 근거합니다."
 
-이벤트 처리기를 유지합니다, completion wait, and cleanup unchanged. 다음으로 교체합니다 only
-the `session.send(...)` call inside the existing `try` block. Update the
-model-status line to print the selected `model`.
+이벤트 처리기, 완료 대기 및 정리는 변경하지 않습니다. 기존 `try` 블록 안의
+`session.send(...)` 호출만 바꿉니다. 모델 상태 줄이 선택한 `model`을 출력하도록 업데이트합니다.
 
-완성된 팟캐스트 에이전트를 실행합니다 같은 폴더에서:
+같은 폴더에서 완성된 팟캐스트 에이전트를 실행합니다:
 
 ```powershell
 .\.venv\Scripts\python.exe main.py
 ```
 
-On macOS/Linux:
+macOS/Linux에서는 다음을 실행합니다:
 
 ```bash
 .venv/bin/python main.py
 ```
 
-예상 단계: model selection, ten-episode selection, `[Tool call started]`, approval prompt, `[Tool call complete]`, then streamed launch copy.
+예상 단계: 모델 선택, 에피소드 10개 중 선택, `[Tool call started]`, 승인 프롬프트, `[Tool call complete]`, 그리고 스트리밍되는 출시 문구입니다.
 
