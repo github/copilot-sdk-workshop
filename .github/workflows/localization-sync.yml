@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Detect changed English documentation
+      - name: Detect changed or stale English documentation
         id: detect
         env:
           BASE_SHA: ${{ github.event.before }}
@@ -42,6 +42,7 @@ jobs:
           python3 scripts/check_localization_updates.py \
             --base "$BASE_SHA" \
             --head "$GITHUB_SHA" \
+            --include-stale-localizations \
             --write-list .localization-changed-files.txt
 
           if [[ -s .localization-changed-files.txt ]]; then
@@ -143,7 +144,7 @@ jobs:
           title: "docs: synchronize localized content"
           commit-message: "docs: synchronize localized content"
           body: |
-            GitHub Copilot CLI ran the repository-local localization skill after these English sources changed:
+            GitHub Copilot CLI ran the repository-local localization skill for these English sources requiring synchronization:
 
             ```
             ${{ steps.detect.outputs.changed_files }}
