@@ -323,12 +323,12 @@ PROCEDURE_MARKERS = {
         "java": "CuratorStreamer.streamExhibit",
     },
     "museum-03-curator-voice.md": {
-        "dotnet": "const string SystemMessage",
-        "nodejs": "const systemMessage",
-        "python": "SYSTEM_MESSAGE =",
-        "go": "const systemMessage",
-        "rust": "const SYSTEM_MESSAGE",
-        "java": "public static final String SYSTEM_MESSAGE",
+        "dotnet": "Content = CuratorSystemMessages.Curator",
+        "nodejs": "content: curatorSystemMessage",
+        "python": '"content": CURATOR_SYSTEM_MESSAGE',
+        "go": "Content: CuratorSystemMessage",
+        "rust": ".with_content(CURATOR_SYSTEM_MESSAGE)",
+        "java": ".setContent(CuratorSystemMessages.CURATOR)",
     },
     "museum-04-approved-facts.md": {
         "dotnet": "BuildExhibitPrompt",
@@ -1026,11 +1026,34 @@ def validate_layout() -> None:
 
 MUSEUM_HELPER_PATTERNS = {
     "dotnet": ("Helpers/Curator*.cs",),
-    "nodejs": ("src/curator.ts",),
-    "python": ("curator.py",),
-    "go": ("curator.go",),
-    "rust": ("src/lib.rs",),
+    "nodejs": ("src/curator.ts", "src/system-messages.ts"),
+    "python": ("curator.py", "system_messages.py"),
+    "go": ("curator.go", "system_messages.go"),
+    "rust": ("src/lib.rs", "src/system_messages.rs"),
     "java": ("src/main/java/workshop/Curator*.java",),
+}
+# The system messages are long application-owned text, so they ship in a pre-built helper file and
+# the learner only wires them into a session. Keeping them out of the entrypoint is what keeps it
+# short enough to follow.
+MUSEUM_SYSTEM_MESSAGE_FILES = {
+    "dotnet": "Helpers/CuratorSystemMessages.cs",
+    "nodejs": "src/system-messages.ts",
+    "python": "system_messages.py",
+    "go": "system_messages.go",
+    "rust": "src/system_messages.rs",
+    "java": "src/main/java/workshop/CuratorSystemMessages.java",
+}
+MUSEUM_SYSTEM_MESSAGE_OPENINGS = (
+    "You are an interpretive museum exhibit curator.",
+    "You are a museum research assistant.",
+)
+# Lessons quote the pre-built system messages so the learner can read them in place. A quote that
+# drifts from the helper file would teach text the session never receives.
+MUSEUM_QUOTED_SYSTEM_MESSAGES = {
+    "museum-03-curator-voice.md": "You are an interpretive museum exhibit curator.",
+    "museum-07-wikipedia-research.md": (
+        "Use only facts supplied by this application. Call approved_fact_lookup first;"
+    ),
 }
 MUSEUM_HELPER_SYMBOLS = (
     "apollo11facts",
@@ -1051,6 +1074,15 @@ MUSEUM_HELPER_SYMBOLS = (
     "exhibitwrite",
     "askyesno",
     "readfacts",
+    "chooseapprovedfacts",
+    "describefailure",
+    "selectedmodel",
+    "formatsources",
+    "exhibitstructure",
+    "htmlrequirements",
+    "buildresearchprompt",
+    "curatorsystemmessage",
+    "curatorwithresearch",
 )
 MUSEUM_HELPER_LESSON_REFERENCES = {
     "dotnet": re.compile(r"Helpers/Curator[A-Za-z]+\.cs"),
@@ -1265,13 +1297,16 @@ MUSEUM_SESSION_RUNNER_MARKERS = {
         "client.stop().get();",
     ),
 }
-MUSEUM_TIMEOUT_REPORTERS = {
-    "dotnet": r'Console\.Error\.WriteLine\("The curator did not respond in time\. Try again\."\)',
-    "nodejs": r'console\.error\([^;]*"The curator did not respond in time\. Try again\."[^;]*\)',
-    "python": r'print\("The curator did not respond in time\. Try again\.",\s*file=sys\.stderr\)',
-    "go": r'fmt\.Fprintln\(os\.Stderr,\s*"The curator did not respond in time\. Try again\."\)',
-    "rust": r'eprintln!\("The curator did not respond in time\. Try again\."\)',
-    "java": r'System\.err\.println\("The curator did not respond in time\. Try again\."\)',
+# The starter ships the top-level error handler, and the wording of a failed run lives in one
+# pre-built helper so every language reports a timeout the same way.
+MUSEUM_TIMEOUT_MESSAGE = "The curator did not respond in time. Try again."
+MUSEUM_FAILURE_REPORTERS = {
+    "dotnet": "Console.Error.WriteLine(CuratorTerminal.DescribeFailure(exception))",
+    "nodejs": "console.error(describeFailure(error))",
+    "python": "print(describe_failure(error), file=sys.stderr)",
+    "go": "fmt.Fprintln(os.Stderr, DescribeFailure(err))",
+    "rust": 'eprintln!("{}", describe_failure(error.as_ref()))',
+    "java": "System.err.println(CuratorTerminal.describeFailure(exception))",
 }
 MUSEUM_GENERATION_RUN_CALLS = {
     "dotnet": r"RunSessionAsync\(\s*GenerationConfig\(approvedFacts\),\s*"
@@ -1459,6 +1494,51 @@ def validate_museum_projects() -> None:
             f"{starter.relative_to(ROOT)} helper module does not ship the pre-built "
             "approved_fact_lookup tool",
         )
+        system_messages = starter / MUSEUM_SYSTEM_MESSAGE_FILES[language]
+        require(
+            system_messages.exists(),
+            f"{starter.relative_to(ROOT)} is missing its pre-built system message file "
+            f"{MUSEUM_SYSTEM_MESSAGE_FILES[language]}",
+        )
+        for opening in MUSEUM_SYSTEM_MESSAGE_OPENINGS:
+            require(
+                system_messages.exists() and opening in read(system_messages),
+                f"{system_messages.relative_to(ROOT)} must hold the system message that opens "
+                f"with: {opening}",
+            )
+            for lesson_name in MUSEUM_LESSONS:
+                require(
+                    opening
+                    not in "\n".join(
+                        lesson_code_blocks(
+                            render_language_markdown(WORKSHOP / lesson_name, language), language
+                        )
+                    ),
+                    f"workshop/{lesson_name} ({language}) pastes a system message into the "
+                    f"entrypoint; it belongs in {MUSEUM_SYSTEM_MESSAGE_FILES[language]}",
+                )
+        for lesson_name, first_line in MUSEUM_QUOTED_SYSTEM_MESSAGES.items():
+            quote = next(
+                (
+                    fence
+                    for fence in re.findall(
+                        r"^```text\n(.*?)^```$", read(WORKSHOP / lesson_name), re.S | re.M
+                    )
+                    if fence.startswith(first_line)
+                ),
+                None,
+            )
+            require(
+                quote is not None,
+                f"workshop/{lesson_name} must quote the system message text that starts: {first_line}",
+            )
+            helper_text = read(system_messages) if system_messages.exists() else ""
+            for line in (quote or "").splitlines():
+                require(
+                    not line.strip() or line.strip() in helper_text,
+                    f"workshop/{lesson_name} quotes a system message line that "
+                    f"{system_messages.relative_to(ROOT)} does not contain: {line.strip()}",
+                )
         for marker in MUSEUM_STARTER_SOLUTION_MARKERS:
             require(
                 marker not in entrypoint_symbols,
@@ -2291,9 +2371,20 @@ def validate_documentation() -> None:
             f"workshop/{lesson_name} ({language}) must reject blank exhibit output",
         )
         require(
-            re.search(MUSEUM_TIMEOUT_REPORTERS[language], code) is not None,
-            f"workshop/{lesson_name} ({language}) must report timeout failures in its error handler",
+            MUSEUM_TIMEOUT_MESSAGE in museum_helper_source(ROOT / "start-museum" / language, language),
+            f"start-museum/{language} helper module must own the timeout message: "
+            f"{MUSEUM_TIMEOUT_MESSAGE}",
         )
+        for project in (
+            ROOT / "start-museum" / language,
+            ROOT / "finished" / language / "museum-exhibit-studio",
+        ):
+            require(
+                museum_tokens(MUSEUM_FAILURE_REPORTERS[language])
+                in museum_tokens(read(project / MUSEUM_ENTRYPOINTS[language])),
+                f"{project.relative_to(ROOT)} must report a failed run through the pre-built "
+                f"helper in its error handler: {MUSEUM_FAILURE_REPORTERS[language]}",
+            )
     require(
         "Continue to [Prove the structure](museum-06-prove-the-structure.md)." in facts_lesson,
         "Approved Facts must continue directly to Structural Checks",
@@ -2497,6 +2588,234 @@ def validate_museum_rust_error_types() -> None:
                 )
 
 
+# The learner grows one entrypoint by filling named regions. A region is a pair of whole-line
+# marker comments, and its BEGIN line lists every step that touches it:
+#
+#     // >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+#     // <<< END generation-config
+#
+# Each lesson code block is introduced by an edit line naming its region and one of two actions.
+# INSERT fills an empty region; REPLACE overwrites what an earlier step put there. A block is
+# always the complete contents of its region, and marker lines never move. That makes the lessons
+# mechanically applicable, so this check applies them to the starter and requires the result to be
+# the finished entrypoint. Repository validation builds the starter and the finished app but never
+# the code the lessons dictate, so nothing else here catches a lesson that drifts from the app.
+MUSEUM_REGION_NAME = r"[a-z0-9]+(?:-[a-z0-9]+)*"
+MUSEUM_REGION_MARKER = re.compile(r"\s*(?://|#) (?:>>> BEGIN|<<< END)\b")
+MUSEUM_REGION_BEGIN = re.compile(
+    rf"\s*(?://|#) >>> BEGIN (?P<name>{MUSEUM_REGION_NAME}) \| (?P<schedule>.+)"
+)
+MUSEUM_REGION_END = re.compile(rf"\s*(?://|#) <<< END (?P<name>{MUSEUM_REGION_NAME})")
+MUSEUM_SCHEDULE_ENTRY = re.compile(
+    r"Steps? (?P<steps>\d+(?:-\d+)?(?:, \d+(?:-\d+)?)*): (?P<action>INSERT|REPLACE)"
+)
+MUSEUM_EDIT_LINE = re.compile(
+    r"\*\*(?P<action>INSERT|REPLACE)\*\* region `(?P<region>[^`]*)` in `(?P<file>[^`]*)`:"
+)
+MuseumRegions = dict[str, tuple[int, int, dict[int, str]]]
+
+
+def museum_region_schedule(schedule: str) -> dict[int, str] | None:
+    """Parse `Step 4: INSERT | Steps 5-6: REPLACE` into {4: "INSERT", 5: "REPLACE", 6: "REPLACE"}."""
+    steps: dict[int, str] = {}
+    for entry in schedule.split(" | "):
+        match = MUSEUM_SCHEDULE_ENTRY.fullmatch(entry)
+        if match is None:
+            return None
+        for part in match.group("steps").split(", "):
+            first, _, last = part.partition("-")
+            for step in range(int(first), int(last or first) + 1):
+                if steps and step <= max(steps):
+                    return None
+                steps[step] = match.group("action")
+    # Only the first edit can find the region empty.
+    if "INSERT" in list(steps.values())[1:]:
+        return None
+    if not steps or min(steps) < 1 or max(steps) > len(MUSEUM_LESSONS) - 1:
+        return None
+    return steps
+
+
+def museum_regions(lines: list[str], label: str) -> MuseumRegions | None:
+    """Locate every region as (BEGIN line index, END line index, schedule)."""
+    regions: MuseumRegions = {}
+    failures = len(errors)
+    opened: tuple[str, int, dict[int, str]] | None = None
+    for index, line in enumerate(lines):
+        if MUSEUM_REGION_MARKER.match(line) is None:
+            continue
+        begin = MUSEUM_REGION_BEGIN.fullmatch(line)
+        end = MUSEUM_REGION_END.fullmatch(line)
+        if begin is not None:
+            name = begin.group("name")
+            schedule = museum_region_schedule(begin.group("schedule"))
+            require(opened is None, f"{label}:{index + 1} opens region {name} inside region "
+                                    f"{opened[0] if opened else ''}; regions cannot nest")
+            require(name not in regions, f"{label}:{index + 1} declares region {name} twice")
+            require(
+                schedule is not None,
+                f"{label}:{index + 1} has an unreadable schedule for region {name}; expected "
+                "ascending entries such as `Step 4: INSERT | Steps 5-6: REPLACE`, with INSERT "
+                "only as the first edit",
+            )
+            opened = (name, index, schedule or {})
+        elif end is not None:
+            require(
+                opened is not None and opened[0] == end.group("name"),
+                f"{label}:{index + 1} closes region {end.group('name')}, which is not the open region",
+            )
+            if opened is not None:
+                regions[opened[0]] = (opened[1], index, opened[2])
+            opened = None
+        else:
+            require(False, f"{label}:{index + 1} has a malformed region marker: {line.strip()}")
+    require(opened is None, f"{label} never closes region {opened[0] if opened else ''}")
+    return regions if len(errors) == failures else None
+
+
+def museum_lesson_edits(lesson_name: str, language: str) -> list[tuple[str, str, list[str]]] | None:
+    """Return each (action, region, block lines) a lesson dictates, in order."""
+    label = f"workshop/{lesson_name} ({language})"
+    fence = "```" + {"dotnet": "csharp", "nodejs": "typescript"}.get(language, language)
+    lines = render_language_markdown(WORKSHOP / lesson_name, language).splitlines()
+    edits: list[tuple[str, str, list[str]]] = []
+    failures = len(errors)
+    pending: tuple[str, str] | None = None
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        edit = MUSEUM_EDIT_LINE.fullmatch(line)
+        if edit is not None:
+            require(pending is None, f"{label} has an edit line for region "
+                                     f"{pending[1] if pending else ''} with no code block")
+            require(
+                edit.group("file") == MUSEUM_ENTRYPOINTS[language],
+                f"{label} edits region {edit.group('region')} in {edit.group('file')}; every "
+                f"museum edit belongs in {MUSEUM_ENTRYPOINTS[language]}",
+            )
+            pending = (edit.group("action"), edit.group("region"))
+        elif line.startswith("```"):
+            closing = next(
+                (later for later in range(index + 1, len(lines)) if lines[later] == "```"), None
+            )
+            if closing is None:
+                require(False, f"{label} has an unclosed code fence")
+                break
+            if line == fence:
+                require(
+                    pending is not None,
+                    f"{label} shows a code block with no INSERT or REPLACE region line directly "
+                    f"above it, so the learner cannot tell where it goes: {lines[index + 1].strip()}",
+                )
+                if pending is not None:
+                    edits.append((*pending, lines[index + 1 : closing]))
+            else:
+                require(pending is None, f"{label} has an edit line for region "
+                                         f"{pending[1] if pending else ''} with no code block")
+            pending = None
+            index = closing
+        elif line.strip():
+            require(pending is None, f"{label} puts prose between the edit line for region "
+                                     f"{pending[1] if pending else ''} and its code block")
+            pending = None
+        index += 1
+    require(pending is None, f"{label} ends on an edit line with no code block")
+    return edits if len(errors) == failures else None
+
+
+def museum_assemble(language: str, through_step: int | None = None) -> str | None:
+    """Apply the lessons' edits to the starter entrypoint and return the resulting file."""
+    label = f"start-museum/{language}/{MUSEUM_ENTRYPOINTS[language]}"
+    lines = read(ROOT / "start-museum" / language / MUSEUM_ENTRYPOINTS[language]).splitlines()
+    regions = museum_regions(lines, label)
+    if regions is None:
+        return None
+    require(bool(regions), f"{label} declares no edit regions")
+    failures = len(errors)
+
+    def populated(region: str) -> bool:
+        begin, end, _ = regions[region]
+        return any(line.strip() for line in lines[begin + 1 : end])
+
+    schedules = {name: schedule for name, (_, _, schedule) in regions.items()}
+    for name, schedule in schedules.items():
+        require(
+            populated(name) == (schedule[min(schedule)] == "REPLACE"),
+            f"{label} region {name} must start empty when its first edit is INSERT and hold "
+            "starter code when its first edit is REPLACE",
+        )
+    for step, lesson_name in enumerate(MUSEUM_LESSONS[1:], start=1):
+        if through_step is not None and step > through_step:
+            break
+        lesson_label = f"workshop/{lesson_name} ({language})"
+        edits = museum_lesson_edits(lesson_name, language)
+        if edits is None:
+            return None
+        edited: set[str] = set()
+        for action, region, block in edits:
+            if region not in regions:
+                require(False, f"{lesson_label} edits region {region}, which {label} does not declare")
+                continue
+            require(region not in edited, f"{lesson_label} edits region {region} more than once")
+            require(
+                schedules[region].get(step) == action,
+                f"{lesson_label} applies {action} to region {region} in Step {step}, but its "
+                f"BEGIN line schedules {schedules[region].get(step, 'no edit')} for that step",
+            )
+            require(
+                populated(region) == (action == "REPLACE"),
+                f"{lesson_label} applies {action} to region {region}, which is "
+                f"{'not empty' if populated(region) else 'empty'} at that point",
+            )
+            require(any(line.strip() for line in block), f"{lesson_label} has an empty block for region {region}")
+            require(
+                not any(MUSEUM_REGION_MARKER.match(line) for line in block),
+                f"{lesson_label} repeats a region marker inside its block for region {region}; "
+                "marker lines stay in the file and are never pasted",
+            )
+            begin, end, _ = regions[region]
+            lines[begin + 1 : end] = block
+            edited.add(region)
+            regions = museum_regions(lines, label)
+            if regions is None:
+                return None
+        for name, schedule in schedules.items():
+            require(
+                step not in schedule or name in edited,
+                f"{lesson_label} never applies {schedule.get(step)} to region {name}, which "
+                f"{label} schedules for Step {step}",
+            )
+    return "\n".join(lines) + "\n" if len(errors) == failures else None
+
+
+def validate_museum_assembly() -> None:
+    for language in LANGUAGES:
+        assembled = museum_assemble(language)
+        if assembled is None:
+            continue
+        finished = ROOT / "finished" / language / "museum-exhibit-studio" / MUSEUM_ENTRYPOINTS[language]
+        expected = read(finished).splitlines()
+        actual = assembled.splitlines()
+        if actual == expected:
+            continue
+        line_number = next(
+            (
+                index + 1
+                for index, (ours, theirs) in enumerate(zip(actual, expected))
+                if ours != theirs
+            ),
+            min(len(actual), len(expected)) + 1,
+        )
+        ours = actual[line_number - 1] if line_number <= len(actual) else "<end of file>"
+        theirs = expected[line_number - 1] if line_number <= len(expected) else "<end of file>"
+        require(
+            False,
+            f"Applying the {language} museum lessons to the starter does not produce "
+            f"{finished.relative_to(ROOT)}; first difference at line {line_number}: the lessons "
+            f"give {ours.strip()!r}, the finished app has {theirs.strip()!r}",
+        )
+
+
 def validate_learn_more_sections() -> None:
     # Every lesson ends with a "Learn more" section so a learner can go deeper into the official
     # SDK documentation for that step. Assert the section and at least one link in every
@@ -2671,6 +2990,7 @@ validate_documentation()
 validate_editor_open_guidance()
 validate_museum_permission_handlers()
 validate_museum_rust_error_types()
+validate_museum_assembly()
 validate_learn_more_sections()
 validate_completion_pages()
 validate_configuration_explainers()

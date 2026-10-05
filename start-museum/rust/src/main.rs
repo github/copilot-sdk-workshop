@@ -1,52 +1,80 @@
 // Museum Exhibit Studio — learner entrypoint.
 //
-// The pre-built curator helpers live in src/lib.rs. Do not edit that file: it is the
-// application-owned half of the workshop, and it must stay identical to the finished app's copy.
-// Everything below is yours to write, one lesson at a time.
+// HOW TO EDIT THIS FILE
 //
-// Step 1  First curator session .......... create the client with Client::start, create a session
-//                                          from SessionConfig::default().with_permission_handler(
-//                                          permission::approve_all()) so requests get an answer,
-//                                          send a prompt, print the reply, then disconnect
-//                                          and stop.
-// Step 2  Stream the curator ............. swap the blocking send for stream_exhibit so tokens and
-//                                          [tool:start] / [tool:done] events print live.
-// Step 3  Curator voice .................. add `const SYSTEM_MESSAGE: &str = ...` here and pass it
-//                                          through SystemMessageConfig with mode "replace".
-// Step 4  Ground it in approved facts .... add build_exhibit_prompt(); register the pre-built tool
-//                                          with config.tools = Some(vec![approved_fact_lookup(
-//                                          &facts)?]) and config.available_tools =
-//                                          Some(vec![APPROVED_FACT_LOOKUP_NAME.to_owned()]); the
-//                                          prompt tells the curator to call approved_fact_lookup
-//                                          first.
-//                                          Add generation_config() and run_session() with the
-//                                          generation timeout, blank-output rejection, and cleanup.
-// Step 5  Prove the structure ............ call format_validation(&validate_exhibit(&exhibit)).
-// Step 6  Wikipedia research ............. add research_config() with wikipedia_server() plus
-//                                          wikipedia_permission_handler(), run it through
-//                                          run_session, and print sources after the exhibit.
-//                                          Retain the body and citations, conditionally register
-//                                          approved_wikipedia_fact_lookup, and request both
-//                                          lookups before generation. Approved facts win.
-// Step 7  Interactive exhibit page ....... add html_config() with the "builtin:apply_patch" and
-//                                          "builtin:create" allowlist and exhibit_write_permission(...).
+// Every place you write code is a named region between two marker lines:
+//
+//     >>> BEGIN <region> | Step 4: INSERT | Step 6: REPLACE
+//     <<< END <region>
+//
+// The BEGIN line lists every step that touches the region. Each lesson block names its region
+// and one of two actions:
+//
+//     INSERT   The region is empty. Paste the block between the two marker lines.
+//     REPLACE  The region already has code. Delete everything between the two marker lines,
+//              then paste the block.
+//
+// A block is always the complete contents of its region. Never edit, move, or delete a marker
+// line, and leave the code outside the regions as it is.
+//
+// The pre-built curator helpers live in src/lib.rs, and the system messages in
+// src/system_messages.rs. Do not edit those files: they are the application-owned half of the
+// workshop, and they must stay identical to the finished app's copy.
 
-// Your `use` declarations go here, and grow as the lessons progress.
+// >>> BEGIN imports | Steps 1-7: REPLACE
+use museum_exhibit_studio::{RuntimeError, describe_failure};
+// <<< END imports
 
-// Your SYSTEM_MESSAGE (Step 3) goes here.
+#[tokio::main]
+async fn main() {
+    if let Err(error) = run().await {
+        eprintln!("{}", describe_failure(error.as_ref()));
+        std::process::exit(1);
+    }
+}
 
-// Your prompt builders (Steps 4, 6, 7) go here.
-
-// Your session configuration builders (Steps 4, 6, 7) go here.
-
-// Your run_session() lifecycle function (Step 4) goes here.
-
-fn main() {
+async fn run() -> Result<(), RuntimeError> {
+    // >>> BEGIN banner | Step 1: REPLACE
     println!("=== Museum Exhibit Studio starter ===");
     println!("Pre-built curator helpers are ready in src/lib.rs.");
     println!("Continue with museum step 1 to write your first curator session.");
-    // Your run flow (Steps 1-7) replaces the banner above. Once you create a session main()
-    // becomes `#[tokio::main] async fn main() -> Result<(), RuntimeError>`, using the error alias
-    // src/lib.rs exports, and in Step 4 it becomes a thin wrapper over an
-    // `async fn run() -> Result<(), RuntimeError>` so failures exit with status 1.
+    // <<< END banner
+
+    // >>> BEGIN choose-facts | Step 4: INSERT
+    // <<< END choose-facts
+
+    // >>> BEGIN research | Step 6: INSERT
+    // <<< END research
+
+    // >>> BEGIN generate | Step 1: INSERT | Steps 2-6: REPLACE
+    // <<< END generate
+
+    // >>> BEGIN validate | Step 5: INSERT
+    // <<< END validate
+
+    // >>> BEGIN sources | Step 6: INSERT
+    // <<< END sources
+
+    // >>> BEGIN exhibit-page | Step 7: INSERT
+    // <<< END exhibit-page
+
+    Ok(())
 }
+
+// >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE
+// <<< END exhibit-prompt
+
+// >>> BEGIN html-prompt | Step 7: INSERT
+// <<< END html-prompt
+
+// >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+// <<< END generation-config
+
+// >>> BEGIN research-config | Step 6: INSERT
+// <<< END research-config
+
+// >>> BEGIN html-config | Step 7: INSERT
+// <<< END html-config
+
+// >>> BEGIN session-runner | Step 4: INSERT
+// <<< END session-runner

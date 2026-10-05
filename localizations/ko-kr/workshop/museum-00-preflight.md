@@ -31,11 +31,11 @@ approved facts -> bounded prompt -> curator session -> structural checks -> huma
 축하하고 리소스를 살펴보십시오.
 
 시작 프로젝트에는 직접 작성할 필요가 없는 기반 기능이 이미 포함되어 있습니다. 여기에는
-승인된 사실 집합과 해당 경계, 스트리밍 출력기, 결정론적 전시 유효성 검사, 기본적으로
-거부하는 권한 처리기가 포함된 범위 제한 Wikipedia MCP 서버, 단일 파일 `exhibit.html`
-쓰기 권한 및 간단한 터미널 프롬프트가 포함됩니다. **도우미 모듈은 절대 편집하지
-않습니다.** 세션 설정, 시스템 메시지 2개, 프롬프트 빌더, 세션 실행기 하나 및 `main`을
-작성합니다.
+승인된 사실 집합과 해당 경계, 사실 선택 메뉴, 스트리밍 출력기, 결정론적 전시 유효성 검사,
+기본적으로 거부하는 권한 처리기가 포함된 범위 제한 Wikipedia MCP 서버, 단일 파일 `exhibit.html`
+쓰기 권한, 시스템 메시지, 전시 구조, 조사 요청 및 페이지 요구 사항을 위한 고정된 프롬프트 텍스트,
+코드 주변의 오류 처리가 포함됩니다. **도우미 파일은 절대 편집하지 않습니다.** SDK 코드, 즉 세션
+설정, 도구 등록 및 세션 구성, 전시 및 페이지 프롬프트의 지침, 세션 실행기 하나를 작성합니다.
 
 인증된 GitHub Copilot CLI, 사용할 언어의 런타임 및 터미널이 필요합니다. 완성된
 애플리케이션이 아니라 `start-museum/<language>` 아래의 최소 프로젝트에서 직접
@@ -104,8 +104,8 @@ npm start
 유지합니다. 이 폴더에서 `code .`을 입력하여 VS Code로 열거나 선호하는 편집기에서 폴더를
 엽니다.
 
-도우미 모듈은 `src/curator.ts`입니다. 모든 단원의 변경 사항은 `src/index.ts`에
-작성합니다.
+도우미 모듈은 `src/curator.ts`이고 시스템 메시지는 `src/system-messages.ts`에 있습니다.
+모든 단원의 변경 사항은 `src/index.ts`에 작성합니다.
 :::
 
 :::language python
@@ -128,7 +128,8 @@ Windows에서 인터프리터는 `.venv/Scripts/python.exe`에 있습니다.
 유지합니다. 이 폴더에서 `code .`을 입력하여 VS Code로 열거나 선호하는 편집기에서 폴더를
 엽니다.
 
-도우미 모듈은 `curator.py`입니다. 모든 단원의 변경 사항은 `main.py`에 작성합니다.
+도우미 모듈은 `curator.py`이고 시스템 메시지는 `system_messages.py`에 있습니다. 모든 단원의
+변경 사항은 `main.py`에 작성합니다.
 :::
 
 :::language go
@@ -148,8 +149,8 @@ go run .
 유지합니다. 이 폴더에서 `code .`을 입력하여 VS Code로 열거나 선호하는 편집기에서 폴더를
 엽니다.
 
-도우미 모듈은 동일한 `main` 패키지의 `curator.go`입니다. 모든 단원의 변경 사항은
-`main.go`에 작성합니다.
+도우미 모듈은 `curator.go`이고 시스템 메시지는 `system_messages.go`에 있습니다. 둘 다 동일한
+`main` 패키지에 있습니다. 모든 단원의 변경 사항은 `main.go`에 작성합니다.
 :::
 
 :::language rust
@@ -170,8 +171,8 @@ cargo run --locked
 유지합니다. 이 폴더에서 `code .`을 입력하여 VS Code로 열거나 선호하는 편집기에서 폴더를
 엽니다.
 
-도우미 모듈은 `src/lib.rs`의 `museum_exhibit_studio` 라이브러리 크레이트입니다. 모든
-단원의 변경 사항은 `src/main.rs`에 작성합니다.
+도우미 모듈은 `src/lib.rs`의 `museum_exhibit_studio` 라이브러리 크레이트이며, 시스템
+메시지는 `src/system_messages.rs`에 있습니다. 모든 단원의 변경 사항은 `src/main.rs`에 작성합니다.
 :::
 
 :::language java
@@ -196,6 +197,27 @@ cd start-museum/java
 도우미 모듈은 `src/main/java/workshop/Curator*.java`입니다. 모든 단원의 변경 사항은
 `src/main/java/workshop/MuseumExhibitStudio.java`에 작성합니다.
 :::
+
+## 편집 방식
+
+위 설정 블록 끝에 이름이 나온 진입점을 엽니다. 코드를 작성하는 모든 위치는 두 개의 마커 주석
+사이에 있는 이름이 지정된 **영역**입니다.
+
+```text
+>>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+<<< END generation-config
+```
+
+`BEGIN` 줄에는 영역을 건드리는 모든 단계가 나열되므로, 파일은 워크숍 지도 역할도 합니다.
+수업의 각 코드 블록 앞에는 해당 영역 이름과 두 작업 중 하나를 나타내는 줄이 옵니다.
+
+| 작업 | 영역 상태 | 수행할 작업 |
+|---|---|---|
+| **INSERT** | 비어 있음 | 두 마커 줄 사이에 블록을 붙여 넣습니다. |
+| **REPLACE** | 이전 단계의 코드를 포함함 | 두 마커 줄 사이의 모든 내용을 삭제한 다음 블록을 붙여 넣습니다. |
+
+블록은 항상 해당 영역의 전체 내용이므로, 코드를 직접 병합할 필요가 없습니다. 마커 줄과 영역 밖의
+코드는 그대로 둡니다.
 
 ## 신뢰 경계 설정
 

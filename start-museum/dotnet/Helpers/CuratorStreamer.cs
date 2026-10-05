@@ -8,6 +8,13 @@ public static class CuratorStreamer
     public static readonly TimeSpan GenerationTimeout = TimeSpan.FromSeconds(120);
     public static readonly TimeSpan ResearchTimeout = TimeSpan.FromSeconds(90);
 
+    // Set COPILOT_MODEL to choose a model. Null leaves the choice to the Copilot runtime.
+    public static string? SelectedModel()
+    {
+        var model = Environment.GetEnvironmentVariable("COPILOT_MODEL");
+        return string.IsNullOrWhiteSpace(model) ? null : model.Trim();
+    }
+
     public static async Task<string> StreamExhibitAsync(
         CopilotSession session,
         string prompt,

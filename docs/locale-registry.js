@@ -19,10 +19,17 @@
                 skipLink: 'Skip to workshop overview',
                 brandLabel: 'GitHub Copilot SDK Workshop home',
                 resourcesLabel: 'Workshop resources',
-                docsLabel: 'Docs',
-                docsAriaLabel: 'Documentation language',
-                targetApp: 'Target app ↗',
-                sdkDocs: 'SDK docs ↗',
+                targetApp: 'Target app',
+                sdkDocs: 'SDK docs',
+                sdkDocsNamed: '{language} SDK docs',
+                newTab: '(opens in a new tab)',
+                settings: {
+                    label: 'Settings',
+                    locale: 'Language',
+                    theme: 'Theme',
+                    light: 'Light',
+                    dark: 'Dark'
+                },
                 heroTitle: 'Choose what your agent is here to do.',
                 heroDefinition: 'Start with SDK 101 in 30 minutes. Then go deeper: build an agent for the software lifecycle, or take Copilot into a different domain.',
                 workshopLegend: 'Choose a workshop',
@@ -35,6 +42,15 @@
                 chooseLanguageFor: 'Now choose a language for {name}.',
                 workshopUsesLanguage: '{name} will use the {language} SDK.',
                 chooseWorkshopContinue: 'Choose a workshop to continue.',
+                introRuntimeNote: 'Work in start-intro/{language}. Preflight covers its runtime and dependency setup.',
+                runtimeNotes: {
+                    dotnet: 'Requires the .NET SDK and a supported C# runtime.',
+                    go: 'Requires a supported Go toolchain and module.',
+                    java: 'Requires a supported JDK and a Maven or Gradle project.',
+                    nodejs: 'Requires a current Node.js LTS release.',
+                    python: 'Requires Python and an isolated virtual environment.',
+                    rust: 'Requires Rust and Cargo from rustup.'
+                },
                 lesson: {
                     previous: 'Previous',
                     previousShort: 'Prev',
@@ -50,11 +66,7 @@
                     openSections: 'Open sections',
                     closeSections: 'Close sections',
                     lessonActions: 'Lesson actions',
-                    languageLabel: 'Language',
-                    languageAriaLabel: 'Workshop language',
                     chooseLanguageOption: 'Choose language',
-                    hub: '🏠 Hub',
-                    headerDocs: '📚 {language} docs ↗',
                     progressAriaLabel: 'Workshop progress',
                     loading: 'Loading',
                     stepPosition: 'Step {number} of {count}',
@@ -72,7 +84,7 @@
                     chooseLanguageShort: 'Choose a language',
                     chooseLanguageHeading: 'Choose a workshop language',
                     chooseLanguageDetails:
-                        'Select one of the six supported languages above before loading a lesson.',
+                        'Open Settings and choose one of the six supported programming languages to load this lesson.',
                     chooseLanguageStatus: 'Choose a workshop language to continue.',
                     loadErrorHeading: 'Unable to load this lesson',
                     loadErrorStatus: 'Unable to load this lesson.',
@@ -92,12 +104,6 @@
                     workshopTitles: {},
                     stepLabels: {},
                     stepTitles: {}
-                },
-                theme: {
-                    dark: '🌙 Dark',
-                    light: '☀️ Light',
-                    switchToDark: 'Switch to dark theme',
-                    switchToLight: 'Switch to light theme'
                 },
                 previewAriaLabel: 'Selected workshop preview',
                 previewEmptyTitle: 'workshop-preview',
@@ -184,10 +190,17 @@ System message: replace
                 skipLink: '워크숍 개요로 건너뛰기',
                 brandLabel: 'GitHub Copilot SDK 워크숍 홈',
                 resourcesLabel: '워크숍 리소스',
-                docsLabel: '문서',
-                docsAriaLabel: '문서 언어',
-                targetApp: '대상 앱 ↗',
-                sdkDocs: 'SDK 문서 ↗',
+                targetApp: '대상 앱',
+                sdkDocs: 'SDK 문서',
+                sdkDocsNamed: '{language} SDK 문서',
+                newTab: '(새 탭에서 열림)',
+                settings: {
+                    label: '설정',
+                    locale: '언어',
+                    theme: '테마',
+                    light: '밝게',
+                    dark: '어둡게'
+                },
                 heroTitle: '에이전트가 수행할 작업을 선택하세요.',
                 heroDefinition: '30분 만에 SDK 101을 시작하세요. 그런 다음 소프트웨어 수명 주기용 에이전트를 만들거나 Copilot을 다른 분야에 적용해 보세요.',
                 workshopLegend: '워크숍 선택',
@@ -200,6 +213,15 @@ System message: replace
                 chooseLanguageFor: '{name}에 사용할 언어를 선택하세요.',
                 workshopUsesLanguage: '{name}에서 {language} SDK를 사용합니다.',
                 chooseWorkshopContinue: '계속하려면 워크숍을 선택하세요.',
+                introRuntimeNote: 'start-intro/{language}에서 작업합니다. 런타임과 종속성 설정은 사전 점검에서 다룹니다.',
+                runtimeNotes: {
+                    dotnet: '.NET SDK와 지원되는 C# 런타임이 필요합니다.',
+                    go: '지원되는 Go 도구 체인과 모듈이 필요합니다.',
+                    java: '지원되는 JDK와 Maven 또는 Gradle 프로젝트가 필요합니다.',
+                    nodejs: '최신 Node.js LTS 릴리스가 필요합니다.',
+                    python: 'Python과 격리된 가상 환경이 필요합니다.',
+                    rust: 'rustup으로 설치한 Rust와 Cargo가 필요합니다.'
+                },
                 lesson: {
                     previous: '이전',
                     previousShort: '이전',
@@ -215,11 +237,7 @@ System message: replace
                     openSections: '목차 열기',
                     closeSections: '목차 닫기',
                     lessonActions: '수업 동작',
-                    languageLabel: '언어',
-                    languageAriaLabel: '워크숍 언어',
                     chooseLanguageOption: '언어 선택',
-                    hub: '🏠 허브',
-                    headerDocs: '📚 {language} 문서 ↗',
                     progressAriaLabel: '워크숍 진행률',
                     loading: '불러오는 중',
                     stepPosition: '{count}단계 중 {number}단계',
@@ -237,7 +255,7 @@ System message: replace
                     chooseLanguageShort: '언어 선택',
                     chooseLanguageHeading: '워크숍 언어를 선택하세요',
                     chooseLanguageDetails:
-                        '수업을 불러오기 전에 위에서 지원되는 6개 언어 중 하나를 선택하세요.',
+                        '수업을 불러오려면 설정을 열고 지원되는 6개 프로그래밍 언어 중 하나를 선택하세요.',
                     chooseLanguageStatus: '계속하려면 워크숍 언어를 선택하세요.',
                     loadErrorHeading: '이 수업을 불러올 수 없습니다',
                     loadErrorStatus: '이 수업을 불러올 수 없습니다.',
@@ -314,12 +332,6 @@ System message: replace
                         'museum-09-complete': '축하 및 다음 단계'
                     }
                 },
-                theme: {
-                    dark: '🌙 어둡게',
-                    light: '☀️ 밝게',
-                    switchToDark: '어두운 테마로 전환',
-                    switchToLight: '밝은 테마로 전환'
-                },
                 previewAriaLabel: '선택한 워크숍 미리 보기',
                 previewEmptyTitle: '워크숍 미리 보기',
                 previewEmpty: '워크숍을 선택하면 에이전트 흐름을 미리 볼 수 있습니다.',
@@ -392,6 +404,1121 @@ System message: replace
             demoActHeadings: Object.freeze({
                 one: '## 1막: Hello World',
                 two: '## 2막: 팟캐스트 에이전트로 전환'
+            })
+        },
+        {
+            id: 'ja-jp',
+            displayName: '日本語',
+            htmlLang: 'ja',
+            contentPath: 'localizations/ja-jp/',
+            ui: Object.freeze({
+                title: 'ワークショップを選択 | GitHub Copilot SDK',
+                description: '30 分の GitHub Copilot SDK 101 ワークショップから始めるか、アクセシビリティレビューアーや博物館キュレーターで一歩進んだ内容に取り組みます。',
+                skipLink: 'ワークショップ概要へスキップ',
+                brandLabel: 'GitHub Copilot SDK ワークショップのホーム',
+                resourcesLabel: 'ワークショップリソース',
+                targetApp: '対象アプリ',
+                sdkDocs: 'SDK ドキュメント',
+                sdkDocsNamed: '{language} SDK ドキュメント',
+                newTab: '(新しいタブで開きます)',
+                settings: {
+                    label: '設定',
+                    locale: '表示言語',
+                    theme: 'テーマ',
+                    light: 'ライト',
+                    dark: 'ダーク'
+                },
+                heroTitle: 'エージェントの目的を選択する。',
+                heroDefinition: 'まず 30 分で SDK 101 に取り組みます。さらに、ソフトウェアライフサイクル向けのエージェントを構築したり、Copilot を別の分野で活用したりします。',
+                workshopLegend: 'ワークショップを選択',
+                languageTitle: 'ワークショップのプログラミング言語を選択',
+                languageSummary: 'まずワークショップを選び、次に実装言語を選択します。',
+                programmingLanguage: 'プログラミング言語',
+                startSelected: '選択したワークショップを開始',
+                startNamed: '「{name}」を開始',
+                startGuidance: 'ワークショップと言語を選択します。エージェントや SDK の事前経験は不要です。',
+                chooseLanguageFor: '「{name}」の言語を選択します。',
+                workshopUsesLanguage: '「{name}」では {language} SDK を使用します。',
+                chooseWorkshopContinue: '続行するワークショップを選択します。',
+                introRuntimeNote: 'start-intro/{language} で作業します。事前準備では、そのランタイムと依存関係のセットアップを扱います。',
+                runtimeNotes: {
+                    dotnet: '.NET SDK と対応する C# ランタイムが必要です。',
+                    go: '対応する Go ツールチェーンとモジュールが必要です。',
+                    java: '対応する JDK と Maven または Gradle プロジェクトが必要です。',
+                    nodejs: '最新の Node.js LTS リリースが必要です。',
+                    python: 'Python と分離された仮想環境が必要です。',
+                    rust: 'rustup から入手した Rust と Cargo が必要です。'
+                },
+                lesson: {
+                    previous: '前へ',
+                    previousShort: '前へ',
+                    nextShort: '次へ',
+                    previousAria: '前へ: {title}',
+                    nextAria: '次へ: {title}',
+                    backToHub: 'ワークショップハブに戻る',
+                    beforeYouBegin: '始める前に',
+                    workshop: 'ワークショップ',
+                    skipLink: 'レッスンへスキップ',
+                    siteTitle: 'Copilot SDK ワークショップ',
+                    homeAriaLabel: 'Copilot SDK ワークショップのホーム',
+                    openSections: 'セクションを開く',
+                    closeSections: 'セクションを閉じる',
+                    lessonActions: 'レッスン操作',
+                    chooseLanguageOption: '言語を選択',
+                    progressAriaLabel: 'ワークショップの進行状況',
+                    loading: '読み込み中',
+                    stepPosition: 'ステップ {number}/{count}',
+                    preflight: '事前準備',
+                    navigationTitle: '{workshop} のステップ',
+                    navigationAriaLabel: 'ワークショップのステップ',
+                    paginationAriaLabel: 'レッスンのページ移動',
+                    loadingLesson: 'レッスンを読み込んでいます。',
+                    loadingLessonProgress: 'レッスンを読み込み中...',
+                    loadingNamed: '{title} を読み込んでいます。',
+                    loadedNamed: '{title} を読み込みました。',
+                    completeStatus: '{workshop} が完了しました。やり遂げました！リソースは以下で利用できます。',
+                    documentTitle: '{step} | {language} | Copilot SDK ワークショップ',
+                    chooseLanguageDocumentTitle: '言語を選択 | Copilot SDK ワークショップ',
+                    chooseLanguageShort: '言語を選択',
+                    chooseLanguageHeading: 'ワークショップのプログラミング言語を選択',
+                    chooseLanguageDetails:
+                        'このレッスンを読み込むには、設定を開き、対応する 6 つのプログラミング言語から 1 つを選択します。',
+                    chooseLanguageStatus: '続行するには、ワークショップのプログラミング言語を選択します。',
+                    loadErrorHeading: 'このレッスンを読み込めません',
+                    loadErrorStatus: 'このレッスンを読み込めません。',
+                    loadErrorFileGuidance:
+                        'ローカル HTTP サーバーでリポジトリを配信してください。ブラウザーは file URL からのレッスン取得をブロックします。',
+                    loadErrorGuidance:
+                        'ページを更新してください。問題が続く場合は、ワークショップ Markdown がデプロイされていることを確認してください。',
+                    copy: 'コピー',
+                    copied: 'コピー済み',
+                    copyFailed: 'コピー失敗',
+                    copyAriaLabel: 'コードブロックをコピー',
+                    times: {
+                        untimed: '時間制限なし',
+                        resources: 'リソース',
+                        minutes: '{count} 分'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': '事前準備',
+                        'intro-01-sdk-basics': 'SDK の基本',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'ポッドキャストエージェント',
+                        'intro-04-wrap-up': 'まとめ',
+                        '00-preflight': '事前準備',
+                        '01-first-session': '最初のセッション',
+                        '02-streaming': 'ストリーミング',
+                        '03-local-tool': 'アプリ所有の知識',
+                        '04-mcp-safety': '外部ツール接続',
+                        '05-combine-tools': 'ツールの組み合わせ',
+                        '06-structured-report': '構造化レポート',
+                        '07-run-explain': '実行と説明',
+                        '08-model-selection': 'モデル選択',
+                        '09-interactive-html-report': 'インタラクティブレポート',
+                        '10-complete': '達成と次のステップ',
+                        'museum-00-preflight': '事前準備',
+                        'museum-01-first-curator-session': '最初のキュレーターセッション',
+                        'museum-02-stream-the-curator': 'キュレーターのストリーミング',
+                        'museum-03-curator-voice': 'キュレーターの語り口',
+                        'museum-04-approved-facts': '承認済みの事実',
+                        'museum-06-prove-the-structure': '構造の検証',
+                        'museum-07-wikipedia-research': 'Wikipedia 調査',
+                        'museum-08-interactive-exhibit-page': '展示ページ',
+                        'museum-09-complete': '達成と次のステップ'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': '事前準備: SDK 101 の準備をする',
+                        'intro-01-sdk-basics': 'ステップ 1: SDK の基本',
+                        'intro-02-hello-world': 'ステップ 2: ストリーミングで Hello World',
+                        'intro-03-podcast-agent': 'ステップ 3: ポッドキャストエージェントを構築する',
+                        'intro-04-wrap-up': 'ステップ 4: まとめと次のステップ',
+                        '00-preflight': '事前準備: マシンをセットアップする',
+                        '01-first-session': 'ステップ 1: 最初の Copilot セッションを作成する',
+                        '02-streaming': 'ステップ 2: 応答をストリーミングする',
+                        '03-local-tool': 'ステップ 3: アプリケーションが所有する知識を追加する',
+                        '04-mcp-safety': 'ステップ 4: 外部ツールを安全に接続する',
+                        '05-combine-tools': 'ステップ 5: ローカルツールと MCP ツールを組み合わせる',
+                        '06-structured-report': 'ステップ 6: 構造化レポートを生成する',
+                        '07-run-explain': 'ステップ 7: アプリケーションを実行して説明する',
+                        '08-model-selection': 'ステップ 8: モデルを選択する',
+                        '09-interactive-html-report': 'ステップ 9: インタラクティブな HTML レポートを生成する',
+                        '10-complete': 'やり遂げました！',
+                        'museum-00-preflight': 'Museum Exhibit Studio: 事前準備',
+                        'museum-01-first-curator-session': 'ステップ 1: 最初のキュレーターセッション',
+                        'museum-02-stream-the-curator': 'ステップ 2: キュレーターの応答をストリーミングする',
+                        'museum-03-curator-voice': 'ステップ 3: キュレーターに語り口を与える',
+                        'museum-04-approved-facts': 'ステップ 4: 承認済みの事実に基づかせる',
+                        'museum-06-prove-the-structure': 'ステップ 5: 構造を検証する',
+                        'museum-07-wikipedia-research': 'ステップ 6: Wikipedia MCP で調査する',
+                        'museum-08-interactive-exhibit-page': 'ステップ 7: インタラクティブな展示ページを公開する',
+                        'museum-09-complete': 'やり遂げました！'
+                    }
+                },
+                previewAriaLabel: '選択したワークショップのプレビュー',
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: 'ワークショップを選択するとエージェントフローをプレビューできます。',
+                outcomesTitle: 'アプリを構築し、境界を理解する。',
+                outcomes: [
+                    'Copilot セッションを作成して管理します。',
+                    '永続的なエージェントポリシーをタスクデータから分離します。',
+                    '作業に適したツールサーフェスを選択します。',
+                    '客観的な出力要件をコードで検証します。',
+                    'プロンプトのガイダンスが終わり、厳格な制御が始まる場所を説明します。'
+                ],
+                workshops: {
+                    intro: {
+                        kicker: '初級入門 · 30 分',
+                        name: 'SDK 101 を始める',
+                        shortName: 'SDK 101',
+                        description: '付属のスタータープロジェクトを使って、ストリーミング Hello World からポッドキャストエージェントまで進みます。事前にセットアップを完了します。',
+                        capabilities: 'クライアントとセッション · ストリーミング · あらかじめ用意されたローカルツール · 承認',
+                        previewTitle: 'start-intro',
+                        preview: `クライアント → ストリーミング Hello World
+             → ポッドキャストエピソードを選択
+             → RSS ツールを承認
+             → 見出しと公開投稿
+
+[ツール] get_github_podcast_episode
+
+30 分 · 6 言語
+セッション前にセットアップを完了。`,
+                        guidance: '30 分で SDK の基本を学びます。事前にインストール、認証、スターターの依存関係のダウンロードを完了します。'
+                    },
+                    sdlc: {
+                        kicker: '開発者ツール · 115 分',
+                        name: 'Web アクセシビリティをレビュー',
+                        shortName: 'アクセシビリティレビュー',
+                        description: 'ページを検査し、WCAG ガイダンスを参照して、証拠に基づくレポートを生成する SDLC エージェントを構築します。',
+                        capabilities: 'ストリーミング · ローカルツール · Playwright MCP · 権限',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → Playwright 検査
+    → WCAG 参照
+    → 構造化レポート
+
+[ツール] playwright-browser_navigate
+[ツール] accessibility_rule_lookup
+
+検出事項
+名前入力にアクセシブルな名前がありません。`,
+                        guidance: '115 分のワークショップで SDLC 開発者ツールを構築し、その後は完成を祝って開発を続けます。'
+                    },
+                    museum: {
+                        kicker: '非 SDLC ツール · 90 分',
+                        name: '博物館の展示をキュレーション',
+                        shortName: '博物館展示',
+                        description: '承認済みの事実を来館者向けの展示コピーに変換する、根拠に基づいた解説エージェントを構築します。',
+                        capabilities: 'カスタムペルソナ · アプリケーション所有のツール 1 つ · 検証 · 評価',
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `承認済みの事実 → キュレーターセッション
+               → 展示の検証
+               → 来館者向けのコピー
+
+利用可能なツール: []
+システムメッセージ: replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: '90 分のワークショップで非 SDLC のキュレーターツールを構築し、その後は完成を祝って開発を続けます。'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## 第 1 幕: Hello World',
+                two: '## 第 2 幕: ポッドキャストエージェントに作り変える'
+            })
+        },
+        {
+            id: 'pt-br',
+            displayName: 'Português (Brasil)',
+            htmlLang: 'pt-BR',
+            contentPath: 'localizations/pt-br/',
+            ui: Object.freeze({
+                title: 'Escolha seu workshop | GitHub Copilot SDK',
+                description: 'Comece com um workshop GitHub Copilot SDK 101 de 30 minutos ou aprofunde-se com um revisor de acessibilidade ou curador de museu.',
+                skipLink: 'Pular para a visão geral do workshop',
+                brandLabel: 'Início do workshop do GitHub Copilot SDK',
+                resourcesLabel: 'Recursos do workshop',
+                targetApp: 'Aplicativo de destino',
+                sdkDocs: 'Documentação do SDK',
+                sdkDocsNamed: 'Documentação do SDK de {language}',
+                newTab: '(abre em uma nova guia)',
+                settings: {
+                    label: 'Configurações',
+                    locale: 'Idioma',
+                    theme: 'Tema',
+                    light: 'Claro',
+                    dark: 'Escuro'
+                },
+                heroTitle: 'Escolha o que o agente deve fazer.',
+                heroDefinition: 'Comece com o SDK 101 em 30 minutos. Depois, aprofunde-se: crie um agente para o ciclo de vida do software ou leve o Copilot para outro domínio.',
+                workshopLegend: 'Escolha um workshop',
+                languageTitle: 'Escolha a linguagem do workshop',
+                languageSummary: 'Escolha primeiro um workshop e depois selecione a linguagem de implementação.',
+                programmingLanguage: 'Linguagem de programação',
+                startSelected: 'Iniciar workshop selecionado',
+                startNamed: 'Iniciar {name}',
+                startGuidance: 'Escolha um workshop e uma linguagem. Não é preciso ter experiência prévia com agentes ou SDK.',
+                chooseLanguageFor: 'Agora escolha uma linguagem para “{name}”.',
+                workshopUsesLanguage: '“{name}” usará o SDK de {language}.',
+                chooseWorkshopContinue: 'Escolha um workshop para continuar.',
+                introRuntimeNote: 'Trabalhe em start-intro/{language}. A preparação cobre a configuração do tempo de execução e das dependências.',
+                runtimeNotes: {
+                    dotnet: 'Requer o SDK do .NET e um tempo de execução C# compatível.',
+                    go: 'Requer uma toolchain Go compatível e um módulo Go.',
+                    java: 'Requer um JDK compatível e um projeto Maven ou Gradle.',
+                    nodejs: 'Requer uma versão LTS atual do Node.js.',
+                    python: 'Requer Python e um ambiente virtual isolado.',
+                    rust: 'Requer Rust e Cargo do rustup.'
+                },
+                lesson: {
+                    previous: 'Anterior',
+                    previousShort: 'Anterior',
+                    nextShort: 'Próxima',
+                    previousAria: 'Anterior: {title}',
+                    nextAria: 'Próxima: {title}',
+                    backToHub: 'Voltar ao hub do workshop',
+                    beforeYouBegin: 'Antes de começar',
+                    workshop: 'Workshop',
+                    skipLink: 'Pular para a lição',
+                    siteTitle: 'Workshop do Copilot SDK',
+                    homeAriaLabel: 'Início do workshop do Copilot SDK',
+                    openSections: 'Abrir seções',
+                    closeSections: 'Fechar seções',
+                    lessonActions: 'Ações da lição',
+                    chooseLanguageOption: 'Escolha a linguagem',
+                    progressAriaLabel: 'Progresso do workshop',
+                    loading: 'Carregando',
+                    stepPosition: 'Etapa {number} de {count}',
+                    preflight: 'Preparação',
+                    navigationTitle: 'Etapas de {workshop}',
+                    navigationAriaLabel: 'Etapas do workshop',
+                    paginationAriaLabel: 'Paginação da lição',
+                    loadingLesson: 'Carregando lição.',
+                    loadingLessonProgress: 'Carregando lição...',
+                    loadingNamed: 'Carregando {title}.',
+                    loadedNamed: 'Carregado: {title}.',
+                    completeStatus: '{workshop} concluído. Você conseguiu! Os recursos estão prontos abaixo.',
+                    documentTitle: '{step} | {language} | Workshop do Copilot SDK',
+                    chooseLanguageDocumentTitle: 'Escolha uma linguagem | Workshop do Copilot SDK',
+                    chooseLanguageShort: 'Escolha uma linguagem',
+                    chooseLanguageHeading: 'Escolha uma linguagem do workshop',
+                    chooseLanguageDetails:
+                        'Abra Configurações e escolha uma das seis linguagens de programação compatíveis para carregar esta lição.',
+                    chooseLanguageStatus: 'Escolha uma linguagem do workshop para continuar.',
+                    loadErrorHeading: 'Não foi possível carregar esta lição',
+                    loadErrorStatus: 'Não foi possível carregar esta lição.',
+                    loadErrorFileGuidance:
+                        'Disponibilize o repositório por um servidor HTTP local; os navegadores bloqueiam o carregamento de lições a partir de URLs de arquivo.',
+                    loadErrorGuidance:
+                        'Atualize a página. Se o problema continuar, verifique se o Markdown do workshop foi implantado.',
+                    copy: 'Copiar',
+                    copied: 'Copiado',
+                    copyFailed: 'Falha ao copiar',
+                    copyAriaLabel: 'Copiar bloco de código',
+                    times: {
+                        untimed: 'Sem tempo definido',
+                        resources: 'Recursos',
+                        minutes: '{count} min'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': 'Preparação',
+                        'intro-01-sdk-basics': 'Noções do SDK',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'Agente de podcast',
+                        'intro-04-wrap-up': 'Recapitulação',
+                        '00-preflight': 'Preparação',
+                        '01-first-session': 'Primeira sessão',
+                        '02-streaming': 'Streaming',
+                        '03-local-tool': 'Ferramenta local',
+                        '04-mcp-safety': 'MCP e permissões',
+                        '05-combine-tools': 'Combinar ferramentas',
+                        '06-structured-report': 'Relatório estruturado',
+                        '07-run-explain': 'Executar e explicar',
+                        '08-model-selection': 'Seleção de modelo',
+                        '09-interactive-html-report': 'Relatório interativo',
+                        '10-complete': 'Celebre e continue criando',
+                        'museum-00-preflight': 'Preparação',
+                        'museum-01-first-curator-session': 'Primeira sessão',
+                        'museum-02-stream-the-curator': 'Streaming',
+                        'museum-03-curator-voice': 'Voz do curador',
+                        'museum-04-approved-facts': 'Fatos aprovados',
+                        'museum-06-prove-the-structure': 'Verificações da estrutura',
+                        'museum-07-wikipedia-research': 'Pesquisa na Wikipedia',
+                        'museum-08-interactive-exhibit-page': 'Página da exposição',
+                        'museum-09-complete': 'Celebre e continue criando'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': 'Preparação: prepare-se para o SDK 101',
+                        'intro-01-sdk-basics': 'Etapa 1: Noções básicas do SDK',
+                        'intro-02-hello-world': 'Etapa 2: Hello World em streaming',
+                        'intro-03-podcast-agent': 'Etapa 3: Crie o agente de podcast',
+                        'intro-04-wrap-up': 'Etapa 4: Recapitulação e próximos passos',
+                        '00-preflight': 'Preparação: configure sua máquina',
+                        '01-first-session': 'Etapa 1: Crie sua primeira sessão do Copilot',
+                        '02-streaming': 'Etapa 2: Transmita uma resposta em streaming',
+                        '03-local-tool': 'Etapa 3: Adicione conhecimento pertencente ao aplicativo',
+                        '04-mcp-safety': 'Etapa 4: Conecte uma ferramenta externa com segurança',
+                        '05-combine-tools': 'Etapa 5: Combine ferramentas locais e MCP',
+                        '06-structured-report': 'Etapa 6: Produza um relatório estruturado',
+                        '07-run-explain': 'Etapa 7: Execute e explique o aplicativo',
+                        '08-model-selection': 'Etapa 8: Selecione um modelo',
+                        '09-interactive-html-report': 'Etapa 9: Gere um relatório HTML interativo',
+                        '10-complete': 'Você conseguiu!',
+                        'museum-00-preflight': 'Museum Exhibit Studio: preparação',
+                        'museum-01-first-curator-session': 'Etapa 1: Sua primeira sessão de curador',
+                        'museum-02-stream-the-curator': 'Etapa 2: Transmita o curador em streaming',
+                        'museum-03-curator-voice': 'Etapa 3: Dê uma voz ao curador',
+                        'museum-04-approved-facts': 'Etapa 4: Fundamente em fatos aprovados',
+                        'museum-06-prove-the-structure': 'Etapa 5: Comprove a estrutura',
+                        'museum-07-wikipedia-research': 'Etapa 6: Pesquise com o Wikipedia MCP',
+                        'museum-08-interactive-exhibit-page': 'Etapa 7: Publique uma página de exposição interativa',
+                        'museum-09-complete': 'Você conseguiu!'
+                    }
+                },
+                previewAriaLabel: 'Prévia do workshop selecionado',
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: 'Selecione um workshop para ver a prévia do fluxo do agente.',
+                outcomesTitle: 'Crie o aplicativo. Entenda o limite.',
+                outcomes: [
+                    'Crie e gerencie uma sessão do Copilot.',
+                    'Separe a política persistente do agente dos dados da tarefa.',
+                    'Escolha a superfície de ferramenta certa para o trabalho.',
+                    'Valide no código os requisitos objetivos de saída.',
+                    'Explique onde a orientação do prompt termina e os controles rígidos começam.'
+                ],
+                workshops: {
+                    intro: {
+                        kicker: 'Introdução para iniciantes · 30 minutos',
+                        name: 'Primeiros passos com o SDK 101',
+                        shortName: 'SDK 101',
+                        description: 'Passe de um Hello World em streaming a um agente de podcast usando os projetos iniciais incluídos. Conclua a configuração antes.',
+                        capabilities: 'Cliente e sessão · streaming · ferramentas locais prontas · aprovações',
+                        previewTitle: 'start-intro',
+                        preview: `Cliente → Hello World em streaming
+        → selecionar um episódio de podcast
+        → aprovar uma ferramenta RSS
+        → título e post de lançamento
+
+[ferramenta] get_github_podcast_episode
+
+30 minutos · seis linguagens
+Conclua a configuração antes da sessão.`,
+                        guidance: 'Aprenda noções básicas do SDK em 30 minutos. Instale, autentique-se e baixe as dependências dos projetos iniciais antes.'
+                    },
+                    sdlc: {
+                        kicker: 'Ferramenta de desenvolvedor · 115 minutos',
+                        name: 'Revisão de acessibilidade na Web',
+                        shortName: 'revisão de acessibilidade',
+                        description: 'Crie um agente de SDLC que inspeciona uma página, consulta orientações da WCAG e produz um relatório baseado em evidências.',
+                        capabilities: 'Streaming · ferramentas locais · Playwright MCP · permissões',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → inspeção do Playwright
+    → consulta à WCAG
+    → relatório estruturado
+
+[ferramenta] playwright-browser_navigate
+[ferramenta] accessibility_rule_lookup
+
+Achado
+O campo de nome não tem um nome acessível.`,
+                        guidance: 'Crie uma ferramenta de desenvolvedor de SDLC em um workshop de 115 minutos; depois, celebre e continue criando.'
+                    },
+                    museum: {
+                        kicker: 'Ferramenta não SDLC · 90 minutos',
+                        name: 'Curadoria de exposição de museu',
+                        shortName: 'curadoria de exposição',
+                        description: 'Crie um agente interpretativo fundamentado que transforma fatos aprovados em texto de exposição pronto para visitantes.',
+                        capabilities: 'Persona personalizada · uma ferramenta pertencente ao aplicativo · validação · avaliação',
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `Fatos aprovados → sessão de curador
+                → validação da exposição
+                → texto pronto para visitantes
+
+Ferramentas disponíveis: []
+Mensagem de sistema: replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: 'Crie uma ferramenta de curador não SDLC em um workshop de 90 minutos; depois, celebre e continue criando.'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## Ato um: Hello World',
+                two: '## Ato dois: transforme-o em um agente de podcast'
+            })
+        },
+        {
+            id: 'es-es',
+            displayName: 'Español',
+            htmlLang: 'es',
+            contentPath: 'localizations/es-es/',
+            ui: Object.freeze({
+                title: 'Elige tu taller | GitHub Copilot SDK',
+                description: 'Empieza con un taller GitHub Copilot SDK 101 de 30 minutos, o profundiza con un revisor de accesibilidad o un conservador de museo.',
+                skipLink: 'Saltar al resumen del taller',
+                brandLabel: 'Inicio del taller de GitHub Copilot SDK',
+                resourcesLabel: 'Recursos del taller',
+                targetApp: 'Aplicación de destino',
+                sdkDocs: 'Documentación del SDK',
+                sdkDocsNamed: 'Documentación del SDK de {language}',
+                newTab: '(se abre en una pestaña nueva)',
+                settings: {
+                    label: 'Configuración',
+                    locale: 'Idioma',
+                    theme: 'Tema',
+                    light: 'Claro',
+                    dark: 'Oscuro'
+                },
+                heroTitle: 'Elige qué hará tu agente.',
+                heroDefinition: 'Empieza con SDK 101 en 30 minutos. Luego profundiza: crea un agente para el ciclo de vida del software o lleva Copilot a otro dominio.',
+                workshopLegend: 'Elige un taller',
+                languageTitle: 'Elige el lenguaje de programación del taller',
+                languageSummary: 'Elige primero un taller y luego su lenguaje de implementación.',
+                programmingLanguage: 'Lenguaje de programación',
+                startSelected: 'Empezar el taller seleccionado',
+                startNamed: 'Empezar {name}',
+                startGuidance: 'Elige un taller y un lenguaje. No necesitas experiencia previa con agentes ni con el SDK.',
+                chooseLanguageFor: 'Ahora elige un lenguaje de programación para «{name}».',
+                workshopUsesLanguage: '«{name}» usará el SDK de {language}.',
+                chooseWorkshopContinue: 'Elige un taller para continuar.',
+                introRuntimeNote: 'Trabaja en start-intro/{language}. La preparación cubre su entorno de ejecución y la configuración de dependencias.',
+                runtimeNotes: {
+                    dotnet: 'Requiere el SDK de .NET y un entorno de ejecución de C# compatible.',
+                    go: 'Requiere una cadena de herramientas de Go compatible y un módulo.',
+                    java: 'Requiere un JDK compatible y un proyecto de Maven o Gradle.',
+                    nodejs: 'Requiere una versión LTS vigente de Node.js.',
+                    python: 'Requiere Python y un entorno virtual aislado.',
+                    rust: 'Requiere Rust y Cargo instalados mediante rustup.'
+                },
+                lesson: {
+                    previous: 'Anterior',
+                    previousShort: 'Ant',
+                    nextShort: 'Sig',
+                    previousAria: 'Anterior: {title}',
+                    nextAria: 'Siguiente: {title}',
+                    backToHub: 'Volver al centro del taller',
+                    beforeYouBegin: 'Antes de empezar',
+                    workshop: 'Taller',
+                    skipLink: 'Saltar a la lección',
+                    siteTitle: 'Taller de Copilot SDK',
+                    homeAriaLabel: 'Inicio del taller de Copilot SDK',
+                    openSections: 'Abrir secciones',
+                    closeSections: 'Cerrar secciones',
+                    lessonActions: 'Acciones de la lección',
+                    chooseLanguageOption: 'Elegir lenguaje',
+                    progressAriaLabel: 'Progreso del taller',
+                    loading: 'Cargando',
+                    stepPosition: 'Paso {number} de {count}',
+                    preflight: 'Preparación',
+                    navigationTitle: 'Pasos de {workshop}',
+                    navigationAriaLabel: 'Pasos del taller',
+                    paginationAriaLabel: 'Paginación de la lección',
+                    loadingLesson: 'Cargando lección.',
+                    loadingLessonProgress: 'Cargando lección...',
+                    loadingNamed: 'Cargando {title}.',
+                    loadedNamed: '{title} cargada.',
+                    completeStatus: 'Has completado {workshop}. ¡Lo has conseguido! Los recursos están listos abajo.',
+                    documentTitle: '{step} | {language} | Taller de Copilot SDK',
+                    chooseLanguageDocumentTitle: 'Elige un lenguaje | Taller de Copilot SDK',
+                    chooseLanguageShort: 'Elegir lenguaje',
+                    chooseLanguageHeading: 'Elige un lenguaje de programación del taller',
+                    chooseLanguageDetails:
+                        'Abre Configuración y elige uno de los seis lenguajes de programación compatibles para cargar esta lección.',
+                    chooseLanguageStatus: 'Elige un lenguaje de programación del taller para continuar.',
+                    loadErrorHeading: 'No se puede cargar esta lección',
+                    loadErrorStatus: 'No se puede cargar esta lección.',
+                    loadErrorFileGuidance:
+                        'Sirve el repositorio con un servidor HTTP local; los navegadores bloquean la carga de lecciones desde URL de archivo.',
+                    loadErrorGuidance:
+                        'Actualiza la página. Si el problema continúa, comprueba que el Markdown del taller se haya desplegado.',
+                    copy: 'Copiar',
+                    copied: 'Copiado',
+                    copyFailed: 'Error al copiar',
+                    copyAriaLabel: 'Copiar bloque de código',
+                    times: {
+                        untimed: 'Sin tiempo',
+                        resources: 'Recursos',
+                        minutes: '{count} min'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': 'Preparación',
+                        'intro-01-sdk-basics': 'Conceptos básicos del SDK',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'Agente de pódcast',
+                        'intro-04-wrap-up': 'Resumen',
+                        '00-preflight': 'Preparación',
+                        '01-first-session': 'Primera sesión',
+                        '02-streaming': 'Streaming',
+                        '03-local-tool': 'Conocimiento propio',
+                        '04-mcp-safety': 'MCP y permisos',
+                        '05-combine-tools': 'Combina herramientas',
+                        '06-structured-report': 'Informe estructurado',
+                        '07-run-explain': 'Ejecuta y explica',
+                        '08-model-selection': 'Selección de modelo',
+                        '09-interactive-html-report': 'Informe interactivo',
+                        '10-complete': 'Celebra y sigue creando',
+                        'museum-00-preflight': 'Preparación',
+                        'museum-01-first-curator-session': 'Primera sesión',
+                        'museum-02-stream-the-curator': 'Streaming',
+                        'museum-03-curator-voice': 'Voz del conservador',
+                        'museum-04-approved-facts': 'Hechos aprobados',
+                        'museum-06-prove-the-structure': 'Comprobaciones estructurales',
+                        'museum-07-wikipedia-research': 'Investigación en Wikipedia',
+                        'museum-08-interactive-exhibit-page': 'Página de exposición',
+                        'museum-09-complete': 'Celebra y sigue creando'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': 'Preparación: prepárate para SDK 101',
+                        'intro-01-sdk-basics': 'Paso 1: Conceptos básicos del SDK',
+                        'intro-02-hello-world': 'Paso 2: Hello World en streaming',
+                        'intro-03-podcast-agent': 'Paso 3: Crea el agente de pódcast',
+                        'intro-04-wrap-up': 'Paso 4: Resumen y siguientes pasos',
+                        '00-preflight': 'Preparación: prepara tu equipo',
+                        '01-first-session': 'Paso 1: Crea tu primera sesión de Copilot',
+                        '02-streaming': 'Paso 2: Transmite una respuesta en streaming',
+                        '03-local-tool': 'Paso 3: Añade conocimiento propio de la aplicación',
+                        '04-mcp-safety': 'Paso 4: Conecta una herramienta externa de forma segura',
+                        '05-combine-tools': 'Paso 5: Combina herramientas locales y MCP',
+                        '06-structured-report': 'Paso 6: Genera un informe estructurado',
+                        '07-run-explain': 'Paso 7: Ejecuta y explica la aplicación',
+                        '08-model-selection': 'Paso 8: Selecciona un modelo',
+                        '09-interactive-html-report': 'Paso 9: Genera un informe HTML interactivo',
+                        '10-complete': '¡Lo has conseguido!',
+                        'museum-00-preflight': 'Museum Exhibit Studio: preparación',
+                        'museum-01-first-curator-session': 'Paso 1: Tu primera sesión de conservador',
+                        'museum-02-stream-the-curator': 'Paso 2: Transmite la respuesta del conservador en streaming',
+                        'museum-03-curator-voice': 'Paso 3: Dale voz al conservador',
+                        'museum-04-approved-facts': 'Paso 4: Básalo en hechos aprobados',
+                        'museum-06-prove-the-structure': 'Paso 5: Comprueba la estructura',
+                        'museum-07-wikipedia-research': 'Paso 6: Investiga con Wikipedia MCP',
+                        'museum-08-interactive-exhibit-page': 'Paso 7: Publica una página de exposición interactiva',
+                        'museum-09-complete': '¡Lo has conseguido!'
+                    }
+                },
+                previewAriaLabel: 'Vista previa del taller seleccionado',
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: 'Selecciona un taller para previsualizar el flujo de su agente.',
+                outcomesTitle: 'Crea la aplicación. Entiende el límite.',
+                outcomes: [
+                    'Crea y gestiona una sesión de Copilot.',
+                    'Separa la política duradera del agente de los datos de la tarea.',
+                    'Elige la superficie de herramientas adecuada para cada tarea.',
+                    'Valida en código los requisitos objetivos de salida.',
+                    'Explica dónde termina la guía del prompt y dónde empiezan los controles estrictos.'
+                ],
+                workshops: {
+                    intro: {
+                        kicker: 'Introducción para principiantes · 30 minutos',
+                        name: 'Empieza con SDK 101',
+                        shortName: 'SDK 101',
+                        description: 'Pasa de un Hello World en streaming a un agente de pódcast con los proyectos iniciales incluidos. Completa la configuración antes.',
+                        capabilities: 'Cliente y sesión · streaming · herramientas locales incluidas · aprobaciones',
+                        previewTitle: 'start-intro',
+                        preview: `Cliente → Hello World en streaming
+        → seleccionar un episodio de pódcast
+        → aprobar una herramienta RSS
+        → título y publicación de lanzamiento
+
+[herramienta] get_github_podcast_episode
+
+30 minutos · seis lenguajes
+Completa la configuración antes de la sesión.`,
+                        guidance: 'Aprende los conceptos básicos del SDK en 30 minutos. Instala, autentícate y descarga antes las dependencias de los proyectos iniciales.'
+                    },
+                    sdlc: {
+                        kicker: 'Herramienta para desarrolladores · 115 minutos',
+                        name: 'Revisa la accesibilidad web',
+                        shortName: 'la revisión de accesibilidad',
+                        description: 'Crea un agente de SDLC que inspecciona una página, consulta la guía de WCAG y genera un informe basado en evidencias.',
+                        capabilities: 'Streaming · herramientas locales · Playwright MCP · permisos',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → inspección de Playwright
+    → consulta de WCAG
+    → informe estructurado
+
+[herramienta] playwright-browser_navigate
+[herramienta] accessibility_rule_lookup
+
+Hallazgo
+El campo de nombre no tiene un nombre accesible.`,
+                        guidance: 'Crea una herramienta de SDLC para desarrolladores en un taller de 115 minutos; luego celebra el resultado y sigue creando.'
+                    },
+                    museum: {
+                        kicker: 'Herramienta no SDLC · 90 minutos',
+                        name: 'Prepara una exposición de museo',
+                        shortName: 'la exposición de museo',
+                        description: 'Crea un agente interpretativo fundamentado que convierte hechos aprobados en texto de exposición listo para visitantes.',
+                        capabilities: 'Persona personalizada · una herramienta propia de la aplicación · validación · evaluación',
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `Hechos aprobados → sesión de conservador
+                 → validación de exposición
+                 → texto listo para visitantes
+
+Herramientas disponibles: []
+Mensaje del sistema: replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: 'Crea una herramienta de conservador no SDLC en un taller de 90 minutos; luego celebra el resultado y sigue creando.'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## Primer acto: Hello World',
+                two: '## Segundo acto: conviértelo en un agente de pódcast'
+            })
+        },
+        {
+            id: 'fr-fr',
+            displayName: 'Français',
+            htmlLang: 'fr',
+            contentPath: 'localizations/fr-fr/',
+            ui: Object.freeze({
+                title: 'Choisissez votre atelier | GitHub Copilot SDK',
+                description: "Commencez avec un atelier GitHub Copilot SDK 101 de 30 minutes, ou approfondissez avec un évaluateur d'accessibilité ou un conservateur de musée.",
+                skipLink: "Passer à l'aperçu des ateliers",
+                brandLabel: "Accueil de l'atelier GitHub Copilot SDK",
+                resourcesLabel: "Ressources de l'atelier",
+                targetApp: 'Application cible',
+                sdkDocs: 'Documentation du SDK',
+                sdkDocsNamed: 'Documentation du SDK {language}',
+                newTab: "(s'ouvre dans un nouvel onglet)",
+                settings: {
+                    label: 'Paramètres',
+                    locale: 'Langue du site',
+                    theme: 'Thème',
+                    light: 'Clair',
+                    dark: 'Sombre'
+                },
+                heroTitle: 'Choisissez ce que votre agent doit faire.',
+                heroDefinition: 'Commencez avec SDK 101 en 30 minutes. Puis approfondissez : créez un agent pour le cycle de vie logiciel, ou emmenez Copilot dans un autre domaine.',
+                workshopLegend: 'Choisir un atelier',
+                languageTitle: "Choisissez le langage de programmation de l'atelier",
+                languageSummary: "Choisissez d'abord un atelier, puis sélectionnez son langage d'implémentation.",
+                programmingLanguage: 'Langage de programmation',
+                startSelected: "Démarrer l'atelier sélectionné",
+                startNamed: 'Démarrer {name}',
+                startGuidance: "Choisissez un atelier et un langage. Aucune expérience préalable des agents ou du SDK n'est requise.",
+                chooseLanguageFor: 'Choisissez maintenant un langage pour « {name} ».',
+                workshopUsesLanguage: '« {name} » utilisera le SDK {language}.',
+                chooseWorkshopContinue: 'Choisissez un atelier pour continuer.',
+                introRuntimeNote: 'Travaillez dans start-intro/{language}. La préparation couvre la configuration du runtime et des dépendances.',
+                runtimeNotes: {
+                    dotnet: 'Nécessite le SDK .NET et un runtime C# pris en charge.',
+                    go: "Nécessite une chaîne d'outils Go et un module pris en charge.",
+                    java: 'Nécessite un JDK pris en charge et un projet Maven ou Gradle.',
+                    nodejs: 'Nécessite une version LTS actuelle de Node.js.',
+                    python: 'Nécessite Python et un environnement virtuel isolé.',
+                    rust: 'Nécessite Rust et Cargo installés avec rustup.'
+                },
+                lesson: {
+                    previous: 'Précédent',
+                    previousShort: 'Préc',
+                    nextShort: 'Suiv',
+                    previousAria: 'Précédent : {title}',
+                    nextAria: 'Suivant : {title}',
+                    backToHub: "Retour à l'accueil des ateliers",
+                    beforeYouBegin: 'Avant de commencer',
+                    workshop: 'Atelier',
+                    skipLink: 'Passer à la leçon',
+                    siteTitle: 'Atelier Copilot SDK',
+                    homeAriaLabel: "Accueil de l'atelier Copilot SDK",
+                    openSections: 'Ouvrir les sections',
+                    closeSections: 'Fermer les sections',
+                    lessonActions: 'Actions de la leçon',
+                    chooseLanguageOption: 'Choisir un langage',
+                    progressAriaLabel: "Progression de l'atelier",
+                    loading: 'Chargement',
+                    stepPosition: 'Étape {number} sur {count}',
+                    preflight: 'Préparation',
+                    navigationTitle: 'Étapes : {workshop}',
+                    navigationAriaLabel: "Étapes de l'atelier",
+                    paginationAriaLabel: 'Pagination de la leçon',
+                    loadingLesson: 'Chargement de la leçon.',
+                    loadingLessonProgress: 'Chargement de la leçon...',
+                    loadingNamed: 'Chargement de {title}.',
+                    loadedNamed: '{title} chargé.',
+                    completeStatus: '{workshop} terminé. Vous avez réussi ! Les ressources sont prêtes ci-dessous.',
+                    documentTitle: '{step} | {language} | Atelier Copilot SDK',
+                    chooseLanguageDocumentTitle: 'Choisir un langage | Atelier Copilot SDK',
+                    chooseLanguageShort: 'Choisir un langage',
+                    chooseLanguageHeading: "Choisissez un langage pour l'atelier",
+                    chooseLanguageDetails:
+                        "Ouvrez Paramètres et choisissez l'un des six langages de programmation pris en charge pour charger cette leçon.",
+                    chooseLanguageStatus: "Choisissez un langage pour l'atelier afin de continuer.",
+                    loadErrorHeading: 'Impossible de charger cette leçon',
+                    loadErrorStatus: 'Impossible de charger cette leçon.',
+                    loadErrorFileGuidance:
+                        'Servez le dépôt avec un serveur HTTP local ; les navigateurs bloquent le chargement des leçons depuis les URL file.',
+                    loadErrorGuidance:
+                        "Actualisez la page. Si le problème persiste, vérifiez que le Markdown de l'atelier a été déployé.",
+                    copy: 'Copier',
+                    copied: 'Copié',
+                    copyFailed: 'Échec de la copie',
+                    copyAriaLabel: 'Copier le bloc de code',
+                    times: {
+                        untimed: 'Sans durée',
+                        resources: 'Ressources',
+                        minutes: '{count} min'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': 'Préparation',
+                        'intro-01-sdk-basics': 'Bases du SDK',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'Agent de podcast',
+                        'intro-04-wrap-up': 'Récapitulatif',
+                        '00-preflight': 'Préparation',
+                        '01-first-session': 'Première session',
+                        '02-streaming': 'Streaming',
+                        '03-local-tool': 'Outil local',
+                        '04-mcp-safety': 'MCP et autorisations',
+                        '05-combine-tools': 'Combiner les outils',
+                        '06-structured-report': 'Rapport structuré',
+                        '07-run-explain': 'Exécuter et expliquer',
+                        '08-model-selection': 'Sélection du modèle',
+                        '09-interactive-html-report': 'Rapport interactif',
+                        '10-complete': 'Célébrer et continuer',
+                        'museum-00-preflight': 'Préparation',
+                        'museum-01-first-curator-session': 'Première session',
+                        'museum-02-stream-the-curator': 'Streaming',
+                        'museum-03-curator-voice': 'Voix du conservateur',
+                        'museum-04-approved-facts': 'Faits approuvés',
+                        'museum-06-prove-the-structure': 'Vérification de structure',
+                        'museum-07-wikipedia-research': 'Recherche Wikipedia',
+                        'museum-08-interactive-exhibit-page': "Page d'exposition",
+                        'museum-09-complete': 'Célébrer et continuer'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': 'Préparation : préparez-vous pour SDK 101',
+                        'intro-01-sdk-basics': 'Étape 1 : Les bases du SDK',
+                        'intro-02-hello-world': 'Étape 2 : Hello World en streaming',
+                        'intro-03-podcast-agent': "Étape 3 : Créez l'agent de podcast",
+                        'intro-04-wrap-up': 'Étape 4 : Récapitulatif et prochaines étapes',
+                        '00-preflight': 'Préparation : configurez votre machine',
+                        '01-first-session': 'Étape 1 : Créez votre première session Copilot',
+                        '02-streaming': 'Étape 2 : Diffusez une réponse en streaming',
+                        '03-local-tool': "Étape 3 : Ajoutez des connaissances propres à l'application",
+                        '04-mcp-safety': 'Étape 4 : Connectez un outil externe en toute sécurité',
+                        '05-combine-tools': 'Étape 5 : Combinez des outils locaux et MCP',
+                        '06-structured-report': 'Étape 6 : Produisez un rapport structuré',
+                        '07-run-explain': "Étape 7 : Exécutez et expliquez l'application",
+                        '08-model-selection': 'Étape 8 : Sélectionnez un modèle',
+                        '09-interactive-html-report': 'Étape 9 : Générez un rapport HTML interactif',
+                        '10-complete': 'Vous avez réussi !',
+                        'museum-00-preflight': 'Museum Exhibit Studio : préparation',
+                        'museum-01-first-curator-session': 'Étape 1 : Votre première session de conservateur',
+                        'museum-02-stream-the-curator': 'Étape 2 : Diffusez la réponse du conservateur en streaming',
+                        'museum-03-curator-voice': 'Étape 3 : Donnez une voix au conservateur',
+                        'museum-04-approved-facts': 'Étape 4 : Appuyez-vous sur des faits approuvés',
+                        'museum-06-prove-the-structure': 'Étape 5 : Vérifiez la structure',
+                        'museum-07-wikipedia-research': 'Étape 6 : Faites des recherches avec Wikipedia MCP',
+                        'museum-08-interactive-exhibit-page': "Étape 7 : Publiez une page d'exposition interactive",
+                        'museum-09-complete': 'Vous avez réussi !'
+                    }
+                },
+                previewAriaLabel: "Aperçu de l'atelier sélectionné",
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: "Sélectionnez un atelier pour afficher l'aperçu du flux de son agent.",
+                outcomesTitle: "Créez l'application. Comprenez la limite.",
+                outcomes: [
+                    'Créer et gérer une session Copilot.',
+                    "Séparer la politique durable de l'agent des données de tâche.",
+                    "Choisir la bonne surface d'outil pour la tâche.",
+                    'Valider dans le code les exigences objectives de sortie.',
+                    "Expliquer où s'arrêtent les consignes du prompt et où commencent les contrôles stricts."
+                ],
+                workshops: {
+                    intro: {
+                        kicker: 'Introduction pour débutants · 30 minutes',
+                        name: 'Premiers pas avec SDK 101',
+                        shortName: 'SDK 101',
+                        description: "Passez d'un Hello World en streaming à un agent de podcast avec les projets de départ fournis. Terminez la configuration en amont.",
+                        capabilities: 'Client et session · streaming · outils locaux fournis · approbations',
+                        previewTitle: 'start-intro',
+                        preview: `Client → Hello World en streaming
+       → sélectionner un épisode de podcast
+       → approuver un outil RSS
+       → titre et billet de lancement
+
+[outil] get_github_podcast_episode
+
+30 minutes · six langages
+Terminez la configuration avant la session.`,
+                        guidance: 'Apprenez les bases du SDK en 30 minutes. Installez, authentifiez-vous et téléchargez les dépendances du projet de départ en amont.'
+                    },
+                    sdlc: {
+                        kicker: 'Outil de développement · 115 minutes',
+                        name: "Audit de l'accessibilité web",
+                        shortName: "l'audit d'accessibilité",
+                        description: 'Créez un agent SDLC qui inspecte une page, consulte les recommandations WCAG et produit un rapport fondé sur des preuves.',
+                        capabilities: 'Streaming · outils locaux · Playwright MCP · autorisations',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → inspection Playwright
+    → consultation WCAG
+    → rapport structuré
+
+[outil] playwright-browser_navigate
+[outil] accessibility_rule_lookup
+
+Constat
+Le champ Nom n'a pas de nom accessible.`,
+                        guidance: 'Créez un outil de développement SDLC dans un atelier de 115 minutes, puis célébrez et continuez à créer.'
+                    },
+                    museum: {
+                        kicker: 'Outil hors SDLC · 90 minutes',
+                        name: 'Organiser une exposition de musée',
+                        shortName: "l'exposition de musée",
+                        description: "Créez un agent d'interprétation ancré qui transforme des faits approuvés en texte d'exposition prêt pour les visiteurs.",
+                        capabilities: "Persona personnalisée · un outil propre à l'application · validation · évaluation",
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `Faits approuvés → session du conservateur
+                → validation de l'exposition
+                → texte prêt pour les visiteurs
+
+Outils disponibles : []
+Message système : replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: 'Créez un outil de conservateur hors SDLC dans un atelier de 90 minutes, puis célébrez et continuez à créer.'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## Acte un : Hello World',
+                two: '## Acte deux : transformez-le en agent de podcast'
+            })
+        },
+        {
+            id: 'de-de',
+            displayName: 'Deutsch',
+            htmlLang: 'de',
+            contentPath: 'localizations/de-de/',
+            ui: Object.freeze({
+                title: 'Workshop auswählen | GitHub Copilot SDK',
+                description: 'Starten Sie mit einem 30-minütigen GitHub Copilot SDK 101-Workshop, oder gehen Sie mit einem Accessibility Reviewer oder Museumskurator tiefer.',
+                skipLink: 'Zur Workshop-Übersicht springen',
+                brandLabel: 'Startseite des GitHub Copilot SDK Workshop',
+                resourcesLabel: 'Workshop-Ressourcen',
+                targetApp: 'Ziel-App',
+                sdkDocs: 'SDK-Dokumentation',
+                sdkDocsNamed: '{language}-SDK-Dokumentation',
+                newTab: '(wird in neuem Tab geöffnet)',
+                settings: {
+                    label: 'Einstellungen',
+                    locale: 'Sprache',
+                    theme: 'Design',
+                    light: 'Hell',
+                    dark: 'Dunkel'
+                },
+                heroTitle: 'Wählen Sie die Aufgabe Ihres Agenten.',
+                heroDefinition: 'Starten Sie in 30 Minuten mit SDK 101. Danach geht es tiefer: Erstellen Sie einen Agenten für den Softwarelebenszyklus, oder bringen Sie Copilot in ein anderes Fachgebiet.',
+                workshopLegend: 'Workshop auswählen',
+                languageTitle: 'Workshop-Programmiersprache wählen',
+                languageSummary: 'Wählen Sie zuerst einen Workshop und dann seine Implementierungssprache.',
+                programmingLanguage: 'Programmiersprache',
+                startSelected: 'Ausgewählten Workshop starten',
+                startNamed: '{name} starten',
+                startGuidance: 'Wählen Sie einen Workshop und eine Sprache. Vorkenntnisse zu Agenten oder SDKs sind nicht erforderlich.',
+                chooseLanguageFor: 'Wählen Sie jetzt eine Sprache für „{name}“.',
+                workshopUsesLanguage: '„{name}“ verwendet das {language}-SDK.',
+                chooseWorkshopContinue: 'Wählen Sie einen Workshop, um fortzufahren.',
+                introRuntimeNote: 'Arbeiten Sie in start-intro/{language}. Die Vorbereitung behandelt die Einrichtung von Laufzeit und Abhängigkeiten.',
+                runtimeNotes: {
+                    dotnet: 'Erfordert das .NET-SDK und eine unterstützte C#-Laufzeit.',
+                    go: 'Erfordert eine unterstützte Go-Toolchain und ein Modul.',
+                    java: 'Erfordert ein unterstütztes JDK und ein Maven- oder Gradle-Projekt.',
+                    nodejs: 'Erfordert eine aktuelle Node.js-LTS-Version.',
+                    python: 'Erfordert Python und eine isolierte virtuelle Umgebung.',
+                    rust: 'Erfordert Rust und Cargo aus rustup.'
+                },
+                lesson: {
+                    previous: 'Zurück',
+                    previousShort: 'Zurück',
+                    nextShort: 'Weiter',
+                    previousAria: 'Zurück: {title}',
+                    nextAria: 'Weiter: {title}',
+                    backToHub: 'Zurück zum Workshop-Hub',
+                    beforeYouBegin: 'Bevor Sie beginnen',
+                    workshop: 'Workshop',
+                    skipLink: 'Zur Lektion springen',
+                    siteTitle: 'Copilot SDK Workshop',
+                    homeAriaLabel: 'Startseite des Copilot SDK Workshop',
+                    openSections: 'Abschnitte öffnen',
+                    closeSections: 'Abschnitte schließen',
+                    lessonActions: 'Lektionsaktionen',
+                    chooseLanguageOption: 'Programmiersprache wählen',
+                    progressAriaLabel: 'Workshop-Fortschritt',
+                    loading: 'Laden',
+                    stepPosition: 'Schritt {number} von {count}',
+                    preflight: 'Vorbereitung',
+                    navigationTitle: 'Schritte für {workshop}',
+                    navigationAriaLabel: 'Workshop-Schritte',
+                    paginationAriaLabel: 'Lektionsnavigation',
+                    loadingLesson: 'Lektion wird geladen.',
+                    loadingLessonProgress: 'Lektion wird geladen...',
+                    loadingNamed: '{title} wird geladen.',
+                    loadedNamed: '{title} geladen.',
+                    completeStatus: '{workshop} abgeschlossen. Geschafft! Unten stehen Ressourcen bereit.',
+                    documentTitle: '{step} | {language} | Copilot SDK Workshop',
+                    chooseLanguageDocumentTitle: 'Programmiersprache wählen | Copilot SDK Workshop',
+                    chooseLanguageShort: 'Programmiersprache wählen',
+                    chooseLanguageHeading: 'Workshop-Programmiersprache wählen',
+                    chooseLanguageDetails:
+                        'Öffnen Sie die Einstellungen und wählen Sie eine der sechs unterstützten Programmiersprachen, um diese Lektion zu laden.',
+                    chooseLanguageStatus: 'Wählen Sie eine Workshop-Programmiersprache, um fortzufahren.',
+                    loadErrorHeading: 'Diese Lektion kann nicht geladen werden',
+                    loadErrorStatus: 'Diese Lektion kann nicht geladen werden.',
+                    loadErrorFileGuidance:
+                        'Stellen Sie das Repository über einen lokalen HTTP-Server bereit; Browser blockieren das Laden von Lektionen aus file-URLs.',
+                    loadErrorGuidance:
+                        'Aktualisieren Sie die Seite. Wenn das Problem weiterhin besteht, prüfen Sie, ob das Workshop-Markdown bereitgestellt wurde.',
+                    copy: 'Kopieren',
+                    copied: 'Kopiert',
+                    copyFailed: 'Kopieren fehlgeschlagen',
+                    copyAriaLabel: 'Codeblock kopieren',
+                    times: {
+                        untimed: 'Ohne Zeitangabe',
+                        resources: 'Ressourcen',
+                        minutes: '{count} Min'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': 'Vorbereitung',
+                        'intro-01-sdk-basics': 'SDK-Grundlagen',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'Podcast-Agent',
+                        'intro-04-wrap-up': 'Zusammenfassung',
+                        '00-preflight': 'Vorbereitung',
+                        '01-first-session': 'Erste Copilot-Sitzung',
+                        '02-streaming': 'Streaming',
+                        '03-local-tool': 'Lokales Tool',
+                        '04-mcp-safety': 'MCP und Berechtigungen',
+                        '05-combine-tools': 'Tools kombinieren',
+                        '06-structured-report': 'Strukturierter Bericht',
+                        '07-run-explain': 'Ausführen und erklären',
+                        '08-model-selection': 'Modellauswahl',
+                        '09-interactive-html-report': 'Interaktiver Bericht',
+                        '10-complete': 'Feiern und weiterbauen',
+                        'museum-00-preflight': 'Vorbereitung',
+                        'museum-01-first-curator-session': 'Erste Kurator-Sitzung',
+                        'museum-02-stream-the-curator': 'Streaming',
+                        'museum-03-curator-voice': 'Kurator-Stimme',
+                        'museum-04-approved-facts': 'Freigegebene Fakten',
+                        'museum-06-prove-the-structure': 'Strukturprüfungen',
+                        'museum-07-wikipedia-research': 'Wikipedia-Recherche',
+                        'museum-08-interactive-exhibit-page': 'Ausstellungsseite',
+                        'museum-09-complete': 'Feiern und weiterbauen'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': 'Vorbereitung: Auf SDK 101 vorbereiten',
+                        'intro-01-sdk-basics': 'Schritt 1: SDK-Grundlagen',
+                        'intro-02-hello-world': 'Schritt 2: Hello World per Streaming',
+                        'intro-03-podcast-agent': 'Schritt 3: Den Podcast-Agenten erstellen',
+                        'intro-04-wrap-up': 'Schritt 4: Zusammenfassung und nächste Schritte',
+                        '00-preflight': 'Vorbereitung: Rechner einrichten',
+                        '01-first-session': 'Schritt 1: Die erste Copilot-Sitzung erstellen',
+                        '02-streaming': 'Schritt 2: Eine Antwort streamen',
+                        '03-local-tool': 'Schritt 3: Anwendungseigenes Wissen hinzufügen',
+                        '04-mcp-safety': 'Schritt 4: Ein externes Tool sicher anbinden',
+                        '05-combine-tools': 'Schritt 5: Lokale Tools und MCP-Tools kombinieren',
+                        '06-structured-report': 'Schritt 6: Einen strukturierten Bericht erzeugen',
+                        '07-run-explain': 'Schritt 7: Die Anwendung ausführen und erklären',
+                        '08-model-selection': 'Schritt 8: Ein Modell auswählen',
+                        '09-interactive-html-report': 'Schritt 9: Einen interaktiven HTML-Bericht generieren',
+                        '10-complete': 'Geschafft!',
+                        'museum-00-preflight': 'Museum Exhibit Studio: Vorbereitung',
+                        'museum-01-first-curator-session': 'Schritt 1: Ihre erste Kurator-Sitzung',
+                        'museum-02-stream-the-curator': 'Schritt 2: Die Antwort des Kurators streamen',
+                        'museum-03-curator-voice': 'Schritt 3: Dem Kurator eine Stimme geben',
+                        'museum-04-approved-facts': 'Schritt 4: Auf freigegebene Fakten stützen',
+                        'museum-06-prove-the-structure': 'Schritt 5: Die Struktur prüfen',
+                        'museum-07-wikipedia-research': 'Schritt 6: Mit Wikipedia MCP recherchieren',
+                        'museum-08-interactive-exhibit-page': 'Schritt 7: Eine interaktive Ausstellungsseite veröffentlichen',
+                        'museum-09-complete': 'Geschafft!'
+                    }
+                },
+                previewAriaLabel: 'Vorschau des ausgewählten Workshops',
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: 'Wählen Sie einen Workshop, um seinen Agentenfluss als Vorschau anzuzeigen.',
+                outcomesTitle: 'Die App erstellen. Die Grenze verstehen.',
+                outcomes: [
+                    'Eine Copilot-Sitzung erstellen und verwalten.',
+                    'Dauerhafte Agent-Richtlinien von Aufgabendaten trennen.',
+                    'Die richtige Tool-Schnittstelle für die Aufgabe auswählen.',
+                    'Objektive Ausgabeanforderungen im Code validieren.',
+                    'Erklären, wo Prompt-Anweisungen enden und harte Kontrollen beginnen.'
+                ],
+                workshops: {
+                    intro: {
+                        kicker: 'Einführung für Einsteiger · 30 Minuten',
+                        name: 'Mit SDK 101 starten',
+                        shortName: 'SDK 101',
+                        description: 'Gehen Sie mit den enthaltenen Starterprojekten von Hello World per Streaming bis zum Podcast-Agenten. Schließen Sie vorher die Einrichtung ab.',
+                        capabilities: 'Client und Sitzung · Streaming · vorgefertigte lokale Tools · Genehmigungen',
+                        previewTitle: 'start-intro',
+                        preview: `Client → Hello World per Streaming
+       → Podcast-Folge auswählen
+       → RSS-Tool genehmigen
+       → Überschrift und Launch-Beitrag
+
+[Tool] get_github_podcast_episode
+
+30 Minuten · sechs Sprachen
+Einrichtung vor der Sitzung abschließen.`,
+                        guidance: 'Lernen Sie SDK-Grundlagen in 30 Minuten. Installieren und authentifizieren Sie sich vorher, und laden Sie die Starter-Abhängigkeiten herunter.'
+                    },
+                    sdlc: {
+                        kicker: 'Entwickler-Tool · 115 Minuten',
+                        name: 'Barrierefreiheit im Web prüfen',
+                        shortName: 'Barrierefreiheitsprüfung',
+                        description: 'Erstellen Sie einen SDLC-Agenten, der eine Seite prüft, WCAG-Leitlinien heranzieht und einen evidenzbasierten Bericht erzeugt.',
+                        capabilities: 'Streaming · lokale Tools · Playwright MCP · Berechtigungen',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → Playwright-Prüfung
+    → WCAG-Abfrage
+    → strukturierter Bericht
+
+[Tool] playwright-browser_navigate
+[Tool] accessibility_rule_lookup
+
+Befund
+Die Namenseingabe hat keinen barrierefreien Namen.`,
+                        guidance: 'Erstellen Sie in einem 115-Minuten-Workshop ein SDLC-Entwickler-Tool, feiern Sie den Erfolg und bauen Sie weiter.'
+                    },
+                    museum: {
+                        kicker: 'Nicht-SDLC-Tool · 90 Minuten',
+                        name: 'Eine Museumsausstellung kuratieren',
+                        shortName: 'Museumsausstellung',
+                        description: 'Erstellen Sie einen fundierten interpretierenden Agenten, der freigegebene Fakten in besuchergerechten Ausstellungstext umwandelt.',
+                        capabilities: 'Eigene Persona · ein anwendungseigenes Tool · Validierung · Evaluation',
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `Freigegebene Fakten → Kurator-Sitzung
+                    → Ausstellungsvalidierung
+                    → besuchergerechter Text
+
+Verfügbare Tools: []
+Systemnachricht: replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: 'Erstellen Sie in einem 90-Minuten-Workshop ein Nicht-SDLC-Kurator-Tool, feiern Sie den Erfolg und bauen Sie weiter.'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## Erster Akt: Hello World',
+                two: '## Zweiter Akt: In einen Podcast-Agenten verwandeln'
             })
         }
     ]);

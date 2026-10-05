@@ -33,7 +33,9 @@ what it does not cover — is the lesson.
 ## Wire the validator
 
 :::language dotnet
-Open `Program.cs`. Capture the returned exhibit and print the report:
+Open `Program.cs`. Two regions change in this step.
+
+**REPLACE** region `generate` in `Program.cs`:
 
 ```csharp
     Console.WriteLine();
@@ -41,15 +43,19 @@ Open `Program.cs`. Capture the returned exhibit and print the report:
         GenerationConfig(approvedFacts),
         BuildExhibitPrompt(),
         CuratorStreamer.GenerationTimeout);
-
-    Console.WriteLine();
-    Console.WriteLine(CuratorValidation.FormatValidation(CuratorValidation.ValidateExhibit(exhibit)));
-
-    return 0;
 ```
 
-`CuratorValidation` is already in the `MuseumExhibitStudio.Helpers` namespace you imported in
-Step 2, so there is nothing new to add at the top of the file.
+One change in `generate`: the text `RunSessionAsync` already returned is now kept in `exhibit`.
+
+**INSERT** region `validate` in `Program.cs`:
+
+```csharp
+    Console.WriteLine();
+    Console.WriteLine(CuratorValidation.FormatValidation(CuratorValidation.ValidateExhibit(exhibit)));
+```
+
+`CuratorValidation` is already in the `MuseumExhibitStudio.Helpers` namespace the `imports` region
+brings in, so there is nothing new to add at the top of the file.
 
 **Look inside:** `Helpers/CuratorValidation.cs` is the concrete answer to "the application proves
 this, not the model". `ValidateExhibit` splits the text into lines, counts `TitlePattern` matches,
@@ -60,8 +66,29 @@ five terms in `ProhibitedVocabulary`. Each failed rule appends a plain sentence 
 :::
 
 :::language nodejs
-Open `src/index.ts`. Add `formatValidation` and `validateExhibit` to the helper
-import, then capture the returned exhibit and print the report:
+Open `src/index.ts`. Three regions change in this step.
+
+**REPLACE** region `imports` in `src/index.ts`:
+
+```typescript
+import { approveAll, CopilotClient, type SessionConfig } from "@github/copilot-sdk";
+import {
+  approvedFactLookupName,
+  chooseApprovedFacts,
+  closeTerminal,
+  createApprovedFactLookup,
+  describeFailure,
+  exhibitStructure,
+  formatValidation,
+  generationTimeoutMs,
+  selectedModel,
+  streamExhibit,
+  validateExhibit,
+} from "./curator.js";
+import { curatorSystemMessage } from "./system-messages.js";
+```
+
+**REPLACE** region `generate` in `src/index.ts`:
 
 ```typescript
     console.log();
@@ -70,10 +97,19 @@ import, then capture the returned exhibit and print the report:
       buildExhibitPrompt(),
       generationTimeoutMs,
     );
+```
 
+One change in `generate`: the text `runSession` already returned is now kept in `exhibit`.
+
+**INSERT** region `validate` in `src/index.ts`:
+
+```typescript
     console.log();
     console.log(formatValidation(validateExhibit(exhibit)));
 ```
+
+The validation helpers come from `src/curator.ts`, so the only top-of-file change is the helper
+import.
 
 **Look inside:** `src/curator.ts` is the concrete answer to "the application proves this, not the
 model". `validateExhibit` splits the text into lines, counts `titlePattern` matches, locates the
@@ -84,22 +120,57 @@ collects numbered items with `questionPattern`, and scans the whole text for the
 :::
 
 :::language python
-Open `main.py`. Add `format_validation` and `validate_exhibit` to the helper
-import, then capture the returned exhibit and print the report:
+Open `main.py`. Three regions change in this step.
+
+**REPLACE** region `imports` in `main.py`:
 
 ```python
-    try:
+from __future__ import annotations
+
+import asyncio
+import sys
+from collections.abc import Iterable
+from typing import Any
+
+from copilot import CopilotClient, PermissionHandler
+
+from curator import (
+    APPROVED_FACT_LOOKUP_NAME,
+    EXHIBIT_STRUCTURE,
+    GENERATION_TIMEOUT_SECONDS,
+    choose_approved_facts,
+    create_approved_fact_lookup,
+    describe_failure,
+    format_validation,
+    selected_model,
+    stream_exhibit,
+    validate_exhibit,
+)
+from system_messages import CURATOR_SYSTEM_MESSAGE
+```
+
+**REPLACE** region `generate` in `main.py`:
+
+```python
         print()
         exhibit = await run_session(
             generation_config(facts),
             build_exhibit_prompt(),
             GENERATION_TIMEOUT_SECONDS,
         )
+```
 
+One change in `generate`: the text `run_session` already returned is now kept in `exhibit`.
+
+**INSERT** region `validate` in `main.py`:
+
+```python
         print()
         print(format_validation(validate_exhibit(exhibit)))
-        return 0
 ```
+
+`format_validation` and `validate_exhibit` come from `curator.py`, so the imports region now names
+both helpers.
 
 **Look inside:** `curator.py` is the concrete answer to "the application proves this, not the
 model". `validate_exhibit` splits the text into lines, counts `_TITLE_PATTERN` matches, locates the
@@ -110,18 +181,36 @@ collects numbered items with `_QUESTION_PATTERN`, and scans the whole text for t
 :::
 
 :::language go
-Open `main.go`. Capture the returned exhibit and print the report:
+Open `main.go`. Two regions change in this step.
+
+**REPLACE** region `generate` in `main.go`:
 
 ```go
-	fmt.Println()
-	exhibit, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout)
+	ctx := context.Background()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	exhibitConfig, err := generationConfig(workingDirectory, facts)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println()
+	exhibit, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout)
+	if err != nil {
+		return err
+	}
+```
+
+One change in `generate`: the text `runSession` already returned is now kept in `exhibit`.
+
+**INSERT** region `validate` in `main.go`:
+
+```go
+	fmt.Println()
 	fmt.Println(FormatValidation(ValidateExhibit(exhibit)))
-	return nil
 ```
 
 `FormatValidation` and `ValidateExhibit` live in `curator.go` in the same package, so there is no
@@ -136,8 +225,24 @@ report you print. No model is involved at any point.
 :::
 
 :::language rust
-Open `src/main.rs`. Add `format_validation` and `validate_exhibit` to the crate
-import, then capture the returned exhibit and print the report:
+Open `src/main.rs`. Three regions change in this step.
+
+**REPLACE** region `imports` in `src/main.rs`:
+
+```rust
+use std::time::Duration;
+
+use github_copilot_sdk::permission;
+use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
+use github_copilot_sdk::{Client, ClientOptions};
+use museum_exhibit_studio::{
+    APPROVED_FACT_LOOKUP_NAME, CURATOR_SYSTEM_MESSAGE, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT,
+    RuntimeError, approved_fact_lookup, choose_approved_facts, describe_failure, format_validation,
+    selected_model, stream_exhibit, validate_exhibit,
+};
+```
+
+**REPLACE** region `generate` in `src/main.rs`:
 
 ```rust
     println!();
@@ -147,12 +252,19 @@ import, then capture the returned exhibit and print the report:
         GENERATION_TIMEOUT,
     )
     .await?;
+```
 
+One change in `generate`: the text `run_session` already returned is now kept in `exhibit`.
+
+**INSERT** region `validate` in `src/main.rs`:
+
+```rust
     println!();
     println!("{}", format_validation(&validate_exhibit(&exhibit)));
-
-    Ok(())
 ```
+
+`format_validation` and `validate_exhibit` come from `src/lib.rs`, so the `imports` region brings
+them in before the report is printed.
 
 **Look inside:** `src/lib.rs` is the concrete answer to "the application proves this, not the
 model". `validate_exhibit` splits the text into lines, counts title-pattern matches, locates the
@@ -163,28 +275,27 @@ you print. No model is involved at any point.
 :::
 
 :::language java
-Open `src/main/java/workshop/MuseumExhibitStudio.java`. Capture the returned
-exhibit and print the report:
+Open `src/main/java/workshop/MuseumExhibitStudio.java`. Two regions change in this step.
+
+**REPLACE** region `generate` in `src/main/java/workshop/MuseumExhibitStudio.java`:
 
 ```java
-            System.out.println();
-            String exhibit = runSession(
-                    generationConfig(facts),
-                    buildExhibitPrompt(),
-                    CuratorStreamer.GENERATION_TIMEOUT);
-
-            System.out.println();
-            System.out.println(CuratorValidation.formatValidation(CuratorValidation.validateExhibit(exhibit)));
+        System.out.println();
+        String exhibit = runSession(generationConfig(facts), buildExhibitPrompt(), CuratorStreamer.GENERATION_TIMEOUT);
 ```
 
-`CuratorValidation` sits in the same `workshop` package, so there is no import to add.
+One change in `generate`: the text `runSession` already returned is now kept in `exhibit`.
 
-**Look inside:** `CuratorValidation.java` is the concrete answer to "the application proves this,
-not the model". `validateExhibit` splits the text into lines, counts `TITLE_PATTERN` matches,
-locates the `## Narrative` and `## Visitor questions` headings, counts narrative words with
-`WORD_PATTERN`, collects numbered items with `QUESTION_PATTERN`, and scans the lowercased text for
-the five terms in `PROHIBITED_VOCABULARY`. Each failed rule adds a plain sentence to `errors`, and
-`formatValidation` renders those into the report you print. No model is involved at any point.
+**INSERT** region `validate` in `src/main/java/workshop/MuseumExhibitStudio.java`:
+
+```java
+        System.out.println();
+        System.out.println(CuratorValidation.formatValidation(CuratorValidation.validateExhibit(exhibit)));
+```
+
+`CuratorValidation` sits in the same `workshop` package, so there is nothing new to add at the top of the file.
+
+**Look inside:** `CuratorValidation.java` is the concrete answer to "the application proves this, not the model". `validateExhibit` splits the text into lines, counts `TITLE_PATTERN` matches, locates the `## Narrative` and `## Visitor questions` headings, counts narrative words with `WORD_PATTERN`, collects numbered items with `QUESTION_PATTERN`, and scans the lowercased text for the five terms in `PROHIBITED_VOCABULARY`. Each failed rule adds a plain sentence to `errors`, and `formatValidation` renders those into the report you print. No model is involved at any point.
 :::
 
 ## Run it

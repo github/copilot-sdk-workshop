@@ -88,6 +88,10 @@ export function createApprovedWikipediaFactLookup(research: ExtractedSources): T
 export const generationTimeoutMs = 120_000;
 export const researchTimeoutMs = 90_000;
 
+export function selectedModel(): string | undefined {
+  return process.env.COPILOT_MODEL?.trim() || undefined;
+}
+
 export async function streamExhibit(
   session: CopilotSession,
   prompt: string,
@@ -323,6 +327,53 @@ export function extractSources(content: string): ExtractedSources {
   }
 }
 
+export function formatSources(research: ExtractedSources): string {
+  return [
+    "Consulted Wikipedia sources:",
+    ...research.sources.map((source) => `- ${source.title}: ${source.url}`),
+  ].join("\n");
+}
+
+export const exhibitStructure = `Return exactly this structure:
+
+# <an engaging exhibit title>
+## Narrative
+<100-140 words, excluding the title and questions>
+## Visitor questions
+1. <question>
+2. <question>
+3. <question>
+
+Write exactly three distinct visitor reflection questions. Do not add a preface,
+conclusion, software discussion, or facts the configured lookup tools did not return.`;
+
+export const htmlRequirements = `Requirements:
+- Use semantic HTML.
+- Use embedded CSS and embedded JavaScript only; no external assets or libraries.
+- Include the exhibit title, the narrative, and the three visitor questions.
+- Include a visible caveat that unsupported claims require human review.
+- Add an accessible text filter over the visitor questions that updates a visible count.
+- Treat exhibit text as data and escape text before inserting it into HTML.
+- Make keyboard focus visible.`;
+
+export function buildResearchPrompt(approvedFacts: Iterable<string>): string {
+  const facts = boundFacts(approvedFacts);
+  const factList = facts.map((fact) => `- ${fact}`).join("\n");
+
+  return `Research background for a museum exhibit using only the configured Wikipedia tools.
+
+Supplied approved facts:
+${factList}
+
+Search first with the scoped search tool, then read at most a few of the most relevant
+articles with readArticle. Write a short, cited factual summary that the application can
+supply to the curator through a local lookup. Associate researched claims with the
+consulted articles. Do not modify the approved facts or write exhibit copy.
+
+End with a ## Sources section listing each consulted article as:
+- <article title>: <canonical Wikipedia URL>`;
+}
+
 export const exhibitFileName = "exhibit.html";
 
 export function exhibitWritePermission(workingDirectory: string): PermissionHandler {
@@ -370,6 +421,39 @@ export async function readFacts(): Promise<string[]> {
     if (!fact) return facts;
     facts.push(fact);
   }
+}
+
+export async function chooseApprovedFacts(): Promise<string[]> {
+  console.log("Approved fact sets:");
+  factSets.forEach((factSet, index) => console.log(`${index + 1}. ${factSet.label}`));
+  console.log();
+
+  const answer = await askLine(`Choose a fact set [1-${factSets.length}, default 1]: `);
+  const choice = Number.parseInt(answer, 10);
+  const selected = Number.isInteger(choice) && choice >= 1 && choice <= factSets.length
+    ? factSets[choice - 1] ?? factSets[0]
+    : factSets[0];
+
+  let facts = boundFacts(selected.facts);
+  facts.forEach((fact, index) => console.log(`${index + 1}. ${fact}`));
+  console.log();
+
+  if (!(await askYesNo("Use these facts?", true))) {
+    facts = boundFacts(await readFacts());
+  }
+
+  return facts;
+}
+
+export function describeError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+export function describeFailure(error: unknown): string {
+  const message = describeError(error);
+  return message.toLocaleLowerCase().includes("timeout")
+    ? "The curator did not respond in time. Try again."
+    : `Could not generate the exhibit: ${message}`;
 }
 
 export function closeTerminal(): void {

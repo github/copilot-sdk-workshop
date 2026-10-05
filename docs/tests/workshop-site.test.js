@@ -154,10 +154,69 @@ function choose(inputs, value) {
     selected.emit('change');
 }
 
+// Every locale must offer the same interface strings as English, with the same placeholders.
+function shape(value, prefix = '') {
+    if (Array.isArray(value)) {
+        return value.flatMap((item, index) => shape(item, `${prefix}.${index}`));
+    }
+    if (value && typeof value === 'object') {
+        return Object.keys(value).flatMap(key => shape(value[key], prefix ? `${prefix}.${key}` : key));
+    }
+    return [[prefix, value]];
+}
+
+function assertLocaleCompleteness() {
+    const english = WorkshopLocales.defaultLocale;
+    const optional = /^lesson\.(workshopTitles|stepLabels|stepTitles)\./;
+    const reference = new Map(shape(english.ui).filter(([key]) => !optional.test(key)));
+    const repository = path.join(docs, '..');
+    for (const locale of WorkshopLocales.locales.slice(1)) {
+        const strings = new Map(shape(locale.ui));
+        for (const [key, source] of reference) {
+            assert.ok(strings.has(key), `${locale.id} is missing ${key}`);
+            const value = strings.get(key);
+            assert.equal(typeof value, 'string', `${locale.id} ${key} must be text`);
+            assert.ok(value.trim(), `${locale.id} ${key} is empty`);
+            assert.deepEqual((value.match(/\{\w+\}/g) ?? []).sort(), (source.match(/\{\w+\}/g) ?? []).sort(),
+                `${locale.id} ${key} must keep its placeholders`);
+        }
+        for (const key of strings.keys()) {
+            assert.ok(reference.has(key) || optional.test(key), `${locale.id} has an unknown string ${key}`);
+        }
+        assert.match(locale.contentPath, /^localizations\/[a-z]{2}-[a-z]{2}\/$/);
+        assert.equal(locale.contentPath, `localizations/${locale.id}/`);
+        const content = path.join(repository, locale.contentPath);
+        assert.ok(fs.existsSync(path.join(content, 'README.md')), `${locale.id} has no localized README`);
+        for (const lesson of fs.readdirSync(path.join(repository, 'workshop')).filter(name => name.endsWith('.md'))) {
+            assert.ok(fs.existsSync(path.join(content, 'workshop', lesson)),
+                `${locale.id} is missing workshop/${lesson}`);
+            const stepId = lesson.replace(/\.md$/, '');
+            assert.ok(locale.ui.lesson.stepLabels[stepId], `${locale.id} has no navigation label for ${stepId}`);
+            assert.ok(locale.ui.lesson.stepTitles[stepId], `${locale.id} has no title for ${stepId}`);
+        }
+        // The lesson viewer finds each demo act by its localized heading.
+        for (const language of WorkshopLanguages.languages) {
+            const guide = fs.readFileSync(
+                path.join(content, 'start-intro', language.id, 'LIVE_DEMO.md'), 'utf8');
+            for (const heading of Object.values(locale.demoActHeadings)) {
+                assert.ok(guide.split(/\r?\n/).includes(heading),
+                    `${locale.id} ${language.id} demo guide must contain "${heading}"`);
+            }
+        }
+    }
+}
+
 async function main() {
+    assertLocaleCompleteness();
+    const localeIds = WorkshopLocales.locales.map(locale => locale.id);
+    assert.deepEqual(localeIds.slice(0, 2), ['en', 'ko-kr']);
+    assert.equal(new Set(localeIds).size, localeIds.length);
     const home = createPage(homeHtml, 'http://localhost:8000/docs/index.html');
     vm.runInContext(homeScript, home.context);
     assert.equal(home.elements.get('languagePicker').disabled, true);
+    assert.equal(home.elements.get('languageSelector').value, '');
+    assert.equal(home.elements.get('sdkDocsLink').href, 'https://github.com/github/copilot-sdk');
+    assert.equal(home.elements.get('sdkDocsLabel').textContent, 'SDK docs');
     assert.equal(home.elements.get('startWorkshopLink').getAttribute('aria-disabled'), 'true');
     assert.equal(home.workshops.length, 3);
     assert.ok(home.workshops.every(input => !input.checked));
@@ -168,6 +227,16 @@ async function main() {
     assert.equal(home.elements.get('startWorkshopLink').href,
         'workshop/step.html?step=intro-00-preflight&lang=rust');
     assert.equal(home.elements.get('targetAppLink').hidden, true);
+    assert.equal(home.elements.get('languageSelector').value, 'rust');
+    assert.equal(home.elements.get('sdkDocsLink').href,
+        'https://github.com/github/copilot-sdk/tree/main/rust');
+    assert.equal(home.elements.get('sdkDocsLabel').textContent, 'Rust SDK docs');
+    home.elements.get('languageSelector').value = 'go';
+    home.elements.get('languageSelector').emit('change');
+    assert.deepEqual(home.languages.filter(input => input.checked).map(input => input.value), ['go']);
+    assert.equal(home.elements.get('startWorkshopLink').href,
+        'workshop/step.html?step=intro-00-preflight&lang=go');
+    choose(home.languages, 'rust');
     assert.equal(home.elements.get('installCommand').textContent,
         'git clone https://github.com/github/copilot-sdk-workshop.git');
     assert.match(home.elements.get('runtimeNote').textContent, /start-intro\/rust/);
@@ -182,7 +251,7 @@ async function main() {
     choose(home.workshops, 'intro');
     assert.equal(home.elements.get('startWorkshopLink').textContent, 'Start SDK 101');
     assert.deepEqual(home.elements.get('localeSelector').children.map(option => option.value),
-        ['en', 'ko-kr']);
+        localeIds);
     home.elements.get('localeSelector').value = 'ko-kr';
     home.elements.get('localeSelector').emit('change');
     assert.equal(home.window.location.searchParams.get('locale'), 'ko-kr');
@@ -199,6 +268,14 @@ async function main() {
         'http://localhost:8000/docs/index.html?workshop=museum&lang=python&locale=ko-kr');
     vm.runInContext(homeScript, koreanHome.context);
     assert.equal(koreanHome.elements.get('localeSelector').value, 'ko-kr');
+    assert.equal(koreanHome.elements.get('languageSelector').value, 'python');
+    assert.equal(koreanHome.elements.get('sdkDocsLabel').textContent, 'Python SDK 문서');
+    const homeHeader = homeHtml.slice(homeHtml.indexOf('<header'), homeHtml.indexOf('</header>'));
+    assert.doesNotMatch(homeHeader, /sdkDocsLink|targetAppLink/);
+    for (const control of ['localeSelector', 'languageSelector', 'name="theme"']) {
+        assert.ok(homeHeader.indexOf(control) > homeHeader.indexOf('id="settingsPanel"'),
+            `${control} belongs in the settings menu`);
+    }
     assert.equal(koreanHome.elements.get('startWorkshopLink').href,
         'workshop/step.html?step=museum-00-preflight&lang=python&locale=ko-kr');
 
@@ -230,7 +307,7 @@ async function main() {
                 `${new URL('../', markdownRoot).href}start-intro/${language.id}/LIVE_DEMO.md`);
             assert.equal(page.elements.get('progressTrack').getAttribute('aria-valuemax'), '4');
             assert.equal(page.elements.get('progressTrack').getAttribute('aria-valuenow'), '2');
-            assert.equal(page.elements.get('hubLink').href,
+            assert.equal(page.elements.get('homeLink').href,
                 `../index.html?lang=${language.id}&workshop=intro`);
             assert.match(page.elements.get('nextHeaderLink').href, /^\?step=intro-03-podcast-agent&lang=/);
             assert.doesNotMatch(page.elements.get('workshopNavigation').innerHTML,
@@ -247,7 +324,7 @@ async function main() {
             await new Promise(resolve => setImmediate(resolve));
             assert.equal(page.window.location.searchParams.get('step'), 'intro-02-hello-world');
             assert.equal(page.window.location.searchParams.get('lang'), selector.value);
-            assert.equal(page.elements.get('hubLink').href,
+            assert.equal(page.elements.get('homeLink').href,
                 `../index.html?lang=${selector.value}&workshop=intro`);
 
             const podcast = createPage(lessonHtml,
@@ -272,7 +349,7 @@ async function main() {
             `http://localhost:8000/docs/workshop/step.html?step=${step}&lang=java`);
         await vm.runInContext(lessonScript, page.context);
         assert.equal(page.elements.get('progressTrack').getAttribute('aria-valuemax'), String(count));
-        assert.equal(page.elements.get('hubLink').href, `../index.html?lang=java&workshop=${track}`);
+        assert.equal(page.elements.get('homeLink').href, `../index.html?lang=java&workshop=${track}`);
         if (step === 'intro-04-wrap-up') {
             assert.equal(page.elements.get('nextHeaderLink').hidden, true);
             assert.equal(page.elements.get('progressTrack').getAttribute('aria-valuenow'), '4');
@@ -294,7 +371,7 @@ async function main() {
             `${markdownRoot}localizations/ko-kr/start-intro/nodejs/LIVE_DEMO.md`);
         assert.equal(korean.elements.get('localeSelector').value, 'ko-kr');
         assert.equal(korean.context.document.documentElement.lang, 'ko');
-        assert.equal(korean.elements.get('hubLink').href,
+        assert.equal(korean.elements.get('homeLink').href,
             '../index.html?lang=nodejs&workshop=intro&locale=ko-kr');
         assert.equal(korean.elements.get('previousHeaderLink').textContent, '← 이전');
         assert.equal(korean.elements.get('nextHeaderLink').textContent, '다음 →');
@@ -307,10 +384,17 @@ async function main() {
         assert.deepEqual([...korean.elements.get('markdownContent').innerHTML.matchAll(/^### (\d+)\./gm)]
             .map(match => match[1]), ['1', '2', '3', '4']);
         assert.match(korean.elements.get('markdownContent').innerHTML, /[가-힣]/);
-        assert.equal(korean.elements.get('hubLink').textContent, '🏠 허브');
-        assert.equal(korean.elements.get('headerDocsLink').textContent, '📚 Node.js 문서 ↗');
+        assert.equal(korean.elements.get('sdkDocsLabel').textContent, 'Node.js SDK 문서');
+        assert.equal(korean.elements.get('sdkDocsLink').href,
+            'https://github.com/github/copilot-sdk/tree/main/nodejs');
+        assert.equal(korean.elements.get('newTabNote').textContent, '(새 탭에서 열림)');
+        assert.equal(korean.elements.get('settingsButton').getAttribute('aria-label'), '설정');
+        assert.equal(korean.elements.get('localeSelectorLabel').textContent, '언어');
+        assert.equal(korean.elements.get('themeLabel').textContent, '테마');
+        assert.equal(korean.elements.get('themeLightLabel').textContent, '밝게');
+        assert.equal(korean.elements.get('themeDarkLabel').textContent, '어둡게');
         assert.equal(korean.elements.get('skipLink').textContent, '수업 내용으로 건너뛰기');
-        assert.equal(korean.elements.get('languageSelectorLabel').textContent, '언어');
+        assert.equal(korean.elements.get('languageSelectorLabel').textContent, '프로그래밍 언어');
         assert.equal(korean.elements.get('chooseLanguageOption').textContent, '언어 선택');
         assert.equal(korean.elements.get('stepPosition').textContent, '4단계 중 2단계');
         assert.equal(korean.elements.get('stepEstimate').textContent, '10분');
@@ -318,19 +402,53 @@ async function main() {
         assert.equal(korean.elements.get('menuButton').getAttribute('aria-label'), '목차 열기');
     }
 
-    const koreanLocale = WorkshopLocales.getLocale('ko-kr');
-    assert.equal(koreanLocale.ui.theme.light, '☀️ 밝게');
-    assert.equal(koreanLocale.ui.theme.dark, '🌙 어둡게');
-    assert.equal(WorkshopLocales.defaultLocale.ui.theme.light, '☀️ Light');
+    // Every locale serves its own lessons and demo guides through the same viewer.
+    for (const locale of WorkshopLocales.locales.slice(1)) {
+        const localized = createPage(lessonHtml,
+            `http://localhost:8000/docs/workshop/step.html?step=intro-02-hello-world&lang=python&locale=${locale.id}`);
+        await vm.runInContext(lessonScript, localized.context);
+        assert.equal(localized.requests[0],
+            `http://localhost:8000/${locale.contentPath}workshop/intro-02-hello-world.md`);
+        assert.equal(localized.requests[1],
+            `http://localhost:8000/${locale.contentPath}start-intro/python/LIVE_DEMO.md`);
+        assert.equal(localized.requests.length, 2, `${locale.id} must not fall back to English`);
+        assert.equal(localized.context.document.documentElement.lang, locale.htmlLang);
+        const content = localized.elements.get('markdownContent').innerHTML;
+        assert.deepEqual([...content.matchAll(/^### (\d+)\./gm)].map(match => match[1]), ['1', '2', '3', '4'],
+            `${locale.id} hello world must include the four demo edits`);
+        assert.doesNotMatch(content, /<!-- LIVE_DEMO -->/);
+        assert.equal(localized.elements.get('markdownContent').getAttribute('aria-busy'), 'false');
+        assert.equal(localized.elements.get('settingsButton').getAttribute('aria-label'),
+            locale.ui.settings.label);
+        assert.equal(localized.elements.get('headerLessonTitle').textContent,
+            locale.ui.lesson.stepTitles['intro-02-hello-world']);
+        assert.equal(localized.elements.get('homeLink').href,
+            `../index.html?lang=python&workshop=intro&locale=${locale.id}`);
+    }
+
+    // The header keeps only the brand, step links, and the settings menu.
+    for (const removed of ['hubLink', 'headerDocsLink']) {
+        assert.doesNotMatch(lessonHtml, new RegExp(`id="${removed}"`));
+    }
+    const header = lessonHtml.slice(lessonHtml.indexOf('<header'), lessonHtml.indexOf('</header>'));
+    for (const control of ['localeSelector', 'languageSelector', 'name="theme"']) {
+        assert.ok(header.indexOf(control) > header.indexOf('id="settingsPanel"'),
+            `${control} belongs in the settings menu`);
+    }
+    assert.ok(lessonHtml.indexOf('id="sdkDocsLink"') > lessonHtml.indexOf('id="lessonFooter"'));
 
     // An unselected or default locale keeps the canonical English URLs unqualified.
     const defaultLocale = createPage(lessonHtml,
         'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=go&locale=en');
     await vm.runInContext(lessonScript, defaultLocale.context);
     assert.equal(defaultLocale.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
-    assert.equal(defaultLocale.elements.get('hubLink').href, '../index.html?lang=go&workshop=intro');
+    assert.equal(defaultLocale.elements.get('homeLink').href, '../index.html?lang=go&workshop=intro');
     assert.equal(defaultLocale.elements.get('previousHeaderLink').textContent, '← Prev');
     assert.equal(defaultLocale.elements.get('nextHeaderLink').textContent, 'Next →');
+    assert.equal(defaultLocale.elements.get('sdkDocsLabel').textContent, 'Go SDK docs');
+    assert.equal(defaultLocale.elements.get('languageSelectorLabel').textContent,
+        'Programming language');
+    assert.equal(defaultLocale.elements.get('localeSelectorLabel').textContent, 'Language');
 
     const koreanFirstStep = createPage(lessonHtml,
         'http://localhost:8000/docs/workshop/step.html?step=museum-00-preflight&lang=dotnet&locale=ko-kr');
@@ -350,7 +468,7 @@ async function main() {
     await vm.runInContext(lessonScript, switched.context);
     assert.equal(switched.requests[0], 'http://localhost:8000/workshop/intro-01-sdk-basics.md');
     const localeSelector = switched.elements.get('localeSelector');
-    assert.deepEqual(localeSelector.children.map(option => option.value), ['en', 'ko-kr']);
+    assert.deepEqual(localeSelector.children.map(option => option.value), localeIds);
     localeSelector.value = 'ko-kr';
     localeSelector.emit('change');
     await new Promise(resolve => setImmediate(resolve));
@@ -377,7 +495,8 @@ async function main() {
         'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=invalid');
     await vm.runInContext(lessonScript, noLanguage.context);
     assert.equal(noLanguage.requests.length, 0);
-    assert.equal(noLanguage.elements.get('hubLink').href, '../index.html?workshop=intro');
+    assert.equal(noLanguage.elements.get('sdkDocsLink').hidden, true);
+    assert.equal(noLanguage.elements.get('homeLink').href, '../index.html?workshop=intro');
     assert.equal(noLanguage.elements.get('lessonStatus').textContent,
         'Choose a workshop language to continue.');
 

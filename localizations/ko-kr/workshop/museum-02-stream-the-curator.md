@@ -27,36 +27,32 @@
 ## 차단 호출을 스트리머로 교체하기
 
 :::language dotnet
-`Program.cs`의 전체 내용을 다음으로 교체합니다.
+`Program.cs`를 엽니다. 이 단계에서는 영역 하나가 바뀝니다.
+
+`Program.cs`의 `generate` 영역을 **REPLACE**합니다.
 
 ```csharp
-using GitHub.Copilot;
-using GitHub.Copilot.Rpc;
-using MuseumExhibitStudio.Helpers;
+    await using var client = new CopilotClient();
+    await client.StartAsync();
 
-Console.WriteLine("=== Museum Exhibit Studio ===");
-Console.WriteLine();
+    await using var session = await client.CreateSessionAsync(new SessionConfig
+    {
+        ClientName = "museum-exhibit-studio",
+        OnPermissionRequest = PermissionHandler.ApproveAll,
+        Streaming = true
+    });
 
-await using var client = new CopilotClient();
-await client.StartAsync();
+    await CuratorStreamer.StreamExhibitAsync(
+        session,
+        "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
 
-await using var session = await client.CreateSessionAsync(new SessionConfig
-{
-    ClientName = "museum-exhibit-studio",
-    OnPermissionRequest = PermissionHandler.ApproveAll,
-    Streaming = true
-});
-
-await CuratorStreamer.StreamExhibitAsync(
-    session,
-    "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
-
-await client.StopAsync();
+    await client.StopAsync();
 ```
 
-변경점은 두 가지입니다. 세션 구성에 `Streaming = true`를 추가하고, `SendAndWaitAsync` 대신
-`CuratorStreamer.StreamExhibitAsync`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에
-그대로 둡니다. 이 헬퍼는 `Helpers/CuratorStreamer.cs`에 있으며, 절대 수정하지 않습니다.
+변경점은 두 가지입니다. 세션 구성에 `Streaming = true`를 추가하고, `SendAndWaitAsync`와
+그 응답을 출력하던 줄 대신 `CuratorStreamer.StreamExhibitAsync`를 사용합니다. 1단계의 권한
+처리기는 정확히 그 자리에 그대로 둡니다. 이 헬퍼는 `Helpers/CuratorStreamer.cs`에 있으며,
+절대 수정하지 않습니다.
 
 **내부 살펴보기:** `Helpers/CuratorStreamer.cs`를 열고 `StreamExhibitAsync`를 한 번 읽어
 보십시오. 이 함수가 SDK 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장
@@ -69,39 +65,39 @@ await client.StopAsync();
 :::
 
 :::language nodejs
-`src/index.ts`의 전체 내용을 다음으로 교체합니다.
+`src/index.ts`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`src/index.ts`의 `imports` 영역을 **REPLACE**합니다.
 
 ```typescript
 import { approveAll, CopilotClient } from "@github/copilot-sdk";
-import { streamExhibit } from "./curator.js";
-
-async function main(): Promise<void> {
-  console.log("=== Museum Exhibit Studio ===");
-  console.log();
-
-  const client = new CopilotClient();
-  await client.start();
-  const session = await client.createSession({
-    clientName: "museum-exhibit-studio",
-    onPermissionRequest: approveAll,
-    streaming: true,
-  });
-
-  await streamExhibit(
-    session,
-    "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
-  );
-
-  await session.disconnect();
-  await client.stop();
-}
-
-void main();
+import { closeTerminal, describeFailure, streamExhibit } from "./curator.js";
 ```
 
-변경점은 두 가지입니다. 세션 구성에 `streaming: true`를 추가하고, `sendAndWait` 대신
-`streamExhibit`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에 그대로 둡니다. 이 헬퍼는
-`src/curator.ts`에 있으며, 절대 수정하지 않습니다.
+`src/index.ts`의 `generate` 영역을 **REPLACE**합니다.
+
+```typescript
+    const client = new CopilotClient();
+    await client.start();
+
+    const session = await client.createSession({
+      clientName: "museum-exhibit-studio",
+      onPermissionRequest: approveAll,
+      streaming: true,
+    });
+
+    await streamExhibit(
+      session,
+      "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+    );
+
+    await session.disconnect();
+    await client.stop();
+```
+
+`generate`의 변경점은 두 가지입니다. 세션 구성에 `streaming: true`를 추가하고,
+`sendAndWait`와 그 응답을 출력하던 줄 대신 `streamExhibit`를 사용합니다. 1단계의 권한 처리기는
+정확히 그 자리에 그대로 둡니다. 이 헬퍼는 `src/curator.ts`에 있으며, 절대 수정하지 않습니다.
 
 **내부 살펴보기:** `src/curator.ts`를 열고 `streamExhibit`를 한 번 읽어 보십시오. 이 함수가 SDK
 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장 명확하게 보여 주는
@@ -113,34 +109,34 @@ void main();
 :::
 
 :::language python
-`main.py`의 전체 내용을 다음으로 교체합니다.
+`main.py`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`main.py`의 `imports` 영역을 **REPLACE**합니다.
 
 ```python
+from __future__ import annotations
+
 import asyncio
+import sys
 
 from copilot import CopilotClient, PermissionHandler
 
-from curator import stream_exhibit
+from curator import describe_failure, stream_exhibit
+```
 
+`main.py`의 `generate` 영역을 **REPLACE**합니다.
 
-async def main() -> None:
-    print("=== Museum Exhibit Studio ===")
-    print()
-
-    async with CopilotClient() as client:
-        async with await client.create_session(
-            client_name="museum-exhibit-studio",
-            on_permission_request=PermissionHandler.approve_all,
-            streaming=True,
-        ) as session:
-            await stream_exhibit(
-                session,
-                "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
-            )
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+```python
+        async with CopilotClient() as client:
+            async with await client.create_session(
+                client_name="museum-exhibit-studio",
+                on_permission_request=PermissionHandler.approve_all,
+                streaming=True,
+            ) as session:
+                await stream_exhibit(
+                    session,
+                    "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+                )
 ```
 
 1단계의 전체 이벤트 리스너가 하나의 호출로 축약됩니다. `stream_exhibit`는 `curator.py`에 있으며,
@@ -157,26 +153,15 @@ if __name__ == "__main__":
 :::
 
 :::language go
-`main.go`의 전체 내용을 다음으로 교체합니다.
+`main.go`를 엽니다. 이 단계에서는 영역 하나가 바뀝니다.
+
+`main.go`의 `generate` 영역을 **REPLACE**합니다.
 
 ```go
-package main
-
-import (
-	"context"
-	"fmt"
-
-	copilot "github.com/github/copilot-sdk/go"
-)
-
-func main() {
-	fmt.Println("=== Museum Exhibit Studio ===")
-	fmt.Println()
-
 	ctx := context.Background()
 	client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
 	if err := client.Start(ctx); err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = client.Stop() }()
 
@@ -186,7 +171,7 @@ func main() {
 		Streaming:           copilot.Bool(true),
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = session.Disconnect() }()
 
@@ -195,15 +180,13 @@ func main() {
 		"Write two sentences of museum wall text about the Apollo 11 Moon landing.",
 		GenerationTimeout,
 	); err != nil {
-		panic(err)
+		return err
 	}
-}
 ```
 
 변경점은 두 가지입니다. 세션 구성에 `Streaming: copilot.Bool(true)`를 추가하고,
-`SendAndWait` 대신 `StreamExhibit`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에 그대로
-둡니다. `StreamExhibit`와 `GenerationTimeout`은 같은 패키지의 `curator.go`에서 오며, 그 파일은
-절대 수정하지 않습니다.
+`SendAndWait`와 그 응답을 출력하던 줄 대신 `StreamExhibit`를 사용합니다. 1단계의 권한 처리기는
+정확히 그 자리에 그대로 둡니다. 이 헬퍼는 `curator.go`에 있으며, 절대 수정하지 않습니다.
 
 **내부 살펴보기:** `curator.go`를 열고 `StreamExhibit`를 한 번 읽어 보십시오. 이 함수가 SDK
 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장 명확하게 보여 주는
@@ -215,19 +198,20 @@ func main() {
 :::
 
 :::language rust
-`src/main.rs`의 전체 내용을 다음으로 교체합니다.
+`src/main.rs`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`src/main.rs`의 `imports` 영역을 **REPLACE**합니다.
 
 ```rust
 use github_copilot_sdk::permission;
 use github_copilot_sdk::types::SessionConfig;
 use github_copilot_sdk::{Client, ClientOptions};
-use museum_exhibit_studio::{GENERATION_TIMEOUT, RuntimeError, stream_exhibit};
+use museum_exhibit_studio::{GENERATION_TIMEOUT, RuntimeError, describe_failure, stream_exhibit};
+```
 
-#[tokio::main]
-async fn main() -> Result<(), RuntimeError> {
-    println!("=== Museum Exhibit Studio ===");
-    println!();
+`src/main.rs`의 `generate` 영역을 **REPLACE**합니다.
 
+```rust
     let client = Client::start(ClientOptions::default()).await?;
     let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
     config.client_name = Some("museum-exhibit-studio".to_owned());
@@ -243,14 +227,12 @@ async fn main() -> Result<(), RuntimeError> {
 
     session.disconnect().await?;
     client.stop().await?;
-    Ok(())
-}
 ```
 
-변경점은 두 가지입니다. `config.streaming = Some(true)`를 추가하고, `send_and_wait` 대신
-`stream_exhibit`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에 그대로 둡니다.
-`stream_exhibit`와 `GENERATION_TIMEOUT`은 모두 `src/lib.rs`의 `museum_exhibit_studio`
-크레이트에서 오며, 그 파일은 절대 수정하지 않습니다.
+`generate`의 변경점은 두 가지입니다. `config.streaming = Some(true)`를 추가하고,
+`send_and_wait`와 그 응답을 출력하던 줄 대신 `stream_exhibit`를 사용합니다. 1단계의 권한 처리기는
+정확히 그 자리에 그대로 둡니다. `stream_exhibit`와 `GENERATION_TIMEOUT`은 모두 `src/lib.rs`의
+`museum_exhibit_studio` 크레이트에서 오며, 그 파일은 절대 수정하지 않습니다.
 
 **내부 살펴보기:** `src/lib.rs`를 열고 `stream_exhibit`를 한 번 읽어 보십시오. 이 함수가 SDK
 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장 명확하게 보여 주는
@@ -262,52 +244,34 @@ poll하므로, 이벤트가 전혀 오지 않더라도 전달한 타임아웃이
 :::
 
 :::language java
-`src/main/java/workshop/MuseumExhibitStudio.java`의 전체 내용을 다음으로 교체합니다.
+`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 이 단계에서는 영역 하나가 바뀝니다.
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `generate` 영역을 **REPLACE**합니다.
 
 ```java
-package workshop;
-
-import com.github.copilot.CopilotClient;
-import com.github.copilot.rpc.PermissionHandler;
-import com.github.copilot.rpc.SessionConfig;
-
-public final class MuseumExhibitStudio {
-    private MuseumExhibitStudio() {
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println("=== Museum Exhibit Studio ===");
-        System.out.println();
-
         try (var client = new CopilotClient()) {
             client.start().get();
-            var session = client.createSession(new SessionConfig()
-                    .setClientName("museum-exhibit-studio")
-                    .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
-                    .setStreaming(true)).get();
+            CopilotSession session = null;
             try {
+                session = client.createSession(new SessionConfig()
+                        .setClientName("museum-exhibit-studio")
+                        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+                        .setStreaming(true)).get();
+
                 CuratorStreamer.streamExhibit(session,
                         "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
             } finally {
-                session.close();
+                if (session != null) {
+                    session.close();
+                }
                 client.stop().get();
             }
         }
-    }
-}
 ```
 
-변경점은 두 가지입니다. 세션 구성에 `setStreaming(true)`를 추가하고, `sendAndWait` 대신
-`CuratorStreamer.streamExhibit`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에 그대로
-둡니다. 이 헬퍼는 파일 옆의 `CuratorStreamer.java`에 있으며, 절대 수정하지 않습니다.
+변경점은 두 가지입니다. 세션 구성에 `setStreaming(true)`를 추가하고, `sendAndWait`와 그 응답을 출력하던 줄 대신 `CuratorStreamer.streamExhibit`를 사용합니다. 1단계의 권한 처리기는 정확히 그 자리에 그대로 둡니다. 이 헬퍼는 파일 옆의 `CuratorStreamer.java`에 있으며, 절대 수정하지 않습니다.
 
-**내부 살펴보기:** `CuratorStreamer.java`를 열고 `streamExhibit`를 한 번 읽어 보십시오. 이 함수가
-SDK 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장 명확하게 보여 주는
-지점입니다. 이벤트 형식마다 하나의 리스너를 등록합니다. `AssistantMessageDeltaEvent`는 각
-청크를 도착 즉시 출력하고 누적하며, `ToolExecutionStartEvent`와 `ToolExecutionCompleteEvent`는
-`[tool:start]`와 `[tool:done]` 줄을 출력하고, `SessionIdleEvent`는 줄을 마무리하며,
-`SessionErrorEvent`는 캡처되어 다시 throw됩니다. 전달하는 타임아웃은 밀리초 단위로
-`session.sendAndWait`에 전달되며, 모든 구독은 `finally` 블록에서 닫힙니다.
+**내부 살펴보기:** `CuratorStreamer.java`를 열고 `streamExhibit`를 한 번 읽어 보십시오. 이 함수가 SDK 이벤트 루프이며, 이 워크숍에서 스트리밍이 실제로 어떻게 동작하는지 가장 명확하게 보여 주는 지점입니다. 이벤트 형식마다 하나의 리스너를 등록합니다. `AssistantMessageDeltaEvent`는 각 청크를 도착 즉시 출력하고 누적하며, `ToolExecutionStartEvent`와 `ToolExecutionCompleteEvent`는 `[tool:start]`와 `[tool:done]` 줄을 출력하고, `SessionIdleEvent`는 줄을 마무리하며, `SessionErrorEvent`는 캡처되어 다시 throw됩니다. 전달하는 타임아웃은 밀리초 단위로 `session.sendAndWait`에 전달되며, 모든 구독은 `finally` 블록에서 닫힙니다.
 :::
 
 ## 실행하기

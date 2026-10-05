@@ -1,0 +1,28 @@
+/*
+ * Japanese typography.
+ *
+ * The site's Latin webfonts (Instrument Sans / IBM Plex Mono) carry no kana or
+ * kanji. Unlike Korean, every major platform ships a good Japanese UI face, so
+ * these stacks name the platform fonts instead of downloading one. The Latin
+ * webfont stays first, so product names and code keep the site's look, and the
+ * Japanese families take over for Japanese glyphs.
+ *
+ * The rules apply only when the locale switcher sets `html[lang="ja"]`; every
+ * other locale keeps its own stacks untouched.
+ */
+
+html[lang="ja"] {
+    --font-sans: "Instrument Sans", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "BIZ UDGothic", "Osaka-Mono", "MS Gothic", "Noto Sans Mono CJK JP", monospace;
+}
+
+/* Keep closing punctuation and small kana off the start of a line. */
+html[lang="ja"] body {
+    line-break: strict;
+}
+
+/* Display headings are tracked tightly for Latin; kana and kanji need their natural spacing. */
+html[lang="ja"] h1,
+html[lang="ja"] h2 {
+    letter-spacing: 0;
+}

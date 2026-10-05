@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
@@ -80,6 +81,19 @@ public final class CuratorSafety {
             }
         });
         return new SourceExtraction(body, sources);
+    }
+
+    public static String formatSources(SourceExtraction research) {
+        Objects.requireNonNull(research, "research");
+        StringBuilder builder = new StringBuilder("Consulted Wikipedia sources:");
+        for (Source source : research.sources()) {
+            builder.append(System.lineSeparator())
+                    .append("- ")
+                    .append(source.title())
+                    .append(": ")
+                    .append(source.url());
+        }
+        return builder.toString();
     }
 
     public static PermissionHandler exhibitWritePermission(Path workingDirectory) {

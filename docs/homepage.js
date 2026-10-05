@@ -3,11 +3,14 @@
 
     const storageKey = 'copilot-sdk-workshop.language';
     const localeStorageKey = 'copilot-sdk-workshop.locale';
+    const sdkDocsUrl = 'https://github.com/github/copilot-sdk';
     const picker = document.getElementById('languagePicker');
     const localeSelector = document.getElementById('localeSelector');
+    const languageSelector = document.getElementById('languageSelector');
     const languageInputs = [...document.querySelectorAll('input[name="language"]')];
     const startLink = document.getElementById('startWorkshopLink');
     const docsLink = document.getElementById('sdkDocsLink');
+    const docsLabel = document.getElementById('sdkDocsLabel');
     const summary = document.getElementById('languageSummary');
     const installCommand = document.getElementById('installCommand');
     const runtimeNote = document.getElementById('runtimeNote');
@@ -86,24 +89,11 @@ System message: replace
         document.querySelectorAll('[data-i18n-attr]').forEach(element => {
             const value = getText(ui, element.dataset.i18nAttr);
             if (value !== undefined) {
-                const attribute = element.dataset.i18nAttr === 'description'
-                    ? 'content'
-                    : element.dataset.i18nAttr === 'brandLabel'
-                    ? 'aria-label'
-                    : element.dataset.i18nAttr === 'resourcesLabel'
-                    ? 'aria-label'
-                    : element.dataset.i18nAttr === 'docsAriaLabel'
-                    ? 'aria-label'
-                    : element.dataset.i18nAttr === 'previewAriaLabel'
-                    ? 'aria-label'
-                    : null;
-                if (attribute) element.setAttribute(attribute, value);
+                element.setAttribute(
+                    element.dataset.i18nAttr === 'description' ? 'content' : 'aria-label', value);
             }
         });
         document.documentElement.lang = locale.htmlLang;
-        if (typeof updateToggleIcon === 'function') {
-            updateToggleIcon(locale);
-        }
     }
 
     function getStoredLanguageId() {
@@ -165,8 +155,8 @@ System message: replace
         targetAppLink.hidden = selectedWorkshopId !== 'sdlc';
 
         if (!hasLanguage) {
-            docsLink.removeAttribute('href');
-            docsLink.setAttribute('aria-disabled', 'true');
+            docsLink.href = sdkDocsUrl;
+            docsLabel.textContent = ui.sdkDocs;
             summary.textContent = workshop
                 ? ui.chooseLanguageFor.replace('{name}', workshop.name)
                 : ui.languageSummary;
@@ -178,8 +168,7 @@ System message: replace
         }
 
         docsLink.href = language.docsUrl;
-        docsLink.removeAttribute('aria-disabled');
-        docsLink.textContent = `📚 ${language.displayName} ${ui.sdkDocs}`;
+        docsLabel.textContent = ui.sdkDocsNamed.replace('{language}', language.displayName);
         summary.textContent = workshop
             ? ui.workshopUsesLanguage
                 .replace('{name}', workshop.name)
@@ -189,8 +178,8 @@ System message: replace
             ? 'git clone https://github.com/github/copilot-sdk-workshop.git'
             : language.installCommand;
         runtimeNote.textContent = selectedWorkshopId === 'intro'
-            ? `Work in start-intro/${language.id}. Preflight covers its runtime and dependency setup.`
-            : language.runtimeNote;
+            ? ui.introRuntimeNote.replace('{language}', language.id)
+            : ui.runtimeNotes[language.id];
         startGuidance.textContent = workshop?.guidance ?? ui.chooseWorkshopContinue;
     }
 
@@ -239,13 +228,24 @@ System message: replace
         updateSelection(languageInputs.find(input => input.checked)?.value ?? null);
     });
 
-    languageInputs.forEach(input => {
-        input.addEventListener('change', () => {
-            const language = WorkshopLanguages.getLanguage(input.value);
-            storeLanguageId(language.id);
-            updateSelection(language.id);
+    // The picker and the settings menu choose the same language, so each mirrors the other.
+    function chooseLanguage(languageId) {
+        const language = WorkshopLanguages.getLanguage(languageId);
+        if (!language) {
+            return;
+        }
+        languageInputs.forEach(input => {
+            input.checked = input.value === language.id;
         });
+        languageSelector.value = language.id;
+        storeLanguageId(language.id);
+        updateSelection(language.id);
+    }
+
+    languageInputs.forEach(input => {
+        input.addEventListener('change', () => chooseLanguage(input.value));
     });
+    languageSelector.addEventListener('change', () => chooseLanguage(languageSelector.value));
 
     workshopInputs.forEach(input => {
         input.addEventListener('change', () => selectWorkshop(input.value));
@@ -273,6 +273,7 @@ System message: replace
         matchingLanguage.checked = true;
         storeLanguageId(initialLanguage.id);
     }
+    languageSelector.value = initialLanguage?.id ?? '';
 
     const requestedWorkshop = new URLSearchParams(window.location.search).get('workshop');
     const matchingWorkshop = workshopInputs.find(input => input.value === requestedWorkshop);

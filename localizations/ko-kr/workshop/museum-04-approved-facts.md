@@ -12,7 +12,8 @@
 사실을 큐레이터에게 전달합니다. 미리 빌드된 `approved_fact_lookup` 도구를 등록하고, 모델이 호출할
 수 있는 유일한 도구로 설정한 뒤, 한 글자라도 쓰기 전에 먼저 그 도구를 호출하라고 지시하는
 프롬프트를 작성합니다. 또한 교육 담당자가 승인된 세 가지 사실 세트 중 하나를 고르거나 직접
-입력하도록 하고, 이후 단계에서도 재사용할 수 있도록 세션 수명 주기를 작은 러너 하나에 담습니다.
+입력할 수 있게 하는 미리 빌드된 선택기를 호출하고, 이후 단계에서도 재사용할 수 있도록 세션 수명
+주기를 작은 러너 하나에 담습니다.
 
 ## 사실을 프롬프트 안이 아니라 도구 뒤에 두어야 하는 이유
 
@@ -52,10 +53,12 @@
 두 가지가 모두 필요합니다. `approved_fact_lookup`만 지정하는 것은 다른 모든 도구를 함께 제외하는
 일이기도 합니다. 이 세션에는 파일 리더, 셸, 브라우저가 제공되지 않습니다.
 
-프롬프트는 세 번째 조각이며, 그중에서도 가장 약합니다. 프롬프트는 모델에게 도구를 호출하라고
-*요청*할 뿐입니다. 실제로 호출이 일어나게 만들지도 못하고, 호출을 막지도 못합니다. 그래도 명시적인
-"먼저 `approved_fact_lookup`를 호출하라"는 지시는 유지하십시오. 이 단계에서는 도구 호출이 눈에
-보이도록 신뢰성 있게 일어나야 하기 때문입니다.
+프롬프트는 세 번째 조각이며, 그중에서도 가장 약합니다. 프롬프트는 모델에게 도구를 호출하고 도구가
+반환한 것만 사용하라고 *요청*할 뿐입니다. 3단계 시스템 메시지는 출처에 대해 아무 말도 하지 않으므로,
+이 프롬프트는 큐레이터에게 사실이 어디서 오는지 알려 주는 첫 번째 위치입니다. 프롬프트는 실제로
+호출이 일어나게 만들지도 못하고, 호출을 막지도 못합니다. 그래도 명시적인
+"call `approved_fact_lookup` first" 지시는 유지하십시오. 이 단계에서는 도구 호출이 눈에 보이도록
+신뢰성 있게 일어나야 하기 때문입니다.
 
 **실행을 경계 안에 유지하십시오:** 헬퍼에 이미 있는 **120초 생성 타임아웃**을 세션 러너에 명시적으로
 전달합니다. 러너는 나중에 검증할 전시 텍스트를 반환하고, 빈 출력을 거부하며, 스트림이 실패하더라도
@@ -64,69 +67,48 @@
 ## 도구를 등록하고 프롬프트 작성하기
 
 :::language dotnet
-`Program.cs`를 엽니다. 파일 상단은 넓히지 마십시오. 이미 `using MuseumExhibitStudio.Helpers;`가
-있습니다. 첫 번째 `Console.WriteLine`부터 파일 끝까지를 다음으로 교체합니다.
+`Program.cs`를 엽니다. 이 단계에서는 영역 다섯 개가 바뀝니다. `imports` 영역에는 이미 이
+단계에 필요한 모든 것이 들어 있습니다.
+
+`Program.cs`의 `choose-facts` 영역에 **INSERT**합니다.
 
 ```csharp
-try
-{
-    Console.WriteLine("=== Museum Exhibit Studio ===");
-    Console.WriteLine();
-    Console.WriteLine("Approved fact sets:");
-    for (var index = 0; index < CuratorFacts.FactSets.Count; index++)
-    {
-        Console.WriteLine($"{index + 1}. {CuratorFacts.FactSets[index].Label}");
-    }
+    var approvedFacts = CuratorTerminal.ChooseApprovedFacts();
+```
 
-    Console.WriteLine();
+`Program.cs`의 `generate` 영역을 **REPLACE**합니다.
 
-    var selectedFactSet = ReadFactSetSelection();
-    var approvedFacts = CuratorFacts.BoundFacts(selectedFactSet.Facts);
-    for (var index = 0; index < approvedFacts.Length; index++)
-    {
-        Console.WriteLine($"{index + 1}. {approvedFacts[index]}");
-    }
-
-    Console.WriteLine();
-
-    if (!CuratorTerminal.AskYesNo("Use these facts?", defaultYes: true))
-    {
-        approvedFacts = CuratorFacts.BoundFacts(CuratorTerminal.ReadFacts());
-    }
-
+```csharp
     Console.WriteLine();
     await RunSessionAsync(
         GenerationConfig(approvedFacts),
         BuildExhibitPrompt(),
         CuratorStreamer.GenerationTimeout);
+```
 
-    return 0;
-}
-catch (TimeoutException)
-{
-    Console.Error.WriteLine("The curator did not respond in time. Try again.");
-    return 1;
-}
-catch (Exception exception)
-{
-    Console.Error.WriteLine($"Could not generate the exhibit: {exception.Message}");
-    return 1;
-}
-finally
-{
-    CuratorTerminal.CloseTerminal();
-}
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와
+세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
 
-static string? SelectedModel()
-{
-    var model = Environment.GetEnvironmentVariable("COPILOT_MODEL");
-    return string.IsNullOrWhiteSpace(model) ? null : model.Trim();
-}
+`Program.cs`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
+```csharp
+static string BuildExhibitPrompt() => $"""
+    Create visitor-facing exhibit text about this application's approved subject.
+
+    Call {CuratorFacts.ApprovedFactLookupName} first. Use only the facts it returns, and
+    treat them as the complete source of truth for this exhibit.
+
+    {CuratorPrompts.ExhibitStructure}
+    """;
+```
+
+`Program.cs`의 `generation-config` 영역에 **INSERT**합니다.
+
+```csharp
 SessionConfig GenerationConfig(IEnumerable<string?> approvedFacts) => new()
 {
     ClientName = "museum-exhibit-studio",
-    Model = SelectedModel(),
+    Model = CuratorStreamer.SelectedModel(),
     OnPermissionRequest = PermissionHandler.ApproveAll,
     Tools = [CuratorFacts.CreateApprovedFactLookup(approvedFacts)],
     AvailableTools = [CuratorFacts.ApprovedFactLookupName],
@@ -134,10 +116,14 @@ SessionConfig GenerationConfig(IEnumerable<string?> approvedFacts) => new()
     SystemMessage = new SystemMessageConfig
     {
         Mode = SystemMessageMode.Replace,
-        Content = SystemMessage
+        Content = CuratorSystemMessages.Curator
     }
 };
+```
 
+`Program.cs`의 `session-runner` 영역에 **INSERT**합니다.
+
+```csharp
 static async Task<string> RunSessionAsync(SessionConfig config, string prompt, TimeSpan timeout)
 {
     await using var client = new CopilotClient();
@@ -158,53 +144,22 @@ static async Task<string> RunSessionAsync(SessionConfig config, string prompt, T
         await client.StopAsync();
     }
 }
-
-CuratorFactSet ReadFactSetSelection()
-{
-    var input = CuratorTerminal.AskLine("Choose a fact set [1-3, default 1]: ");
-    if (int.TryParse(input, out var selection) &&
-        selection >= 1 &&
-        selection <= CuratorFacts.FactSets.Count)
-    {
-        return CuratorFacts.FactSets[selection - 1];
-    }
-
-    return CuratorFacts.FactSets[0];
-}
-
-static string BuildExhibitPrompt()
-{
-    return $"""
-        Create visitor-facing exhibit text about this application's approved subject.
-
-        Call {CuratorFacts.ApprovedFactLookupName} first. Use only the facts it returns, and
-        treat them as the complete source of truth for this exhibit.
-
-        Return exactly this structure:
-
-        # <an engaging exhibit title>
-        ## Narrative
-        <100-140 words, excluding the title and questions>
-        ## Visitor questions
-        1. <question>
-        2. <question>
-        3. <question>
-
-        Write exactly three distinct visitor reflection questions. Do not add a preface,
-        conclusion, software discussion, or facts the tool did not return.
-        """;
-}
 ```
 
-로컬 함수는 top-level statement 뒤에 옵니다. `RunSessionAsync`는 `Helpers/CuratorStreamer.cs`의
-`CuratorStreamer.GenerationTimeout`을 사용하며, `finally`에서 클라이언트를 중지하기 전에 세션을
-dispose합니다. 이제 `BuildExhibitPrompt`는 사실을 전혀 받지 않습니다. 대신 도구의 이름을
-지정합니다. `CreateApprovedFactLookup`는 내부에서 `BoundFacts`를 호출하므로, 누가 도구를 만들든
-같은 경계가 유지됩니다.
+`RunSessionAsync`는 `Helpers/CuratorStreamer.cs`의 `CuratorStreamer.GenerationTimeout`을 사용하며,
+`finally`에서 클라이언트를 중지하기 전에 세션을 dispose합니다. 이제 `BuildExhibitPrompt`는 사실을
+전혀 받지 않습니다. 대신 도구의 이름을 지정합니다. `CreateApprovedFactLookup`는 내부에서
+`BoundFacts`를 호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
 
-**내부 살펴보기:** `Helpers/CuratorFacts.cs`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가
-아니라 실제 도구 정의이므로 읽어 볼 가치가 있습니다. `CreateApprovedFactLookup`는 교육 담당자가
-방금 승인한 경계 적용 목록을 클로저로 캡처하고, `CopilotTool.DefineTool`을 통해
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `CuratorTerminal.ChooseApprovedFacts`는 세 가지
+사실 세트를 나열하고, 선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계
+적용 목록을 반환합니다. `CuratorPrompts.ExhibitStructure`는 고정된 제목, narrative, 질문
+레이아웃이며, 5단계에서 같은 레이아웃을 검사하므로 `Helpers/CuratorPrompts.cs`에 있습니다.
+`CuratorStreamer.SelectedModel`은 선택 사항인 `COPILOT_MODEL` 환경 변수를 읽습니다.
+
+**내부 살펴보기:** `Helpers/CuratorFacts.cs`에는 도구가 들어 있으며, 단순한 배선 코드가 아니라
+실제 도구 정의이므로 읽어 볼 가치가 있습니다. `CreateApprovedFactLookup`는 교육 담당자가 방금
+승인한 경계 적용 목록을 클로저로 캡처하고, `CopilotTool.DefineTool`을 통해
 `approved_fact_lookup`라는 이름으로 등록합니다. 핸들러는 매개변수를 받지 않으므로 모델은 어떤
 값이 돌아올지 조종할 수 없고, 요청하면 정확히 그 목록만 받습니다. `SkipPermission = true`도
 데이터가 애플리케이션 소유이기 때문에 바로 그 자리에서 설정합니다. 세 가지 사실 세트와
@@ -213,72 +168,77 @@ dispose합니다. 이제 `BuildExhibitPrompt`는 사실을 전혀 받지 않습�
 :::
 
 :::language nodejs
-`src/index.ts`를 엽니다. SDK import에 session config 타입을 추가하고, 헬퍼 import도 넓힙니다.
+`src/index.ts`를 엽니다. 이 단계에서는 새 헬퍼에 필요한 import부터 시작해 영역 여섯 개가 바뀝니다.
+
+`src/index.ts`의 `imports` 영역을 **REPLACE**합니다.
 
 ```typescript
 import { approveAll, CopilotClient, type SessionConfig } from "@github/copilot-sdk";
 import {
   approvedFactLookupName,
-  askLine,
-  askYesNo,
-  boundFacts,
+  chooseApprovedFacts,
   closeTerminal,
   createApprovedFactLookup,
-  factSets,
+  describeFailure,
+  exhibitStructure,
   generationTimeoutMs,
-  readFacts,
+  selectedModel,
   streamExhibit,
 } from "./curator.js";
+import { curatorSystemMessage } from "./system-messages.js";
 ```
 
-시스템 메시지 아래에 프롬프트 빌더와 사실 세트 선택기를 추가합니다.
+`src/index.ts`의 `choose-facts` 영역에 **INSERT**합니다.
+
+```typescript
+    const approvedFacts = await chooseApprovedFacts();
+```
+
+`src/index.ts`의 `generate` 영역을 **REPLACE**합니다.
+
+```typescript
+    console.log();
+    await runSession(
+      generationConfig(approvedFacts),
+      buildExhibitPrompt(),
+      generationTimeoutMs,
+    );
+```
+
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와
+세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
+
+`src/index.ts`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
 ```typescript
 function buildExhibitPrompt(): string {
   return `Create visitor-facing exhibit text about this application's approved subject.
 
-Call ${approvedFactLookupName} first. Use only the facts it returns, and treat them as the
-complete source of truth for this exhibit.
+Call ${approvedFactLookupName} first. Use only the facts it returns, and treat them as the complete source of truth for this exhibit.
 
-Return exactly this structure:
-
-# <an engaging exhibit title>
-## Narrative
-<100-140 words, excluding the title and questions>
-## Visitor questions
-1. <question>
-2. <question>
-3. <question>
-
-Write exactly three distinct visitor reflection questions. Do not add a preface,
-conclusion, software discussion, or facts the tool did not return.`;
-}
-
-async function chooseFactSet(): Promise<(typeof factSets)[number]> {
-  const answer = await askLine("Choose a fact set [1-3, default 1]: ");
-  const choice = Number.parseInt(answer, 10);
-  if (Number.isInteger(choice) && choice >= 1 && choice <= factSets.length) {
-    return factSets[choice - 1] ?? factSets[0];
-  }
-  return factSets[0];
+${exhibitStructure}`;
 }
 ```
 
-`main` 위에 설정 빌더와 재사용 가능한 세션 러너를 추가한 뒤, `main`을 다음으로 교체합니다.
+`src/index.ts`의 `generation-config` 영역에 **INSERT**합니다.
 
 ```typescript
 function generationConfig(approvedFacts: Iterable<string>): SessionConfig {
   return {
     clientName: "museum-exhibit-studio",
-    model: process.env.COPILOT_MODEL?.trim() || undefined,
+    model: selectedModel(),
     onPermissionRequest: approveAll,
     tools: [createApprovedFactLookup(approvedFacts)],
     availableTools: [approvedFactLookupName],
     streaming: true,
-    systemMessage: { mode: "replace", content: systemMessage },
+    systemMessage: { mode: "replace", content: curatorSystemMessage },
   };
 }
+```
 
+`src/index.ts`의 `session-runner` 영역에 **INSERT**합니다.
+
+```typescript
 async function runSession(
   config: SessionConfig,
   prompt: string,
@@ -299,53 +259,20 @@ async function runSession(
     await client.stop();
   }
 }
-
-function describe(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
-async function main(): Promise<void> {
-  try {
-    console.log("=== Museum Exhibit Studio ===");
-    console.log();
-    console.log("Approved fact sets:");
-    factSets.forEach((factSet, index) => console.log(`${index + 1}. ${factSet.label}`));
-    console.log();
-
-    const chosenSet = await chooseFactSet();
-    let approvedFacts = boundFacts(chosenSet.facts);
-    approvedFacts.forEach((fact, index) => console.log(`${index + 1}. ${fact}`));
-    console.log();
-
-    if (!(await askYesNo("Use these facts?", true))) {
-      approvedFacts = boundFacts(await readFacts());
-    }
-
-    console.log();
-    await runSession(
-      generationConfig(approvedFacts),
-      buildExhibitPrompt(),
-      generationTimeoutMs,
-    );
-  } catch (error) {
-    const message = describe(error);
-    console.error(message.toLocaleLowerCase().includes("timeout")
-      ? "The curator did not respond in time. Try again."
-      : `Could not generate the exhibit: ${message}`);
-    process.exitCode = 1;
-  } finally {
-    closeTerminal();
-  }
-}
 ```
 
-`void main();` 호출은 그대로 둡니다. `runSession`은 `src/curator.ts`의
-`generationTimeoutMs`를 스트리머에 전달하며, 중첩된 `finally` 블록에서 세션을 disconnect하고
-클라이언트를 중지합니다. 이제 `buildExhibitPrompt`는 사실을 전혀 받지 않습니다. 대신 도구의 이름을
-지정합니다. `createApprovedFactLookup`는 내부에서 `boundFacts`를 호출하므로, 누가 도구를 만들든
-같은 경계가 유지됩니다.
+`runSession`은 `src/curator.ts`의 `generationTimeoutMs`를 스트리머에 전달하며, 중첩된
+`finally` 블록에서 세션을 disconnect하고 클라이언트를 중지합니다. 이제 `buildExhibitPrompt`는
+사실을 전혀 받지 않습니다. 대신 도구의 이름을 지정합니다. `createApprovedFactLookup`는 내부에서
+`boundFacts`를 호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
 
-**내부 살펴보기:** `src/curator.ts`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가 아니라 실제
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `chooseApprovedFacts`는 세 가지 사실 세트를 나열하고,
+선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계 적용 목록을 반환합니다.
+`exhibitStructure`는 고정된 제목, narrative, 질문 레이아웃이며, 5단계에서 같은 레이아웃을
+검사하므로 `src/curator.ts`에 있습니다. `selectedModel`은 선택 사항인 `COPILOT_MODEL` 환경 변수를
+읽습니다.
+
+**내부 살펴보기:** `src/curator.ts`에는 도구가 들어 있으며, 단순한 배선 코드가 아니라 실제
 `defineTool` 정의이므로 읽어 볼 가치가 있습니다. `createApprovedFactLookup`는 교육 담당자가 방금
 승인한 경계 적용 목록을 클로저로 캡처하고,
 `parameters: { type: "object", properties: {}, additionalProperties: false }`와 함께
@@ -356,25 +283,54 @@ async function main(): Promise<void> {
 :::
 
 :::language python
-`main.py`를 엽니다. 파일 상단에 `import os`, `import sys`,
-`from collections.abc import Iterable`, `from typing import Any`를 추가하고, 헬퍼 import도
-넓힙니다.
+`main.py`를 엽니다. 이 단계에서는 영역 여섯 개가 바뀝니다.
+
+`main.py`의 `imports` 영역을 **REPLACE**합니다.
 
 ```python
+from __future__ import annotations
+
+import asyncio
+import sys
+from collections.abc import Iterable
+from typing import Any
+
+from copilot import CopilotClient, PermissionHandler
+
 from curator import (
     APPROVED_FACT_LOOKUP_NAME,
-    FACT_SETS,
+    EXHIBIT_STRUCTURE,
     GENERATION_TIMEOUT_SECONDS,
-    ask_line,
-    ask_yes_no,
-    bound_facts,
+    choose_approved_facts,
     create_approved_fact_lookup,
-    read_facts,
+    describe_failure,
+    selected_model,
     stream_exhibit,
 )
+from system_messages import CURATOR_SYSTEM_MESSAGE
 ```
 
-`SYSTEM_MESSAGE` 아래에 프롬프트 빌더를 추가합니다.
+`main.py`의 `choose-facts` 영역에 **INSERT**합니다.
+
+```python
+        facts = choose_approved_facts()
+```
+
+`main.py`의 `generate` 영역을 **REPLACE**합니다.
+
+```python
+        print()
+        await run_session(
+            generation_config(facts),
+            build_exhibit_prompt(),
+            GENERATION_TIMEOUT_SECONDS,
+        )
+```
+
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와
+세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
+
+`main.py`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
 ```python
 def build_exhibit_prompt() -> str:
@@ -383,39 +339,27 @@ def build_exhibit_prompt() -> str:
 Call {APPROVED_FACT_LOOKUP_NAME} first. Use only the facts it returns, and treat them as
 the complete source of truth for this exhibit.
 
-Return exactly this structure:
-
-# <an engaging exhibit title>
-## Narrative
-<100-140 words, excluding the title and questions>
-## Visitor questions
-1. <question>
-2. <question>
-3. <question>
-
-Write exactly three distinct visitor reflection questions. Do not add a preface,
-conclusion, software discussion, or facts the tool did not return."""
+{EXHIBIT_STRUCTURE}"""
 ```
 
-`main` 위에 설정 빌더와 세션 러너를 추가한 뒤, `main`과 그 아래 entrypoint를 다음으로
-교체합니다.
+`main.py`의 `generation-config` 영역에 **INSERT**합니다.
 
 ```python
 def generation_config(approved_facts: Iterable[str]) -> dict[str, Any]:
-    config: dict[str, Any] = {
+    return {
         "client_name": "museum-exhibit-studio",
+        "model": selected_model(),
         "on_permission_request": PermissionHandler.approve_all,
         "tools": [create_approved_fact_lookup(approved_facts)],
         "available_tools": [APPROVED_FACT_LOOKUP_NAME],
         "streaming": True,
-        "system_message": {"mode": "replace", "content": SYSTEM_MESSAGE},
+        "system_message": {"mode": "replace", "content": CURATOR_SYSTEM_MESSAGE},
     }
-    model = os.getenv("COPILOT_MODEL")
-    if model and model.strip():
-        config["model"] = model.strip()
-    return config
+```
 
+`main.py`의 `session-runner` 영역에 **INSERT**합니다.
 
+```python
 async def run_session(config: dict[str, Any], prompt: str, timeout: float) -> str:
     client = CopilotClient()
     try:
@@ -430,45 +374,6 @@ async def run_session(config: dict[str, Any], prompt: str, timeout: float) -> st
             await session.disconnect()
     finally:
         await client.stop()
-
-
-async def main() -> int:
-    try:
-        print("=== Museum Exhibit Studio ===")
-        print()
-        print("Approved fact sets:")
-        for index, fact_set in enumerate(FACT_SETS, start=1):
-            print(f"{index}. {fact_set.label}")
-        print()
-
-        choice = ask_line("Choose a fact set [1-3, default 1]: ")
-        selected_index = int(choice) - 1 if choice in {"1", "2", "3"} else 0
-        facts = list(FACT_SETS[selected_index].facts)
-        for index, fact in enumerate(facts, start=1):
-            print(f"{index}. {fact}")
-        print()
-
-        if not ask_yes_no("Use these facts?", True):
-            facts = read_facts()
-        facts = bound_facts(facts)
-
-        print()
-        await run_session(
-            generation_config(facts),
-            build_exhibit_prompt(),
-            GENERATION_TIMEOUT_SECONDS,
-        )
-        return 0
-    except TimeoutError:
-        print("The curator did not respond in time. Try again.", file=sys.stderr)
-        return 1
-    except Exception as error:
-        print(f"Could not generate the exhibit: {error}", file=sys.stderr)
-        return 1
-
-
-if __name__ == "__main__":
-    raise SystemExit(asyncio.run(main()))
 ```
 
 `run_session`은 `curator.py`의 `GENERATION_TIMEOUT_SECONDS`를 스트리머에 전달하며,
@@ -476,9 +381,15 @@ if __name__ == "__main__":
 사실을 전혀 받지 않습니다. 대신 도구의 이름을 지정합니다. `create_approved_fact_lookup`는
 내부에서 `bound_facts`를 호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
 
-**내부 살펴보기:** `curator.py`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가 아니라 실제
-`@define_tool` 정의이므로 읽어 볼 가치가 있습니다. `create_approved_fact_lookup`는 교육
-담당자가 방금 승인한 경계 적용 목록을 클로저로 캡처하고, 인수를 받지 않는 중첩
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `choose_approved_facts`는 세 가지 사실 세트를 나열하고,
+선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계 적용 목록을 반환합니다.
+`EXHIBIT_STRUCTURE`는 고정된 제목, narrative, 질문 레이아웃이며, 5단계에서 같은 레이아웃을
+검사하므로 `curator.py`에 있습니다. `selected_model`은 선택 사항인 `COPILOT_MODEL` 환경 변수를
+읽습니다. 이 SDK는 `model=None`을 허용하므로, 설정이 모델 선택을 런타임에 맡길 수 있습니다.
+
+**내부 살펴보기:** `curator.py`에는 도구가 들어 있으며, 단순한 배선 코드가 아니라 실제
+`@define_tool` 정의이므로 읽어 볼 가치가 있습니다. `create_approved_fact_lookup`는 교육 담당자가
+방금 승인한 경계 적용 목록을 클로저로 캡처하고, 인수를 받지 않는 중첩
 `approved_fact_lookup()`에 데코레이터를 적용합니다. 따라서 모델은 어떤 값이 돌아올지 조종할 수
 없고, 요청하면 정확히 그 목록만 받습니다. `skip_permission=True`도 데이터가 애플리케이션 소유이기
 때문에 바로 그 자리에서 설정합니다. 세 가지 사실 세트와 `bound_facts`가 강제하는
@@ -486,32 +397,70 @@ if __name__ == "__main__":
 :::
 
 :::language go
-`main.go`를 엽니다. import 블록에 `"errors"`, `"os"`, `"strconv"`, `"strings"`, `"time"`을
-추가한 뒤, 시스템 메시지 아래에 프롬프트 빌더를 추가합니다.
+`main.go`를 엽니다. 이 단계에서는 영역 여섯 개가 바뀝니다.
+
+`main.go`의 `imports` 영역을 **REPLACE**합니다.
+
+```go
+import (
+	"context"
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+	"time"
+
+	copilot "github.com/github/copilot-sdk/go"
+)
+
+```
+
+`main.go`의 `choose-facts` 영역에 **INSERT**합니다.
+
+```go
+	facts, err := ChooseApprovedFacts()
+	if err != nil {
+		return err
+	}
+```
+
+`main.go`의 `generate` 영역을 **REPLACE**합니다.
+
+```go
+	ctx := context.Background()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	exhibitConfig, err := generationConfig(workingDirectory, facts)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println()
+	if _, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout); err != nil {
+		return err
+	}
+```
+
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와
+세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
+
+`main.go`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
 ```go
 func buildExhibitPrompt() string {
 	return fmt.Sprintf(`Create visitor-facing exhibit text about this application's approved subject.
 
-Call %s first. Use only the facts it returns, and treat them as the complete
-source of truth for this exhibit.
+Call %s first. Use only the facts it returns, and treat them as the complete source of truth for this exhibit.
 
-Return exactly this structure:
-
-# <an engaging exhibit title>
-## Narrative
-<100-140 words, excluding the title and questions>
-## Visitor questions
-1. <question>
-2. <question>
-3. <question>
-
-Write exactly three distinct visitor reflection questions. Do not add a preface,
-conclusion, software discussion, or facts the tool did not return.`, ApprovedFactLookupName)
+%s`, ApprovedFactLookupName, ExhibitStructure)
 }
+
 ```
 
-설정 빌더와 세션 러너를 추가한 뒤, `main`을 얇은 래퍼와 `run` 함수로 교체합니다.
+`main.go`의 `generation-config` 영역에 **INSERT**합니다.
 
 ```go
 func generationConfig(workingDirectory string, approvedFacts []string) (*copilot.SessionConfig, error) {
@@ -522,19 +471,24 @@ func generationConfig(workingDirectory string, approvedFacts []string) (*copilot
 
 	return &copilot.SessionConfig{
 		ClientName:          "museum-exhibit-studio",
-		Model:               strings.TrimSpace(os.Getenv("COPILOT_MODEL")),
+		Model:               SelectedModel(),
 		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
 		Tools:               []copilot.Tool{lookup},
 		AvailableTools:      []string{ApprovedFactLookupName},
 		Streaming:           copilot.Bool(true),
 		SystemMessage: &copilot.SystemMessageConfig{
 			Mode:    "replace",
-			Content: systemMessage,
+			Content: CuratorSystemMessage,
 		},
 		WorkingDirectory: workingDirectory,
 	}, nil
 }
 
+```
+
+`main.go`의 `session-runner` 영역에 **INSERT**합니다.
+
+```go
 func runSession(
 	ctx context.Context,
 	config *copilot.SessionConfig,
@@ -563,76 +517,20 @@ func runSession(
 	return content, nil
 }
 
-func isTimeout(err error) bool {
-	return errors.Is(err, context.DeadlineExceeded) ||
-		strings.Contains(strings.ToLower(err.Error()), "timeout")
-}
-
-func main() {
-	if err := run(); err != nil {
-		if isTimeout(err) {
-			fmt.Fprintln(os.Stderr, "The curator did not respond in time. Try again.")
-		} else {
-			fmt.Fprintln(os.Stderr, err)
-		}
-		os.Exit(1)
-	}
-}
-
-func run() error {
-	fmt.Println("=== Museum Exhibit Studio ===")
-	fmt.Println()
-	fmt.Println("Approved fact sets:")
-	for index, factSet := range FactSets {
-		fmt.Printf("%d. %s\n", index+1, factSet.Label)
-	}
-	fmt.Println()
-
-	choice := AskLine(fmt.Sprintf("Choose a fact set [1-%d, default 1]: ", len(FactSets)))
-	selectedIndex := 0
-	if parsed, err := strconv.Atoi(choice); err == nil && parsed >= 1 && parsed <= len(FactSets) {
-		selectedIndex = parsed - 1
-	}
-
-	facts := append([]string(nil), FactSets[selectedIndex].Facts...)
-	for index, fact := range facts {
-		fmt.Printf("%d. %s\n", index+1, fact)
-	}
-	fmt.Println()
-
-	if !AskYesNo("Use these facts?", true) {
-		facts = ReadFacts()
-	}
-	facts, err := BoundFacts(facts)
-	if err != nil {
-		return err
-	}
-
-	ctx := context.Background()
-	workingDirectory, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	exhibitConfig, err := generationConfig(workingDirectory, facts)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println()
-	if _, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout); err != nil {
-		return err
-	}
-	return nil
-}
 ```
 
-`runSession`은 `curator.go`의 `GenerationTimeout`을 스트리머에 전달하고, `defer`를 사용해 세션을
-disconnect하고 클라이언트를 중지합니다. 이제 `buildExhibitPrompt`는 사실을 전혀 받지 않습니다.
-대신 도구의 이름을 지정합니다. `ApprovedFactLookup`는 내부에서 `BoundFacts`를 호출하므로, 누가
-도구를 만들든 같은 경계가 유지됩니다.
+`runSession`은 `curator.go`의 `GenerationTimeout`을 스트리머에 전달하고, `defer`를 사용해
+클라이언트를 중지하기 전에 세션을 disconnect합니다. 이제 `buildExhibitPrompt`는 사실을 전혀 받지
+않습니다. 대신 도구의 이름을 지정합니다. `ApprovedFactLookup`는 내부에서 `BoundFacts`를
+호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
 
-**내부 살펴보기:** `curator.go`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가 아니라 실제
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `curator.go`의 `ChooseApprovedFacts`는 세 가지
+사실 세트를 나열하고, 선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계
+적용 목록을 반환합니다. `ExhibitStructure`는 고정된 제목, narrative, 질문 레이아웃이며, 5단계에서
+같은 레이아웃을 검사하므로 `curator.go`에 있습니다. `SelectedModel`은 선택 사항인
+`COPILOT_MODEL` 환경 변수를 읽습니다.
+
+**내부 살펴보기:** `curator.go`에는 도구가 들어 있으며, 단순한 배선 코드가 아니라 실제
 `copilot.DefineTool` 정의이므로 읽어 볼 가치가 있습니다. `ApprovedFactLookup`는 교육 담당자가
 방금 승인한 경계 적용 목록을 클로저로 캡처하고, 인수 타입이 `struct{}`인 핸들러를 정의합니다.
 따라서 모델은 어떤 값이 돌아올지 조종할 수 없고, 요청하면 정확히 그 목록만 받습니다.
@@ -642,17 +540,45 @@ disconnect하고 클라이언트를 중지합니다. 이제 `buildExhibitPrompt`
 :::
 
 :::language rust
-`src/main.rs`를 엽니다. `use std::error::Error;`, `use std::time::Duration;`를 추가하고,
-crate import도 넓힙니다.
+`src/main.rs`를 엽니다. 이 단계에서는 영역 여섯 개가 바뀝니다.
+
+`src/main.rs`의 `imports` 영역을 **REPLACE**합니다.
 
 ```rust
+use std::time::Duration;
+
+use github_copilot_sdk::permission;
+use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
+use github_copilot_sdk::{Client, ClientOptions};
 use museum_exhibit_studio::{
-    APPROVED_FACT_LOOKUP_NAME, FactBoundsError, GENERATION_TIMEOUT, RuntimeError,
-    approved_fact_lookup, ask_line, ask_yes_no, bound_facts, fact_sets, read_facts, stream_exhibit,
+    APPROVED_FACT_LOOKUP_NAME, CURATOR_SYSTEM_MESSAGE, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT,
+    RuntimeError, approved_fact_lookup, choose_approved_facts, describe_failure, selected_model,
+    stream_exhibit,
 };
 ```
 
-`SYSTEM_MESSAGE` 아래에 프롬프트 빌더를 추가합니다.
+`src/main.rs`의 `choose-facts` 영역에 **INSERT**합니다.
+
+```rust
+    let facts = choose_approved_facts()?;
+```
+
+`src/main.rs`의 `generate` 영역을 **REPLACE**합니다.
+
+```rust
+    println!();
+    run_session(
+        generation_config(&facts)?,
+        build_exhibit_prompt(),
+        GENERATION_TIMEOUT,
+    )
+    .await?;
+```
+
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와
+세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
+
+`src/main.rs`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
 ```rust
 fn build_exhibit_prompt() -> String {
@@ -662,33 +588,15 @@ fn build_exhibit_prompt() -> String {
 Call {APPROVED_FACT_LOOKUP_NAME} first. Use only the facts it returns, and treat them as
 the complete source of truth for this exhibit.
 
-Return exactly this structure:
-
-# <an engaging exhibit title>
-## Narrative
-<100-140 words, excluding the title and questions>
-## Visitor questions
-1. <question>
-2. <question>
-3. <question>
-
-Write exactly three distinct visitor reflection questions. Do not add a preface,
-conclusion, software discussion, or facts the tool did not return."#
+{EXHIBIT_STRUCTURE}"#
     )
 }
 ```
 
-설정 빌더와 세션 러너를 추가한 뒤, `main`을 얇은 래퍼와 `run` 함수로 교체합니다.
+`src/main.rs`의 `generation-config` 영역에 **INSERT**합니다.
 
 ```rust
-fn selected_model() -> Option<String> {
-    std::env::var("COPILOT_MODEL")
-        .ok()
-        .map(|model| model.trim().to_owned())
-        .filter(|model| !model.is_empty())
-}
-
-fn generation_config(approved_facts: &[String]) -> Result<SessionConfig, FactBoundsError> {
+fn generation_config(approved_facts: &[String]) -> Result<SessionConfig, RuntimeError> {
     let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
     config.client_name = Some("museum-exhibit-studio".to_owned());
     config.model = selected_model();
@@ -698,11 +606,15 @@ fn generation_config(approved_facts: &[String]) -> Result<SessionConfig, FactBou
     config.system_message = Some(
         SystemMessageConfig::new()
             .with_mode("replace")
-            .with_content(SYSTEM_MESSAGE),
+            .with_content(CURATOR_SYSTEM_MESSAGE),
     );
     Ok(config)
 }
+```
 
+`src/main.rs`의 `session-runner` 영역에 **INSERT**합니다.
+
+```rust
 async fn run_session(
     config: SessionConfig,
     prompt: String,
@@ -731,79 +643,18 @@ async fn run_session(
     }
     Ok(content)
 }
-
-fn is_timeout_error(error: &(dyn Error + 'static)) -> bool {
-    let mut current = Some(error);
-    while let Some(candidate) = current {
-        let message = candidate.to_string().to_lowercase();
-        if message.contains("timeout") || message.contains("timed out") {
-            return true;
-        }
-        current = candidate.source();
-    }
-    false
-}
-
-#[tokio::main]
-async fn main() {
-    if let Err(error) = run().await {
-        if is_timeout_error(error.as_ref()) {
-            eprintln!("The curator did not respond in time. Try again.");
-        } else {
-            eprintln!("Could not complete Museum Exhibit Studio: {error}");
-        }
-        std::process::exit(1);
-    }
-}
-
-async fn run() -> Result<(), RuntimeError> {
-    println!("=== Museum Exhibit Studio ===");
-    println!();
-    println!("Approved fact sets:");
-    for (index, fact_set) in fact_sets().iter().enumerate() {
-        println!("{}. {}", index + 1, fact_set.label);
-    }
-    println!();
-
-    let choice = ask_line("Choose a fact set [1-3, default 1]: ")?;
-    let selected_index = choice
-        .trim()
-        .parse::<usize>()
-        .ok()
-        .filter(|index| (1..=fact_sets().len()).contains(index))
-        .unwrap_or(1)
-        - 1;
-    let mut facts = fact_sets()[selected_index]
-        .facts
-        .iter()
-        .map(|fact| (*fact).to_owned())
-        .collect::<Vec<_>>();
-    for (index, fact) in facts.iter().enumerate() {
-        println!("{}. {fact}", index + 1);
-    }
-    println!();
-
-    if !ask_yes_no("Use these facts?", true)? {
-        facts = read_facts()?;
-    }
-    let facts = bound_facts(facts)?;
-
-    println!();
-    run_session(
-        generation_config(&facts)?,
-        build_exhibit_prompt(),
-        GENERATION_TIMEOUT,
-    )
-    .await?;
-
-    Ok(())
-}
 ```
 
 `run_session`은 `src/lib.rs`의 `GENERATION_TIMEOUT`을 스트리머에 전달하고, 오류를 전파하기 전에
 세션을 disconnect하고 클라이언트를 중지합니다. 이제 `build_exhibit_prompt`는 사실을 전혀 받지
 않습니다. 대신 도구의 이름을 지정합니다. `approved_fact_lookup`는 내부에서 `bound_facts`를
 호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
+
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `choose_approved_facts`는 세 가지 사실 세트를 나열하고,
+선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계 적용 목록을 반환합니다.
+`EXHIBIT_STRUCTURE`는 고정된 제목, narrative, 질문 레이아웃이며, 5단계에서 같은 레이아웃을
+검사하므로 `src/lib.rs`에 있습니다. `selected_model`은 선택 사항인 `COPILOT_MODEL` 환경 변수를
+읽습니다.
 
 **내부 살펴보기:** `src/lib.rs`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가 아니라 실제 도구
 정의이므로 읽어 볼 가치가 있습니다. `approved_fact_lookup`는 교육 담당자가 방금 승인한 경계 적용
@@ -816,55 +667,52 @@ async fn run() -> Result<(), RuntimeError> {
 :::
 
 :::language java
-`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 다음 import를 추가한 뒤,
-클래스에 프롬프트 빌더와 사실 세트 선택기를 추가합니다.
+`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 이 단계에서는 영역 여섯 개가 바뀝니다.
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `imports` 영역을 **REPLACE**합니다.
 
 ```java
+import com.github.copilot.CopilotClient;
 import com.github.copilot.CopilotSession;
+import com.github.copilot.SystemMessageMode;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.SessionConfig;
+import com.github.copilot.rpc.SystemMessageConfig;
+
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 ```
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `choose-facts` 영역에 **INSERT**합니다.
+
+```java
+        List<String> facts = CuratorTerminal.chooseApprovedFacts();
+```
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `generate` 영역을 **REPLACE**합니다.
+
+```java
+        System.out.println();
+        runSession(generationConfig(facts), buildExhibitPrompt(), CuratorStreamer.GENERATION_TIMEOUT);
+```
+
+1~3단계의 인라인 클라이언트와 세션은 더 이상 `generate`에 있지 않습니다. 아래의 설정 빌더와 세션 러너로 이동하므로, 이후 단계에서 재사용할 수 있습니다.
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `exhibit-prompt` 영역에 **INSERT**합니다.
 
 ```java
     public static String buildExhibitPrompt() {
         return """
                 Create visitor-facing exhibit text about this application's approved subject.
 
-                Call %s first. Use only the facts it returns, and treat them as the
-                complete source of truth for this exhibit.
+                Call %s first. Use only the facts it returns, and treat them as the complete source of truth for this exhibit.
 
-                Return exactly this structure:
-
-                # <an engaging exhibit title>
-                ## Narrative
-                <100-140 words, excluding the title and questions>
-                ## Visitor questions
-                1. <question>
-                2. <question>
-                3. <question>
-
-                Write exactly three distinct visitor reflection questions. Do not add a preface,
-                conclusion, software discussion, or facts the tool did not return.
-                """.formatted(CuratorFacts.APPROVED_FACT_LOOKUP_NAME);
-    }
-
-    private static CuratorFacts.FactSet selectFactSet(String input) {
-        if (input != null && !input.isBlank()) {
-            try {
-                int selected = Integer.parseInt(input.trim());
-                if (selected >= 1 && selected <= CuratorFacts.factSets.size()) {
-                    return CuratorFacts.factSets.get(selected - 1);
-                }
-            } catch (NumberFormatException ignored) {
-            }
-        }
-        return CuratorFacts.factSets.get(0);
+                %s
+                """.formatted(CuratorFacts.APPROVED_FACT_LOOKUP_NAME, CuratorPrompts.EXHIBIT_STRUCTURE);
     }
 ```
 
-클래스에 설정 빌더와 세션 러너를 추가한 뒤, `main`을 교체합니다.
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `generation-config` 영역에 **INSERT**합니다.
 
 ```java
     private static SessionConfig generationConfig(Iterable<String> approvedFacts) {
@@ -876,16 +724,15 @@ import java.util.concurrent.TimeoutException;
                 .setStreaming(true)
                 .setSystemMessage(new SystemMessageConfig()
                         .setMode(SystemMessageMode.REPLACE)
-                        .setContent(SYSTEM_MESSAGE));
-        String model = System.getenv("COPILOT_MODEL");
-        if (model != null && !model.isBlank()) {
-            config.setModel(model.trim());
-        }
-        return config;
+                        .setContent(CuratorSystemMessages.CURATOR));
+        return CuratorStreamer.withSelectedModel(config);
     }
+```
 
-    private static String runSession(SessionConfig config, String prompt, Duration timeout)
-            throws Exception {
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `session-runner` 영역에 **INSERT**합니다.
+
+```java
+    private static String runSession(SessionConfig config, String prompt, Duration timeout) throws Exception {
         try (var client = new CopilotClient()) {
             CopilotSession session = null;
             try {
@@ -907,90 +754,13 @@ import java.util.concurrent.TimeoutException;
             }
         }
     }
-
-    private static boolean isTimeout(Throwable error) {
-        Throwable current = error;
-        while (current != null) {
-            if (current instanceof TimeoutException) {
-                return true;
-            }
-            current = current.getCause();
-        }
-        return false;
-    }
-
-    private static String rootMessage(Throwable error) {
-        Throwable current = error;
-        while (current instanceof ExecutionException && current.getCause() != null) {
-            current = current.getCause();
-        }
-        while (current.getCause() != null) {
-            current = current.getCause();
-        }
-        String message = current.getMessage();
-        return message == null || message.isBlank() ? current.getClass().getSimpleName() : message;
-    }
-
-    public static void main(String[] args) {
-        int exitCode = 0;
-        try {
-            System.out.println("=== Museum Exhibit Studio ===");
-            System.out.println();
-            System.out.println("Approved fact sets:");
-            for (int index = 0; index < CuratorFacts.factSets.size(); index++) {
-                System.out.printf("%d. %s%n", index + 1, CuratorFacts.factSets.get(index).label());
-            }
-            System.out.println();
-
-            CuratorFacts.FactSet selected =
-                    selectFactSet(CuratorTerminal.askLine("Choose a fact set [1-3, default 1]: "));
-            List<String> facts = selected.facts();
-            for (int index = 0; index < facts.size(); index++) {
-                System.out.printf("%d. %s%n", index + 1, facts.get(index));
-            }
-            System.out.println();
-
-            if (!CuratorTerminal.askYesNo("Use these facts?", true)) {
-                facts = CuratorTerminal.readFacts();
-            }
-            facts = CuratorFacts.boundFacts(facts);
-
-            System.out.println();
-            runSession(generationConfig(facts), buildExhibitPrompt(), CuratorStreamer.GENERATION_TIMEOUT);
-        } catch (Exception exception) {
-            exitCode = 1;
-            if (isTimeout(exception)) {
-                System.err.println("The curator did not respond in time. Try again.");
-            } else {
-                System.err.println("Could not complete the exhibit studio run: " + rootMessage(exception));
-            }
-        } finally {
-            try {
-                CuratorTerminal.close();
-            } catch (Exception exception) {
-                System.err.println("Could not close the terminal: " + rootMessage(exception));
-                exitCode = 1;
-            }
-        }
-        if (exitCode != 0) {
-            System.exit(exitCode);
-        }
-    }
 ```
 
-`runSession`은 `CuratorStreamer.java`의 `CuratorStreamer.GENERATION_TIMEOUT`을 스트리머에
-전달하며, 중첩된 `finally` 블록에서 세션을 닫고 클라이언트를 중지합니다. 이제
-`buildExhibitPrompt`는 사실을 전혀 받지 않습니다. 대신 도구의 이름을 지정합니다.
-`approvedFactLookup`는 내부에서 `boundFacts`를 호출하므로, 누가 도구를 만들든 같은 경계가
-유지됩니다.
+`runSession`은 `CuratorStreamer.java`의 `CuratorStreamer.GENERATION_TIMEOUT`을 사용하며, `finally`에서 클라이언트를 중지하기 전에 세션을 닫습니다. 이제 `buildExhibitPrompt`는 사실을 전혀 받지 않습니다. 대신 도구의 이름을 지정합니다. `approvedFactLookup`는 내부에서 `boundFacts`를 호출하므로, 누가 도구를 만들든 같은 경계가 유지됩니다.
 
-**내부 살펴보기:** `CuratorFacts.java`에 이 모든 내용이 들어 있으며, 단순한 배선 코드가 아니라
-실제 `ToolDefinition`이므로 읽어 볼 가치가 있습니다. `approvedFactLookup`는 교육 담당자가 방금
-승인한 경계 적용 목록 위에 private `ApprovedFactReader`를 만들고, 인수를 받지 않는 `read`
-메서드를 바인딩합니다. 따라서 모델은 어떤 값이 돌아올지 조종할 수 없고, 요청하면 정확히 그
-목록만 받습니다. `.skipPermission(true)`도 데이터가 애플리케이션 소유이기 때문에 바로 그
-자리에서 설정합니다. 세 가지 사실 세트와 `boundFacts`가 강제하는 `MAXIMUM_FACT_COUNT`(20),
-`MAXIMUM_FACT_LENGTH`(500) 경계도 같은 파일에 있습니다.
+헬퍼 호출 세 개 덕분에 이 단계가 짧아집니다. `CuratorTerminal.chooseApprovedFacts`는 세 가지 사실 세트를 나열하고, 선택을 읽고, 사실을 출력한 뒤, 교육 담당자가 확인하거나 직접 입력하면 경계 적용 목록을 반환합니다. `CuratorPrompts.EXHIBIT_STRUCTURE`는 고정된 제목, narrative, 질문 레이아웃이며, 5단계에서 같은 레이아웃을 검사하므로 `CuratorPrompts.java`에 있습니다. `CuratorStreamer.withSelectedModel`은 선택 사항인 `COPILOT_MODEL` 환경 변수를 읽어 세션 config에 적용합니다.
+
+**내부 살펴보기:** `CuratorFacts.java`에는 도구가 들어 있으며, 단순한 배선 코드가 아니라 실제 `ToolDefinition`이므로 읽어 볼 가치가 있습니다. `approvedFactLookup`는 교육 담당자가 방금 승인한 경계 적용 목록 위에 private `ApprovedFactReader`를 만들고, 인수를 받지 않는 `read` 메서드를 바인딩합니다. 따라서 모델은 어떤 값이 돌아올지 조종할 수 없고, 요청하면 정확히 그 목록만 받습니다. `.skipPermission(true)`도 데이터가 애플리케이션 소유이기 때문에 바로 그 자리에서 설정합니다. 세 가지 사실 세트와 `boundFacts`가 강제하는 `MAXIMUM_FACT_COUNT`(20), `MAXIMUM_FACT_LENGTH`(500) 경계도 같은 파일에 있습니다.
 :::
 
 ## 실행하기
@@ -1071,11 +841,17 @@ Off the Queensland coast, more than two thousand nine hundred reefs...
 들어갔고, 도구가 그것을 다시 모델에 전달했기 때문입니다.
 
 실패 사례도 시도해 보십시오. `n`을 입력한 뒤 어떤 사실도 입력하지 않고 바로 빈 줄을 제출합니다.
-그러면 실행은 `Provide at least one approved fact.`와 함께 중단됩니다. 도구 팩토리가 빈 목록을
-기반으로 빌드되기를 거부했으므로, 어떤 요청도 전송되지 않았습니다. 오류 처리기는 이 실패를
-보고하고 상태 코드 1로 종료합니다.
+그러면 실행이 다음 메시지와 함께 중단됩니다.
 
-세션 러너는 여러분을 무기한 기다리게 두는 대신 타임아웃도 보고합니다.
+```text
+Could not generate the exhibit: Provide at least one approved fact.
+```
+
+사실 선택기는 교육 담당자가 무엇을 입력하든 경계를 적용하며, 경계는 빈 목록을 거부하므로 세션은
+전혀 생성되지 않았고 어떤 요청도 전송되지 않았습니다. 스타터에 포함된 오류 처리기는 메시지를
+출력하고 상태 코드 1로 종료합니다.
+
+타임아웃을 초과한 실행도 여러분을 무기한 기다리게 두는 대신 같은 방식으로 중단됩니다.
 
 ```text
 The curator did not respond in time. Try again.

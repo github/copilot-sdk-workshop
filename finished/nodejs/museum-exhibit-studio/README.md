@@ -1,13 +1,18 @@
 # Museum Exhibit Studio
 
-This completed Node.js/TypeScript sample now has two source files:
+This completed Node.js/TypeScript sample has three source files:
 
-- `src/curator.ts` contains the pre-built helper module: approved facts, bounded
-  streaming, deterministic validation, scoped Wikipedia permissions, the optional
-  `exhibit.html` write permission, and terminal helpers.
-- `src/index.ts` contains the learner-authored orchestration: prompts, session
-  configs, fact-set selection, optional research, generation, validation, and the
-  optional HTML capstone.
+- `src/curator.ts` contains the pre-built helper module: approved facts and the
+  fact-selection menu, bounded streaming, deterministic validation, scoped Wikipedia
+  permissions, the optional `exhibit.html` write permission, fixed prompt text, and
+  the failure message.
+- `src/system-messages.ts` contains the pre-built curator and research system messages.
+- `src/index.ts` contains the learner-authored SDK code: the instructions in the
+  exhibit and page prompts, session configs, the session runner, optional research,
+  generation, validation, and the optional HTML capstone.
+
+The `>>> BEGIN` / `<<< END` comments in `src/index.ts` are the named regions the
+lessons fill. Each `BEGIN` line lists the steps that insert or replace that region.
 
 ## Run the sample
 

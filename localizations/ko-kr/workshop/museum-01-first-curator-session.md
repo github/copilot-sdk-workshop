@@ -8,7 +8,8 @@
 프롬프트 하나를 보내고 반환된 내용을 출력합니다.
 
 시스템 메시지도, 사실 카탈로그도, 도구도, 인터페이스도 없습니다. 구현 대상으로 삼을 것도 없습니다.
-SDK를 직접 호출하며, 미리 빌드된 큐레이터 헬퍼는 2단계에서 필요할 때까지 건드리지 않습니다.
+SDK를 직접 호출합니다. 스타터가 이미 코드 주변에 감싸 둔 오류 처리기를 제외하면, 미리 빌드된
+큐레이터 헬퍼는 2단계에서 필요할 때까지 기다립니다.
 
 ## 클라이언트와 세션 알아보기
 
@@ -32,158 +33,211 @@ SDK를 직접 호출하며, 미리 빌드된 큐레이터 헬퍼는 2단계에�
 
 ## 세션 작성하기
 
+이제부터 모든 코드 블록에는 진입점의 영역 이름과 **INSERT** 또는
+**REPLACE**가 표시됩니다. INSERT는 빈 영역을 채웁니다. REPLACE는 영역의 두
+마커 줄 사이에 있는 내용을 삭제한 다음 블록을 붙여 넣는다는 뜻입니다. [사전 점검](museum-00-preflight.md)의
+"편집 방식"에서 마커 줄을 보여 줍니다.
+
 :::language dotnet
-`Program.cs`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`Program.cs`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`Program.cs`의 `imports` 영역을 **REPLACE**합니다.
 
 ```csharp
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
+using MuseumExhibitStudio.Helpers;
+```
 
-Console.WriteLine("=== Museum Exhibit Studio ===");
-Console.WriteLine();
+`Program.cs`의 `banner` 영역을 **REPLACE**합니다.
 
-await using var client = new CopilotClient();
-await client.StartAsync();
+```csharp
+    Console.WriteLine("=== Museum Exhibit Studio ===");
+    Console.WriteLine();
+```
 
-await using var session = await client.CreateSessionAsync(new SessionConfig
-{
-    ClientName = "museum-exhibit-studio",
-    OnPermissionRequest = PermissionHandler.ApproveAll
-});
+`Program.cs`의 `generate` 영역에 **INSERT**합니다.
 
-var response = await session.SendAndWaitAsync(
-    "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
+```csharp
+    await using var client = new CopilotClient();
+    await client.StartAsync();
 
-if (response is null)
-{
-    throw new InvalidOperationException("The curator returned no content.");
-}
+    await using var session = await client.CreateSessionAsync(new SessionConfig
+    {
+        ClientName = "museum-exhibit-studio",
+        OnPermissionRequest = PermissionHandler.ApproveAll
+    });
 
-Console.WriteLine(response.Data.Content);
+    var response = await session.SendAndWaitAsync(
+        "Write two sentences of museum wall text about the Apollo 11 Moon landing.");
 
-await client.StopAsync();
+    if (response is null)
+    {
+        throw new InvalidOperationException("The curator returned no content.");
+    }
+
+    Console.WriteLine(response.Data.Content);
+
+    await client.StopAsync();
 ```
 
 `SendAndWaitAsync`는 세션이 유휴 상태가 될 때까지 차단하므로, 한 번의 호출로 완성된 응답을 받습니다.
 `await using`은 종료 과정에서 세션과 클라이언트를 해제합니다. `PermissionHandler.ApproveAll`은
 `GitHub.Copilot.Rpc`에서 제공되므로 두 번째 `using`이 필요합니다.
 
+영역 주변의 `try`/`catch`/`finally`는 스타터와 함께 제공되었습니다. 예외가 발생하면
+`CuratorTerminal.DescribeFailure`의 메시지 하나를 출력하고 0이 아닌 코드로 종료합니다.
+
 2단계부터 호출할 미리 빌드된 헬퍼는 `Helpers/CuratorFacts.cs`,
 `Helpers/CuratorStreamer.cs`, `Helpers/CuratorValidation.cs`, `Helpers/CuratorSafety.cs`,
-`Helpers/CuratorTerminal.cs`에 있습니다. 이 파일은 편집하지 않고 읽기만 합니다.
+`Helpers/CuratorPrompts.cs`, `Helpers/CuratorSystemMessages.cs`, `Helpers/CuratorTerminal.cs`에
+있습니다. 이 파일은 편집하지 않고 읽기만 합니다.
 :::
 
 :::language nodejs
-`src/index.ts`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`src/index.ts`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`src/index.ts`의 `imports` 영역을 **REPLACE**합니다.
 
 ```typescript
 import { approveAll, CopilotClient } from "@github/copilot-sdk";
+import { closeTerminal, describeFailure } from "./curator.js";
+```
 
-async function main(): Promise<void> {
-  console.log("=== Museum Exhibit Studio ===");
-  console.log();
+`src/index.ts`의 `banner` 영역을 **REPLACE**합니다.
 
-  const client = new CopilotClient();
-  await client.start();
-  const session = await client.createSession({
-    clientName: "museum-exhibit-studio",
-    onPermissionRequest: approveAll,
-  });
+```typescript
+    console.log("=== Museum Exhibit Studio ===");
+    console.log();
+```
 
-  const response = await session.sendAndWait({
-    prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
-  });
-  console.log(response?.data && "content" in response.data ? response.data.content : response);
+`src/index.ts`의 `generate` 영역에 **INSERT**합니다.
 
-  await session.disconnect();
-  await client.stop();
-}
+```typescript
+    const client = new CopilotClient();
+    await client.start();
 
-void main();
+    const session = await client.createSession({
+      clientName: "museum-exhibit-studio",
+      onPermissionRequest: approveAll,
+    });
+
+    const response = await session.sendAndWait({
+      prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
+    });
+    console.log(response?.data && "content" in response.data ? response.data.content : response);
+
+    await session.disconnect();
+    await client.stop();
 ```
 
 `sendAndWait`는 세션이 유휴 상태가 될 때까지 차단하므로, 한 번의 호출로 완성된 응답을 받습니다.
 `approveAll`은 `CopilotClient`와 함께 SDK에서 가져옵니다.
 
-이 파일과 같은 위치의 `src/curator.ts`는 2단계부터 호출할 미리 빌드된 헬퍼 모듈입니다.
-이 파일은 편집하지 않고 읽기만 합니다.
+영역 주변의 `try`/`catch`/`finally`는 스타터와 함께 제공되었습니다. 오류가 발생하면
+`src/curator.ts`의 `describeFailure`에서 메시지 하나를 출력하고 0이 아닌 종료 코드를 설정합니다.
+
+2단계부터 호출할 미리 빌드된 헬퍼 모듈은 `src/curator.ts`에 있고, 3단계에서 사용하는 시스템
+메시지는 `src/system-messages.ts`에 있습니다. 이 파일은 편집하지 않고 읽기만 합니다.
 :::
 
 :::language python
-`main.py`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`main.py`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`main.py`의 `imports` 영역을 **REPLACE**합니다.
 
 ```python
+from __future__ import annotations
+
 import asyncio
+import sys
 
 from copilot import CopilotClient, PermissionHandler
 from copilot.session_events import AssistantMessageData, SessionErrorData, SessionIdleData
 
+from curator import describe_failure
+```
 
-async def main() -> None:
-    print("=== Museum Exhibit Studio ===")
-    print()
+`main.py`의 `banner` 영역을 **REPLACE**합니다.
 
-    async with CopilotClient() as client:
-        async with await client.create_session(
-            client_name="museum-exhibit-studio",
-            on_permission_request=PermissionHandler.approve_all,
-        ) as session:
-            done = asyncio.Event()
-            error: RuntimeError | None = None
+```python
+        print("=== Museum Exhibit Studio ===")
+        print()
+```
 
-            def on_event(event) -> None:
-                nonlocal error
-                match event.data:
-                    case AssistantMessageData(content=content):
-                        print(content)
-                    case SessionErrorData(message=message):
-                        error = RuntimeError(message)
-                        done.set()
-                    case SessionIdleData():
-                        done.set()
+`main.py`의 `generate` 영역에 **INSERT**합니다.
 
-            session.on(on_event)
-            await session.send(
-                "Write two sentences of museum wall text about the Apollo 11 Moon landing."
-            )
-            await done.wait()
-            if error is not None:
-                raise error
+```python
+        async with CopilotClient() as client:
+            async with await client.create_session(
+                client_name="museum-exhibit-studio",
+                on_permission_request=PermissionHandler.approve_all,
+            ) as session:
+                done = asyncio.Event()
+                error: RuntimeError | None = None
 
+                def on_event(event) -> None:
+                    nonlocal error
+                    match event.data:
+                        case AssistantMessageData(content=content):
+                            print(content)
+                        case SessionErrorData(message=message):
+                            error = RuntimeError(message)
+                            done.set()
+                        case SessionIdleData():
+                            done.set()
 
-if __name__ == "__main__":
-    asyncio.run(main())
+                session.on(on_event)
+                await session.send(
+                    "Write two sentences of museum wall text about the Apollo 11 Moon landing."
+                )
+                await done.wait()
+                if error is not None:
+                    raise error
 ```
 
 Python에서는 하나의 차단 헬퍼를 호출하는 대신 세션 이벤트를 수신합니다. 어시스턴트 메시지를 출력하고,
 세션 오류를 실패로 처리하며, 종료하기 전에 유휴 상태가 될 때까지 기다립니다. 2단계에서는 이 리스너
 전체를 하나의 헬퍼 호출로 교체합니다.
 
-이 파일과 같은 위치의 `curator.py`는 해당 교체 작업을 담당하는 미리 빌드된 헬퍼 모듈입니다.
-이 파일은 편집하지 않고 읽기만 합니다.
+영역 주변의 `try`/`except`는 스타터와 함께 제공되었습니다. 오류가 발생하면 `curator.py`의
+`describe_failure`에서 메시지 하나를 출력하고 0이 아닌 코드로 종료합니다.
+
+이 파일과 같은 위치의 `curator.py`는 2단계부터 호출할 미리 빌드된 헬퍼 모듈이고,
+`system_messages.py`에는 3단계에서 사용하는 시스템 메시지가 들어 있습니다. 이 파일들은 편집하지 않고
+읽기만 합니다.
 :::
 
 :::language go
-`main.go`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`main.go`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`main.go`의 `imports` 영역을 **REPLACE**합니다.
 
 ```go
-package main
-
 import (
 	"context"
 	"fmt"
+	"os"
 
 	copilot "github.com/github/copilot-sdk/go"
 )
 
-func main() {
+```
+
+`main.go`의 `banner` 영역을 **REPLACE**합니다.
+
+```go
 	fmt.Println("=== Museum Exhibit Studio ===")
 	fmt.Println()
+```
 
+`main.go`의 `generate` 영역에 **INSERT**합니다.
+
+```go
 	ctx := context.Background()
 	client := copilot.NewClient(&copilot.ClientOptions{LogLevel: "error"})
 	if err := client.Start(ctx); err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = client.Stop() }()
 
@@ -192,7 +246,7 @@ func main() {
 		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer func() { _ = session.Disconnect() }()
 
@@ -200,35 +254,49 @@ func main() {
 		Prompt: "Write two sentences of museum wall text about the Apollo 11 Moon landing.",
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if response == nil {
-		panic("The curator returned no content.")
+		return fmt.Errorf("The curator returned no content.")
 	}
 	if message, ok := response.Data.(*copilot.AssistantMessageData); ok {
 		fmt.Println(message.Content)
 	}
-}
 ```
 
-`curator.go`는 이미 같은 `main` 패키지에 있으므로, 필요해지는 즉시 해당 헬퍼가 범위에 포함됩니다.
-`SendAndWait`는 세션이 유휴 상태가 될 때까지 차단합니다.
+`SendAndWait`는 세션이 유휴 상태가 될 때까지 차단하므로, 한 번의 호출로 완성된 응답을 받습니다.
+지연된 정리 작업은 종료 과정에서 세션 연결을 해제하고 클라이언트를 중지합니다.
+`copilot.PermissionHandler.ApproveAll`은 권한 요청에 응답하여 실행이 멈추지 않도록 합니다.
+
+영역 주변의 `main`/`run` 래퍼와 오류 처리기는 스타터와 함께 제공되었습니다. 오류가 반환되면
+`main`이 `curator.go`의 `DescribeFailure`에서 메시지 하나를 출력하고 0이 아닌 코드로 종료합니다.
+
+2단계부터 호출할 미리 빌드된 헬퍼는 `curator.go`에 있고, 3단계에서 사용하는 시스템 메시지는
+`system_messages.go`에 있습니다. 이 파일은 편집하지 않고 읽기만 합니다.
 :::
 
 :::language rust
-`src/main.rs`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`src/main.rs`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`src/main.rs`의 `imports` 영역을 **REPLACE**합니다.
 
 ```rust
 use github_copilot_sdk::permission;
 use github_copilot_sdk::types::{MessageOptions, SessionConfig};
 use github_copilot_sdk::{Client, ClientOptions};
-use museum_exhibit_studio::RuntimeError;
+use museum_exhibit_studio::{RuntimeError, describe_failure};
+```
 
-#[tokio::main]
-async fn main() -> Result<(), RuntimeError> {
+`src/main.rs`의 `banner` 영역을 **REPLACE**합니다.
+
+```rust
     println!("=== Museum Exhibit Studio ===");
     println!();
+```
 
+`src/main.rs`의 `generate` 영역에 **INSERT**합니다.
+
+```rust
     let client = Client::start(ClientOptions::default()).await?;
     let mut config = SessionConfig::default().with_permission_handler(permission::approve_all());
     config.client_name = Some("museum-exhibit-studio".to_owned());
@@ -248,44 +316,51 @@ async fn main() -> Result<(), RuntimeError> {
 
     session.disconnect().await?;
     client.stop().await?;
-    Ok(())
-}
 ```
 
-`src/lib.rs`는 미리 빌드된 헬퍼를 제공하는 `museum_exhibit_studio` 라이브러리 크레이트이며,
-편집하지 않습니다. 오늘은 이 라이브러리에서 `RuntimeError`라는 이름 하나를 가져옵니다. 이는
-`Box<dyn Error + Send + Sync>`에 대한 크레이트의 별칭입니다. 2단계부터 호출하는 모든 헬퍼는
-이 형식으로 실패를 보고하므로, 처음부터 `main`이 이 형식을 반환하게 하면 학습 과정이 확장되어도
-`?`가 계속 작동합니다.
+`send_and_wait`는 세션이 유휴 상태가 될 때까지 차단하므로, 한 번의 호출로 완성된 응답을 받습니다.
+`with_permission_handler(permission::approve_all())`은 세션이 아직 단순한 동안 도구 요청이 멈추지 않게
+합니다.
 
-`with_permission_handler`는 업데이트된 구성을 반환하므로, 반환된 값에 나머지 필드를 계속 설정합니다.
+영역 주변의 `main` 래퍼, `run` 함수, 종료 코드, 오류 처리기는 스타터와 함께 제공되었습니다.
+오류가 발생하면 래퍼가 `src/lib.rs`의 `describe_failure`에서 메시지 하나를 출력하고 0이 아닌 코드로
+종료합니다.
+
+2단계부터 호출할 미리 빌드된 헬퍼는 `src/lib.rs`에 있고, 3단계에서 사용하는 시스템 메시지는
+`src/system_messages.rs`에 있습니다. 이 파일은 편집하지 않고 읽기만 합니다.
 :::
 
 :::language java
-`src/main/java/workshop/MuseumExhibitStudio.java`를 열고 **파일 전체를 다음 내용으로 교체합니다**.
+`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `imports` 영역에 **INSERT**합니다.
 
 ```java
-package workshop;
-
 import com.github.copilot.CopilotClient;
+import com.github.copilot.CopilotSession;
 import com.github.copilot.rpc.MessageOptions;
 import com.github.copilot.rpc.PermissionHandler;
 import com.github.copilot.rpc.SessionConfig;
+```
 
-public final class MuseumExhibitStudio {
-    private MuseumExhibitStudio() {
-    }
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `banner` 영역을 **REPLACE**합니다.
 
-    public static void main(String[] args) throws Exception {
+```java
         System.out.println("=== Museum Exhibit Studio ===");
         System.out.println();
+```
 
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `generate` 영역에 **INSERT**합니다.
+
+```java
         try (var client = new CopilotClient()) {
             client.start().get();
-            var session = client.createSession(new SessionConfig()
-                    .setClientName("museum-exhibit-studio")
-                    .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+            CopilotSession session = null;
             try {
+                session = client.createSession(new SessionConfig()
+                        .setClientName("museum-exhibit-studio")
+                        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+
                 var response = session.sendAndWait(new MessageOptions().setPrompt(
                         "Write two sentences of museum wall text about the Apollo 11 Moon landing.")).get();
                 if (response == null) {
@@ -293,21 +368,19 @@ public final class MuseumExhibitStudio {
                 }
                 System.out.println(response.getData().content());
             } finally {
-                session.close();
+                if (session != null) {
+                    session.close();
+                }
                 client.stop().get();
             }
         }
-    }
-}
 ```
 
-`sendAndWait`는 세션이 유휴 상태가 될 때까지 차단합니다. try-with-resources 블록은 `main`이
-종료될 때 클라이언트를 닫습니다. `PermissionHandler.APPROVE_ALL`은
-`com.github.copilot.rpc`에서 제공됩니다.
+`sendAndWait`는 세션이 유휴 상태가 될 때까지 차단하므로, 한 번의 호출로 완성된 응답을 받습니다. try-with-resources 블록이 종료되면 클라이언트가 닫히고, `client.stop().get()`이 실행되기 전에 세션이 닫힙니다. `PermissionHandler.APPROVE_ALL`은 `com.github.copilot.rpc`에서 제공되므로 해당 import가 필요합니다.
 
-2단계부터 호출할 미리 빌드된 헬퍼는 파일과 같은 위치인 `src/main/java/workshop/`에 있습니다.
-해당 파일은 `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`,
-`CuratorSafety.java`, `CuratorTerminal.java`입니다. 이 파일은 편집하지 않고 읽기만 합니다.
+`main`/`run` 스캐폴딩, 최상위 `try`/`catch`/`finally`, 종료 코드 처리는 스타터와 함께 제공되었습니다. 오류가 발생하면 오류 처리기가 `CuratorTerminal.describeFailure`를 통해 메시지 하나를 출력하고 0이 아닌 코드로 종료합니다.
+
+2단계부터 호출할 미리 빌드된 헬퍼는 파일과 같은 위치인 `src/main/java/workshop/`에 있습니다. 해당 파일은 `CuratorFacts.java`, `CuratorStreamer.java`, `CuratorValidation.java`, `CuratorSafety.java`, `CuratorPrompts.java`, `CuratorSystemMessages.java`, `CuratorTerminal.java`입니다. 이 파일은 편집하지 않고 읽기만 합니다.
 :::
 
 ## 실행하기

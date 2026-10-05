@@ -2,58 +2,99 @@ package workshop;
 
 // Museum Exhibit Studio — learner entrypoint.
 //
+// HOW TO EDIT THIS FILE
+//
+// Every place you write code is a named region between two marker lines:
+//
+//     >>> BEGIN <region> | Step 4: INSERT | Step 6: REPLACE
+//     <<< END <region>
+//
+// The BEGIN line lists every step that touches the region. Each lesson block names its region
+// and one of two actions:
+//
+//     INSERT   The region is empty. Paste the block between the two marker lines.
+//     REPLACE  The region already has code. Delete everything between the two marker lines,
+//              then paste the block.
+//
+// A block is always the complete contents of its region. Never edit, move, or delete a marker
+// line, and leave the code outside the regions as it is.
+//
 // The pre-built curator helpers live beside this file as Curator*.java. Do not edit those files:
 // they are the application-owned half of the workshop, and they must stay identical to the
-// finished app's copy. Everything below is yours to write, one lesson at a time.
-//
-// Step 1  First curator session .......... create the CopilotClient, create a session with
-//                                          .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
-//                                          so requests get an answer, send a prompt, print the
-//                                          reply, then close and stop.
-// Step 2  Stream the curator ............. swap the blocking send for CuratorStreamer.streamExhibit
-//                                          so tokens and [tool:start] / [tool:done] events print
-//                                          live.
-// Step 3  Curator voice .................. add `public static final String SYSTEM_MESSAGE = ...`
-//                                          here and pass it through SystemMessageConfig with
-//                                          SystemMessageMode.REPLACE.
-// Step 4  Ground it in approved facts .... add selectFactSet() and buildExhibitPrompt(); register
-//                                          the pre-built tool with
-//                                          .setTools(List.of(CuratorFacts.approvedFactLookup(
-//                                          facts))) and .setAvailableTools(List.of(
-//                                          CuratorFacts.APPROVED_FACT_LOOKUP_NAME)); the prompt
-//                                          tells the curator to call approved_fact_lookup first.
-//                                          Add generationConfig() and runSession() with the
-//                                          generation timeout, blank-output rejection, and cleanup.
-// Step 5  Prove the structure ............ call CuratorValidation.formatValidation(
-//                                              CuratorValidation.validateExhibit(exhibit)).
-// Step 6  Wikipedia research ............. add researchConfig() with CuratorSafety.wikipediaServer()
-//                                          plus CuratorSafety.wikipediaPermissionHandler(), run it
-//                                          through runSession, and print sources after the
-//                                          exhibit. Retain the body and citations, conditionally
-//                                          register approved_wikipedia_fact_lookup, and request
-//                                          both lookups before generation. Approved facts win.
-// Step 7  Interactive exhibit page ....... add htmlConfig() with the "builtin:apply_patch" and
-//                                          "builtin:create" allowlist and CuratorSafety.exhibitWritePermission(...).
+// finished app's copy.
 
-// Your imports go here, and grow as the lessons progress.
+// >>> BEGIN imports | Step 1: INSERT | Steps 3-4, 6-7: REPLACE
+// <<< END imports
 
 public final class MuseumExhibitStudio {
-    // Your SYSTEM_MESSAGE (Step 3) goes here.
-
     private MuseumExhibitStudio() {
     }
 
     public static void main(String[] args) {
+        int exitCode = 0;
+        try {
+            run(args);
+        } catch (Exception exception) {
+            exitCode = 1;
+            System.err.println(CuratorTerminal.describeFailure(exception));
+        } finally {
+            try {
+                CuratorTerminal.close();
+            } catch (Exception ignored) {
+                // A failure to close standard input cannot change the outcome of the run, and the
+                // run has already reported its own failure if it had one.
+            }
+        }
+        if (exitCode != 0) {
+            System.exit(exitCode);
+        }
+    }
+
+    private static void run(String[] args) throws Exception {
+        if (args.length != 0) {
+            throw new IllegalArgumentException("Usage: ./mvnw compile exec:java");
+        }
+
+        // >>> BEGIN banner | Step 1: REPLACE
         System.out.println("=== Museum Exhibit Studio starter ===");
         System.out.println("Pre-built curator helpers are ready in src/main/java/workshop/.");
         System.out.println("Continue with museum step 1 to write your first curator session.");
-        // Your run flow (Steps 1-7) replaces the banner above. In Step 4 it gains the
-        // try/catch/finally that reports a timeout, closes the terminal, and exits with status 1.
+        // <<< END banner
+
+        // >>> BEGIN choose-facts | Step 4: INSERT
+        // <<< END choose-facts
+
+        // >>> BEGIN research | Step 6: INSERT
+        // <<< END research
+
+        // >>> BEGIN generate | Step 1: INSERT | Steps 2-6: REPLACE
+        // <<< END generate
+
+        // >>> BEGIN validate | Step 5: INSERT
+        // <<< END validate
+
+        // >>> BEGIN sources | Step 6: INSERT
+        // <<< END sources
+
+        // >>> BEGIN exhibit-page | Step 7: INSERT
+        // <<< END exhibit-page
     }
 
-    // Your prompt builders (Steps 4, 6, 7) go here.
+    // >>> BEGIN exhibit-prompt | Step 4: INSERT | Step 6: REPLACE
+    // <<< END exhibit-prompt
 
-    // Your session configuration builders (Steps 4, 6, 7) go here.
+    // >>> BEGIN html-prompt | Step 7: INSERT
+    // <<< END html-prompt
 
-    // Your runSession() lifecycle function (Step 4) goes here.
+    // >>> BEGIN generation-config | Step 4: INSERT | Step 6: REPLACE
+    // <<< END generation-config
+
+    // >>> BEGIN research-config | Step 6: INSERT
+    // <<< END research-config
+
+    // >>> BEGIN html-config | Step 7: INSERT
+    // <<< END html-config
+
+    // >>> BEGIN session-runner | Step 4: INSERT
+    // <<< END session-runner
 }

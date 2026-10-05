@@ -12,43 +12,37 @@
             id: 'dotnet',
             displayName: '.NET',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/dotnet',
-            installCommand: 'dotnet add package GitHub.Copilot.SDK',
-            runtimeNote: 'Requires the .NET SDK and a supported C# runtime.'
+            installCommand: 'dotnet add package GitHub.Copilot.SDK'
         },
         {
             id: 'go',
             displayName: 'Go',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/go',
-            installCommand: 'go get github.com/github/copilot-sdk/go',
-            runtimeNote: 'Requires a supported Go toolchain and module.'
+            installCommand: 'go get github.com/github/copilot-sdk/go'
         },
         {
             id: 'java',
             displayName: 'Java',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/java',
-            installCommand: 'mvn dependency:get -Dartifact=com.github:copilot-sdk-java:1.0.11',
-            runtimeNote: 'Requires a supported JDK and a Maven or Gradle project.'
+            installCommand: 'mvn dependency:get -Dartifact=com.github:copilot-sdk-java:1.0.11'
         },
         {
             id: 'nodejs',
             displayName: 'Node.js',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/nodejs',
-            installCommand: 'npm install @github/copilot-sdk',
-            runtimeNote: 'Requires a current Node.js LTS release.'
+            installCommand: 'npm install @github/copilot-sdk'
         },
         {
             id: 'python',
             displayName: 'Python',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/python',
-            installCommand: 'pip install github-copilot-sdk',
-            runtimeNote: 'Requires Python and an isolated virtual environment.'
+            installCommand: 'pip install github-copilot-sdk'
         },
         {
             id: 'rust',
             displayName: 'Rust',
             docsUrl: 'https://github.com/github/copilot-sdk/tree/main/rust',
-            installCommand: 'cargo add copilot-sdk',
-            runtimeNote: 'Requires Rust and Cargo from rustup.'
+            installCommand: 'cargo add copilot-sdk'
         }
     ]);
 

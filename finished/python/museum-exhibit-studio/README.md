@@ -1,14 +1,21 @@
 # Museum Exhibit Studio
 
 This Python sample uses the GitHub Copilot SDK as a focused museum exhibit
-studio. The finished app now has two modules:
+studio. The finished app has three modules:
 
-- `curator.py` contains the pre-built workshop helpers: approved fact sets,
-  bounded fact validation, streaming, deterministic structural checks, scoped
-  Wikipedia permissions, scoped `exhibit.html` write permission, and terminal
-  helpers.
-- `main.py` contains the learner-authored orchestration: prompts, session
-  configuration, console flow, validation, and optional HTML generation.
+- `curator.py` contains the pre-built workshop helpers: approved fact sets and
+  the fact-selection menu, bounded fact validation, streaming, deterministic
+  structural checks, scoped Wikipedia permissions, scoped `exhibit.html` write
+  permission, fixed prompt text, and the failure message.
+- `system_messages.py` contains the pre-built curator and research system
+  messages.
+- `main.py` contains the learner-authored SDK code: the instructions in the
+  exhibit and page prompts, session configuration, the session runner,
+  validation, and optional HTML generation.
+
+The `>>> BEGIN` / `<<< END` comments in `main.py` are the named regions the
+lessons fill. Each `BEGIN` line lists the steps that insert or replace that
+region.
 
 ## Run the sample
 

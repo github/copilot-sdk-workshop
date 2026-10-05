@@ -1,0 +1,240 @@
+{
+  "version": 1,
+  "files": {
+    "README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "3a97510cc613b3dbdc0a51067c95fad57815a0a8810ede1a07aa5173a1e1fd21",
+      "localized_sha256": "84f7751c65cd8b46221a963ff07189f3286a7edf473560d93b687deb742aa48c"
+    },
+    "finished/dotnet/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "b1e563c9e4ae77c229c8462a879760788c5d17a6bbff76b750ba66f56276f4eb",
+      "localized_sha256": "a94808e597ed8a76c5990815565420206819717fc46f0741ceb4dbefdea7bb0d"
+    },
+    "finished/go/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "0b09612ee2aac84f226cf577b158db62ea1cafa2116b4b40c9e9605436976f99",
+      "localized_sha256": "6c392891abed38181636bb4da6c0c60264ea5dbfd2459f292ee775208d616334"
+    },
+    "finished/java/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8298b736c4219933ff6a1428d82086dff2bb2f05fc7b45b044ac9b5f4afea0f6",
+      "localized_sha256": "0f250cd2c001fca76893a4caf36e85ea2374ad9db13150b2c31961253692a792"
+    },
+    "finished/nodejs/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "2798fe4b7d13c78b09ce7921d6e5fbf04ca2ed645065c02fc5170017e9a887a4",
+      "localized_sha256": "215af2aeea108ef1305b63c68ed3a99b2bd78395e38f6049c77da9f950ae3c7d"
+    },
+    "finished/python/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "64906fe60830dd7a6241fb29603e64bc6e476733986aee845f7743e6bcf3205e",
+      "localized_sha256": "5ac95488eb4084518ab8e17468acfa8bb06b45b7c5602e287db9ee2565dba113"
+    },
+    "finished/rust/museum-exhibit-studio/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "d662c5aee6b9e9897d11bba63e00ecdf09bad76021e29d60468212ae4e043323",
+      "localized_sha256": "4072d539c7bab753990adcba66603437213eaf93393749e2f0926defb56ac07e"
+    },
+    "start-accessibility/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8f1826ac9b470328c4b29106e7aa353df1ce165fff1943ac29206123b2d7e9cc",
+      "localized_sha256": "838405837516a446851b295054b40d7a376e4bd43fb61d019345133721c42439"
+    },
+    "start-intro/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "a16e948ccf67ac41694adb1839755a3ebf54471319e063d59b8ab4e2bae14830",
+      "localized_sha256": "266e4e6a6dd02552f1a8f47c4589eebe1264f68c688e89abd6dd60eee906674f"
+    },
+    "start-intro/dotnet/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8a064be9bdf22dd594fb8033ed2b4670a1ffc2167cb292bf38741e8080ee3740",
+      "localized_sha256": "5574f09da354904bfacffcd42127281a7de55c9fd018e48d2f9ed41ebdf5a156"
+    },
+    "start-intro/dotnet/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "768979d6d8d706ffcf32f90bbce8a538f594d0a8c14ca8630c40af1e58586990",
+      "localized_sha256": "13d4313e44629e4d108b948cbc3a5410c5eee642a5a897ce05369415e9643b4f"
+    },
+    "start-intro/go/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "53251d6e74279c31f172d4d955e7c0347cbed96864090250d9f2e168a7cc047d",
+      "localized_sha256": "01d231d6f31b725b88174647e8bd7ea1bceca265439973e3853148823d5e19a7"
+    },
+    "start-intro/go/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "e6677894a9d9bbdd727b4db70826b0d59b10312cb6b0d27234de67d870a6ed9d",
+      "localized_sha256": "3a2ebc10bb052d36261c940c327789a7675a676ad73c81b2dd13b786bfd33d14"
+    },
+    "start-intro/java/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "fefaa841cfa2d7beb56c74d455f5aaa2d0a839300a1a3a92f96b22a7ce21e3d8",
+      "localized_sha256": "d72951d9a367c62f87a54b92311c9a8ccc53f873d2eb0b33991c26bda9881141"
+    },
+    "start-intro/java/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "c1cd500c9ed179d035d5455fa4947f41b274ff285e08fbd79afceb048ea12292",
+      "localized_sha256": "63a1238c6af8b71e6cf444289f6b3d3a71e25a8959f7ef89deebde7cf7137d1b"
+    },
+    "start-intro/nodejs/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "42d649ada4fb8055e3424186b4f02febbada53d23a093e0e6eba573aed06a91e",
+      "localized_sha256": "eb6ad7ef0a139ab1de66b665da3164f8fa98531022e4222727b44f6f6c94a6e2"
+    },
+    "start-intro/nodejs/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "0dcccffced18b4c28c37906888e57d4f58736b030ddea9a2cb9de6e20ca3a87c",
+      "localized_sha256": "443d1a246586f7150a7679a9339949b94a3b4a313da210f7f8c4d872999caa0d"
+    },
+    "start-intro/python/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "aabc990950d6ec5a0e62415e9bf6d70d8606115b132528e9b08fe8bd89199a9b",
+      "localized_sha256": "80b525f2664c3a7eae87bc129e00e735be9d28285a46c9842b2d03a975f76826"
+    },
+    "start-intro/python/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "e9651232435f946aa00e348de7b81c92e1d2903ce627f50edb5d8c9b3120fe9f",
+      "localized_sha256": "e3164c02133cdcd978b378beaa45010a6e9429cc207dc551182015b2a3f43757"
+    },
+    "start-intro/rust/LIVE_DEMO.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "e18d6bf592d05364a30d1c6c14f1fc61ae3e75a146d1c7071864faf16329b74b",
+      "localized_sha256": "53c6a3bd96c2dd5ea42b88fda7159df30ac97504f19d9f920b67aefe162c0152"
+    },
+    "start-intro/rust/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "39d4b8c87ff2f1dbfd21b81f69284d84733cfc1675fba4361f7b2ec8626d827f",
+      "localized_sha256": "1eff849a0e0b25f47d24222849def6384fff0461a7df937bc8531652354b86a8"
+    },
+    "start-museum/README.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "1fe0ddaf7bd4c3d2502efed64861b2552ec991968be9b15b3d03faf23df6b635",
+      "localized_sha256": "4fffa024f2f310f50417c0aaf61fac77b2322db55631c2ec3859c1274b12a393"
+    },
+    "workshop/00-preflight.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "60579b55489803004dea298904588630873e371c6df09bcc1eae4371a7837da2",
+      "localized_sha256": "ff4b3c481e476ba762f43f1e871cb7266d52831c83d9b3e01575c2c4eac251c8"
+    },
+    "workshop/01-first-session.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "5f025391fd92d9ec6ed779285007ce279b918265fcca265bc83f8b8db450d4f4",
+      "localized_sha256": "7126ce9dee868c2197c7e11e232b5e46592d035028ca2eee9216378d20e5ab86"
+    },
+    "workshop/02-streaming.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "3661a58657f49aef0edf94c59403cbcc4946818433faecb125e2b119ec1a0b4c",
+      "localized_sha256": "48d420614a5456f3a154ddab92fa261fc97006a81dd4f8cf7c721bdf1b842798"
+    },
+    "workshop/03-local-tool.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "10fe6a2c80075e298b1fd92be61bcefbb874884f5d86954f75e5a6c9f6c9ae17",
+      "localized_sha256": "738974a02900a58f9b65b1bfb4ee5febd25762a2db006895367116cca109d160"
+    },
+    "workshop/04-mcp-safety.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "ca45f2b9b3a5b88911a9f6bd0560b2ec960670ee30eae0528edae107dc4aa596",
+      "localized_sha256": "64316c9a3ea87c210b5fe75afe70b47667cd3b5d4b65cc262e382148c154750c"
+    },
+    "workshop/05-combine-tools.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "4fb915016a414f7b7a7cf06d5a89c61504efe18e9a3a26a84c0cab85f07b85cb",
+      "localized_sha256": "4e08909dbf99f2348a8ac8dbcf2cf97d69b0ef1acb325ce7eaac82f3aa484243"
+    },
+    "workshop/06-structured-report.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "bc96063f7a2f1e6a72a61b2a99b3e86abf5ed505826f84007f55692f3c0eafb4",
+      "localized_sha256": "72084d99d866c993639130115fa112b68d2f632296ae093b0dee8e45f912ea9d"
+    },
+    "workshop/07-run-explain.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "bf4cb1d6026cd3a085a89a9c8f854cf5568e92884e1f705faf68f909f0cf0435",
+      "localized_sha256": "dd8f23ab8e264b573c3e70e1d950c7b855cf37e5ff9750c3e944d4f797655503"
+    },
+    "workshop/08-model-selection.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "d285069e0f7f3829c2e6f78102dff6402026fbcc72a846c3e5fbb4f5fd96d979",
+      "localized_sha256": "6d9679c5b39f1ef12b5cfccba5d05e04e1896330ea6a931c1c408104237ec99e"
+    },
+    "workshop/09-interactive-html-report.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "eba9ce17fb51f714a431bfd411d5e1e05b6ec9f1275272ef5ded9c35288d2a03",
+      "localized_sha256": "a43c3bc0cc57e0039bb3c97257e0d11e2e9f9e47807acd946ca5fc8b821a8817"
+    },
+    "workshop/10-complete.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "561eb69fe554a37ff0cfe8283d0b3c9966e546d8fc7f844058b37614d0be47b5",
+      "localized_sha256": "6a0ff123d8243db650fc2f17fd5461026084cc3624a01e66e70b182fe90aea9f"
+    },
+    "workshop/intro-00-preflight.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "a80d4bf2167083672daff75dd160212801d2b36868408f7ca630759abbfbe150",
+      "localized_sha256": "91d4a46c92f20e32c6ef4c2f1511697a6f43e2c602a76aaaa2c92d6cfb5ad8e3"
+    },
+    "workshop/intro-01-sdk-basics.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "e08b14fc073e65cd061d57808e8ce6b6eb37c2dd810bbb761d43468325ba23a3",
+      "localized_sha256": "79861e59c8b431570346511cafa066c18be89de3b25009c94a4bb7c9e2f57eb1"
+    },
+    "workshop/intro-02-hello-world.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "f3d854bbb49486e0608915e3503fb75ac4b8574f7b067debd870202976d85d61",
+      "localized_sha256": "a259f23e47c117670d109c899c57b4c6b8a118d40c599631e75f7a59f30b9703"
+    },
+    "workshop/intro-03-podcast-agent.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8fe755c5d4a50851cf1d647057c785c3b4208a9cac7fc6d24742ac1e1673f10f",
+      "localized_sha256": "ba0910d13c69f0abfd3d018d36854de9574b370f19db8a87e717883a469b33fb"
+    },
+    "workshop/intro-04-wrap-up.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "61c72ec6152b918c4d459193230537bc69706ab2228c8659109a45c59a289a4a",
+      "localized_sha256": "9473fcc11b7749913967dda602ab833ec351c661a54a9c2b42222bb141b774f6"
+    },
+    "workshop/museum-00-preflight.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8d41926d95e7500617170f683ccf65397a231dbca50b6b790a5b2ad07cd3796d",
+      "localized_sha256": "8034a4df631d9135e385ec568ced23f63325b3feb588cfe3c654bf176084bb06"
+    },
+    "workshop/museum-01-first-curator-session.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "50fbde32b1b417a2849bb2dd870df316edd707184e467036cd7efd2716709269",
+      "localized_sha256": "83fb78cfa6cd07a7dfe4de975c7ff071f94ef4b461188aff79a6ecbd8a4f31be"
+    },
+    "workshop/museum-02-stream-the-curator.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "8703bb8b48534365a5766e8efbe3ff329e0f73593c0a2f957c8ed7a84e5a1fed",
+      "localized_sha256": "9122e26ec96c8358e20dce5ba287cc25044f4b33a8894ff6f743efb37e6c8ab8"
+    },
+    "workshop/museum-03-curator-voice.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "1cee4ac972426a4e6d149504ae419fb93fa79a13a4894c53c746843a888d8885",
+      "localized_sha256": "2c95bd3048f98cc545b87c3d2caf95d58fdcdc39c06150c6e3d0c464068ccd12"
+    },
+    "workshop/museum-04-approved-facts.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "ba43f5122b509bf78cea0539879fc58ff225b18984a1c91eedf67c67c7a4dca1",
+      "localized_sha256": "d6c276531532f5cbafafea11ecfa18811516feacd5fd517a1cb4a10da2020f31"
+    },
+    "workshop/museum-06-prove-the-structure.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "b9d8937e865f1e419c2e24fe4f269f568b890eaddfa9e43af602b10a1fa1dd8f",
+      "localized_sha256": "63a17f3b7aeb674c08dcf07a3a2e6282f731e71661b5f0903b8ae6a52362413a"
+    },
+    "workshop/museum-07-wikipedia-research.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "6bdb7bf41fb25455832e5b85d34dcff88b6ccc61ac04d4f49d9f0cd683eca251",
+      "localized_sha256": "76e3da2a45b84eb0f98e2f98034aa15eaf1ca6d76436ccdafe9b301bf3c893d7"
+    },
+    "workshop/museum-08-interactive-exhibit-page.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "1b1b2a56f01464eb19faa4b5e86637e3b9e6ae19c146cb11df77ea669c083a68",
+      "localized_sha256": "a5009d6be9024c813cd928eb6de121eb3687e5f8770082d808500057a5c81982"
+    },
+    "workshop/museum-09-complete.md": {
+      "source_commit": "76ece49567edeb238d66ed3337d92279ee03b640",
+      "source_sha256": "0fc2662a019ee15b01b25b54845a1b0daa5a67c9751a6e4c57e6beb14cc63947",
+      "localized_sha256": "947f6aa4e31106793b1f6e7e2322becb4de28f3fdd12f852f2d8f40fe8247968"
+    }
+  }
+}

@@ -20,6 +20,12 @@ use github_copilot_sdk::types::{
 };
 use github_copilot_sdk::{Error as SdkError, ToolResult};
 
+mod system_messages;
+
+pub use system_messages::{
+    CURATOR_SYSTEM_MESSAGE, CURATOR_WITH_RESEARCH_SYSTEM_MESSAGE, RESEARCH_SYSTEM_MESSAGE,
+};
+
 pub const MAXIMUM_FACT_COUNT: usize = 20;
 pub const MAXIMUM_FACT_LENGTH: usize = 500;
 pub const GENERATION_TIMEOUT: Duration = Duration::from_secs(120);
@@ -28,6 +34,26 @@ pub const WIKIPEDIA_TOOLS: [&str; 2] = ["wikipedia-search", "wikipedia-readArtic
 pub const EXHIBIT_FILE_NAME: &str = "exhibit.html";
 pub const APPROVED_FACT_LOOKUP_NAME: &str = "approved_fact_lookup";
 pub const APPROVED_WIKIPEDIA_FACT_LOOKUP_NAME: &str = "approved_wikipedia_fact_lookup";
+pub const EXHIBIT_STRUCTURE: &str = r#"Return exactly this structure:
+
+# <an engaging exhibit title>
+## Narrative
+<100-140 words, excluding the title and questions>
+## Visitor questions
+1. <question>
+2. <question>
+3. <question>
+
+Write exactly three distinct visitor reflection questions. Do not add a preface,
+conclusion, software discussion, or facts the configured lookup tools did not return."#;
+pub const HTML_REQUIREMENTS: &str = r#"Requirements:
+- Use semantic HTML.
+- Use embedded CSS and embedded JavaScript only; no external assets or libraries.
+- Include the exhibit title, the narrative, and the three visitor questions.
+- Include a visible caveat that unsupported claims require human review.
+- Add an accessible text filter over the visitor questions that updates a visible count.
+- Treat exhibit text as data and escape text before inserting it into HTML.
+- Make keyboard focus visible."#;
 
 pub const APOLLO_11_FACTS: [&str; 5] = [
     "Apollo 11 launched July 16, 1969.",
@@ -158,6 +184,61 @@ where
 }
 
 pub type RuntimeError = Box<dyn Error + Send + Sync>;
+
+pub fn selected_model() -> Option<String> {
+    std::env::var("COPILOT_MODEL")
+        .ok()
+        .map(|model| model.trim().to_owned())
+        .filter(|model| !model.is_empty())
+}
+
+pub fn describe_failure(error: &(dyn Error + 'static)) -> String {
+    if is_timeout_error(error) {
+        "The curator did not respond in time. Try again.".to_owned()
+    } else {
+        format!("Could not generate the exhibit: {error}")
+    }
+}
+
+fn is_timeout_error(error: &(dyn Error + 'static)) -> bool {
+    let mut current = Some(error);
+    while let Some(candidate) = current {
+        let message = candidate.to_string().to_lowercase();
+        if message.contains("timeout") || message.contains("timed out") {
+            return true;
+        }
+        current = candidate.source();
+    }
+    false
+}
+
+pub fn build_research_prompt<I, S>(approved_facts: I) -> Result<String, RuntimeError>
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<str>,
+{
+    let facts = bound_facts(approved_facts)?;
+    let fact_list = facts
+        .iter()
+        .map(|fact| format!("- {fact}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    Ok(format!(
+        r#"Research background for a museum exhibit using only the configured Wikipedia tools.
+
+Supplied approved facts:
+{fact_list}
+
+Search first with the scoped search tool, then read at most a few of the most relevant
+articles with readArticle. Write a short, cited factual summary that the application can
+supply to the curator through a local lookup. Associate researched claims with the
+consulted articles. Do not modify the approved facts or write exhibit copy.
+
+End with a ## Sources section listing each consulted article as:
+- <article title>: <canonical Wikipedia URL>"#
+    ))
+}
 
 struct ApprovedWikipediaFactLookup {
     payload: String,
@@ -723,6 +804,17 @@ pub fn extract_sources(content: &str) -> ExtractedSources {
     ExtractedSources { body, sources }
 }
 
+pub fn format_sources(research: &ExtractedSources) -> String {
+    let mut lines = vec!["Consulted Wikipedia sources:".to_owned()];
+    lines.extend(
+        research
+            .sources
+            .iter()
+            .map(|source| format!("- {}: {}", source.title, source.url)),
+    );
+    lines.join("\n")
+}
+
 fn parse_source_line(line: &str) -> Option<Source> {
     let bullet = line.trim().strip_prefix("- ")?.trim();
     let split = bullet.find(": http")?;
@@ -848,4 +940,36 @@ pub fn read_facts() -> io::Result<Vec<String>> {
         }
         facts.push(fact.to_owned());
     }
+}
+
+pub fn choose_approved_facts() -> Result<Vec<String>, RuntimeError> {
+    println!("Approved fact sets:");
+    for (index, fact_set) in fact_sets().iter().enumerate() {
+        println!("{}. {}", index + 1, fact_set.label);
+    }
+    println!();
+
+    let choice = ask_line(&format!(
+        "Choose a fact set [1-{}, default 1]: ",
+        fact_sets().len()
+    ))?;
+    let selected_index = choice
+        .trim()
+        .parse::<usize>()
+        .ok()
+        .filter(|index| (1..=fact_sets().len()).contains(index))
+        .unwrap_or(1)
+        - 1;
+    let selected = &fact_sets()[selected_index];
+    let mut facts = bound_facts(selected.facts)?;
+    for (index, fact) in facts.iter().enumerate() {
+        println!("{}. {fact}", index + 1);
+    }
+    println!();
+
+    if !ask_yes_no("Use these facts?", true)? {
+        facts = bound_facts(read_facts()?)?;
+    }
+
+    Ok(facts)
 }
