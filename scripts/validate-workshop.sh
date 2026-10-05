@@ -36,7 +36,7 @@ run_system_python() {
 
 validate_content() {
     run_system_python scripts/validate_workshop.py
-    run_system_python -m unittest scripts/test_check_localization_updates.py
+    run_system_python -m unittest discover -s scripts -p 'test_*.py'
     node docs/tests/markdown-language-preprocessor.test.js
     node docs/tests/workshop-site.test.js
     node --test docs/tests/workshop-completion.test.js

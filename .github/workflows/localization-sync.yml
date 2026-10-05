@@ -13,20 +13,23 @@ on:
       - 'workshop/**/*.md'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-  copilot-requests: write
+permissions: {}
 
 concurrency:
   group: localization-sync-main
   cancel-in-progress: false
 
 jobs:
-  localize:
-    name: Update localized documentation
+  generate:
+    name: Generate localized documentation
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: read
+      copilot-requests: write
+    outputs:
+      changed: ${{ steps.detect.outputs.changed }}
+      changed_files: ${{ steps.detect.outputs.changed_files }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -110,8 +113,56 @@ jobs:
 
           rm .localization-changed-files.txt
 
-      - name: Guard generated changes
+      - name: Upload generated localization tree
         if: steps.detect.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: localization-output
+          path: |
+            localizations
+            docs/locale-registry.js
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  validate:
+    name: Validate generated localization
+    needs: generate
+    if: needs.generate.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.generated.outputs.changed }}
+    steps:
+      - name: Checkout trusted repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Download generated localization tree
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: localization-output
+          path: ${{ runner.temp }}/localization-output
+
+      - name: Materialize generated localization tree
+        run: |
+          python3 scripts/materialize_localization_artifact.py \
+            "${{ runner.temp }}/localization-output"
+
+      - name: Guard generated changes
         id: generated
         run: |
           python3 scripts/check_localization_updates.py \
@@ -129,15 +180,47 @@ jobs:
 
       - name: Validate localized site
         if: steps.generated.outputs.changed == 'true'
+        run: bash scripts/validate-workshop.sh content
+
+  publish:
+    name: Publish localization pull request
+    needs: [generate, validate]
+    if: needs.validate.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout trusted repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Download validated localization tree
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: localization-output
+          path: ${{ runner.temp }}/localization-output
+
+      - name: Materialize validated localization tree
         run: |
-          node docs/tests/workshop-site.test.js
-          python3 scripts/validate_workshop.py
+          python3 scripts/materialize_localization_artifact.py \
+            "${{ runner.temp }}/localization-output"
 
       - name: Create localization review pull request
-        if: steps.generated.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ github.token }}
+          add-paths: |
+            localizations
+            docs/locale-registry.js
           branch: automation/localization-sync
           base: main
           delete-branch: true
@@ -147,7 +230,7 @@ jobs:
             GitHub Copilot CLI ran the repository-local localization skill for these English sources requiring synchronization:
 
             ```
-            ${{ steps.detect.outputs.changed_files }}
+            ${{ needs.generate.outputs.changed_files }}
             ```
 
             This pull request updates only existing locales. Please review translation quality and the localization baselines before merging.
