@@ -127,9 +127,9 @@
       "localized_sha256": "fac9f5e7aca9c35e0e01ec7a91a396970bb8bdf148b25859cb235a2e0f0a4c55"
     },
     "workshop/03-local-tool.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "10fe6a2c80075e298b1fd92be61bcefbb874884f5d86954f75e5a6c9f6c9ae17",
-      "localized_sha256": "b19e015e9230ec124dabb052d3b3ee0f8717fb129ae68e6499b81c937b23c968"
+      "localized_sha256": "48c99b0859fb9a6e88175ec09e882db18fd2fb08f349093c092a2409b1a804a7"
     },
     "workshop/04-mcp-safety.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -137,14 +137,14 @@
       "localized_sha256": "bfba8aeda9508871ca651c3cceb09467f5332fd4d0ce8bb719734b34c4786627"
     },
     "workshop/05-combine-tools.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "4fb915016a414f7b7a7cf06d5a89c61504efe18e9a3a26a84c0cab85f07b85cb",
-      "localized_sha256": "131d6f71e834ff920f310c190cbbb6b580b9026d3b82498512c8d100a7dd6000"
+      "localized_sha256": "0c540636101cca8cde0c444f3517741411a11149fde8253ede125bf7a209e29c"
     },
     "workshop/06-structured-report.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "bc96063f7a2f1e6a72a61b2a99b3e86abf5ed505826f84007f55692f3c0eafb4",
-      "localized_sha256": "e42d9d002556ccfe5b9548c057a21fc01ff51547f331dcf97eec474a200ebf58"
+      "localized_sha256": "4b560eeb6b6d3beaac1695f47bfba2e65fd16ab8a919e93c871983d8a95b98fb"
     },
     "workshop/07-run-explain.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -157,9 +157,9 @@
       "localized_sha256": "f564d94aa7ff2da05a3fc97e89cdd3073cd7cf6dd41d426f5114be3db9ae364c"
     },
     "workshop/09-interactive-html-report.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "eba9ce17fb51f714a431bfd411d5e1e05b6ec9f1275272ef5ded9c35288d2a03",
-      "localized_sha256": "0f48a6bfa20df1177e06348d280a1df5128fbee2b7eb6c85e91867220c656cdd"
+      "localized_sha256": "e1675143694cc0e7baf9df8126fc79b97afedfbc21f8e0f9d30ff9d7d8b49a58"
     },
     "workshop/10-complete.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -192,14 +192,14 @@
       "localized_sha256": "ef91b8635b53d07f712f13d10433e87cc0ba62a3c5a47dd5c56d980be53e3ffa"
     },
     "workshop/museum-00-preflight.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "ed800141333156739757e46c9251974ea06ac1bc1a8143a7d896b519bbc346b3",
-      "localized_sha256": "7f0d149380670f22b189a1c61d83acf6e976b15e9f9ae257e69064c57eac1559"
+      "localized_sha256": "a4061539daf8f183ef30a0d303f256304e70dec17fb3bc0751ee443767bab023"
     },
     "workshop/museum-01-first-curator-session.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "afe8570dbe5a09e1ca837deac3b9ea12ab133555f7472c5a18fda5bfe66da113",
-      "localized_sha256": "cc0d94ddb7fac54b2d163ae46bc10e6fabb475f63b239ace47d9cf1afad883c6"
+      "localized_sha256": "e6f388507608e1532a2cc92420e13eda8caf08117f3ad47566dbc21b1738f42d"
     },
     "workshop/museum-02-stream-the-curator.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -207,9 +207,9 @@
       "localized_sha256": "834d403d94b75d1936190f8725deb46b06b8d68c65ecdb7f669d2ee893516c0f"
     },
     "workshop/museum-03-curator-voice.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "4953b2c169bbdd7c82857306a29d9bb0b1c45d34a2fe91a35331588fdea282b9",
-      "localized_sha256": "d2ea86da271aafc2ddee3b2af8538b3ed7130fc8464a2407d9e0d99605a1916b"
+      "localized_sha256": "191a4b1ca66119f5b06def2a4fc712194041ece1bb51aed8991294c599bb171f"
     },
     "workshop/museum-04-approved-facts.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -217,9 +217,9 @@
       "localized_sha256": "8133b181b7553b7b269d582dc31436351e9bb9e8aba9c8035421688914dacd08"
     },
     "workshop/museum-06-prove-the-structure.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
+      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
       "source_sha256": "2d70c2588b5c6963a4fd4ccfc8789a93de6ea94b96b229a6d852433515023418",
-      "localized_sha256": "8d147f74dfc6172088f3dfcab90a128effc4e1fc7d12b8dd533dffb8e82efd0f"
+      "localized_sha256": "073f065f394201afd3ed4472f5715a1bf81dab1dff483fc3b042ea4be8e44dde"
     },
     "workshop/museum-07-wikipedia-research.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",

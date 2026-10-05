@@ -444,4 +444,4 @@ After:  Fifty years on, the ladder still hangs a metre above the dust. On 20 Jul
 - [Custom skills](https://github.com/github/copilot-sdk/blob/main/docs/features/skills.md):
   긴 메시지 하나 대신 지속적인 지침을 재사용 가능한 모듈로 패키징하는 방법을 설명합니다.
 
-[승인된 사실에 근거 두기](../../../workshop/museum-04-approved-facts.md)로 계속 진행합니다.
+[승인된 사실에 근거 두기](museum-04-approved-facts.md)로 계속 진행합니다.

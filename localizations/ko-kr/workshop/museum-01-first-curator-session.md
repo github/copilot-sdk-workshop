@@ -374,4 +374,4 @@ two of them stepped onto its surface while the world listened.
 - [인증](https://github.com/github/copilot-sdk/blob/main/docs/auth/README.md):
   `copilot login` 이후 클라이언트가 사용할 수 있는 자격 증명을 설명합니다.
 
-[큐레이터 응답 스트리밍](../../../workshop/museum-02-stream-the-curator.md)으로 계속 진행합니다.
+[큐레이터 응답 스트리밍](museum-02-stream-the-curator.md)으로 계속 진행합니다.

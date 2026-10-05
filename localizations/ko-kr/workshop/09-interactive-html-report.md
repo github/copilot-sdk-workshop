@@ -582,4 +582,4 @@ Java 로컬 데모 대체 방법은 SDK가 권한 페이로드 필드를 생략�
 - [로컬 CLI 설정](https://github.com/github/copilot-sdk/blob/main/docs/setup/local-cli.md):
   SDK가 시작할 CLI를 제어하며, 이에 따라 작성된 파일이 저장되는 위치가 결정됩니다.
 
-축하와 계속 빌드하는 데 도움이 되는 리소스를 확인하려면 [10단계: 완료했습니다!](../../../workshop/10-complete.md)로 이동합니다.
+축하와 계속 빌드하는 데 도움이 되는 리소스를 확인하려면 [10단계: 완료했습니다!](10-complete.md)로 이동합니다.

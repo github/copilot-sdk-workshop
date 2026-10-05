@@ -978,4 +978,4 @@ public final class AccessibilityReport {
 - [사용자 지정 스킬](https://github.com/github/copilot-sdk/blob/main/docs/features/skills.md):
   세션에 등록된 도구와 함께 로드되는 재사용 가능한 지침을 패키징합니다.
 
-[4단계: 외부 도구에 안전하게 연결](../../../workshop/04-mcp-safety.md)로 계속 진행합니다.
+[4단계: 외부 도구에 안전하게 연결](04-mcp-safety.md)로 계속 진행합니다.

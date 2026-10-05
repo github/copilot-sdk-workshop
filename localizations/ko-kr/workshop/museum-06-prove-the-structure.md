@@ -288,4 +288,4 @@ The museum's ticketing terminal was installed in 1998.
   각 훅이 턴 안에서 어디에 위치하는지 설명합니다. 나중에 실행하는 검사가 아니라, 런타임이 강제하는
   검사가 필요하다면 여기서 확인하십시오.
 
-[Wikipedia MCP로 조사하기](../../../workshop/museum-07-wikipedia-research.md)로 계속 진행합니다.
+[Wikipedia MCP로 조사하기](museum-07-wikipedia-research.md)로 계속 진행합니다.

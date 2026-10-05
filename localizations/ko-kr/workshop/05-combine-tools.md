@@ -1571,4 +1571,4 @@ public final class AccessibilityReport {
 - [후크 개요](https://github.com/github/copilot-sdk/blob/main/docs/hooks/hooks-overview.md):
   턴에서 각 후크가 위치하는 지점을 설명하며, 여러 도구 호출에 걸친 검사를 이 지점에 추가합니다.
 
-[6단계: 구조화된 보고서 생성하기](../../../workshop/06-structured-report.md)로 계속 진행합니다.
+[6단계: 구조화된 보고서 생성하기](06-structured-report.md)로 계속 진행합니다.

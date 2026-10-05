@@ -1169,4 +1169,4 @@ private static String reportPrompt(URI target) {
 - [인용(Citations)](https://github.com/github/copilot-sdk/blob/main/docs/features/citations.md):
   응답의 범위를 해당 내용을 뒷받침하는 자료와 연결하는 실험적인 방법입니다.
 
-[7단계: 애플리케이션 실행 및 설명](../../../workshop/07-run-explain.md)으로 계속 진행합니다.
+[7단계: 애플리케이션 실행 및 설명](07-run-explain.md)으로 계속 진행합니다.

@@ -255,4 +255,4 @@ cd start-museum/java
   Java SDK의 종속성 좌표와 최소 예제를 제공합니다.
 :::
 
-[첫 번째 큐레이터 세션](../../../workshop/museum-01-first-curator-session.md)으로 계속 진행합니다.
+[첫 번째 큐레이터 세션](museum-01-first-curator-session.md)으로 계속 진행합니다.
