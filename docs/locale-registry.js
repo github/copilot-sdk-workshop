@@ -405,6 +405,229 @@ System message: replace
                 one: '## 1막: Hello World',
                 two: '## 2막: 팟캐스트 에이전트로 전환'
             })
+        },
+        {
+            id: 'ja-jp',
+            displayName: '日本語',
+            htmlLang: 'ja',
+            contentPath: 'localizations/ja-jp/',
+            ui: Object.freeze({
+                title: 'ワークショップを選択 | GitHub Copilot SDK',
+                description: '30 分の GitHub Copilot SDK 101 ワークショップから始めるか、アクセシビリティレビューアーや博物館キュレーターで一歩進んだ内容に取り組みます。',
+                skipLink: 'ワークショップ概要へスキップ',
+                brandLabel: 'GitHub Copilot SDK ワークショップのホーム',
+                resourcesLabel: 'ワークショップリソース',
+                targetApp: '対象アプリ',
+                sdkDocs: 'SDK ドキュメント',
+                sdkDocsNamed: '{language} SDK ドキュメント',
+                newTab: '(新しいタブで開きます)',
+                settings: {
+                    label: '設定',
+                    locale: '表示言語',
+                    theme: 'テーマ',
+                    light: 'ライト',
+                    dark: 'ダーク'
+                },
+                heroTitle: 'エージェントの目的を選択する。',
+                heroDefinition: 'まず 30 分で SDK 101 に取り組みます。さらに、ソフトウェアライフサイクル向けのエージェントを構築したり、Copilot を別の分野で活用したりします。',
+                workshopLegend: 'ワークショップを選択',
+                languageTitle: 'ワークショップのプログラミング言語を選択',
+                languageSummary: 'まずワークショップを選び、次に実装言語を選択します。',
+                programmingLanguage: 'プログラミング言語',
+                startSelected: '選択したワークショップを開始',
+                startNamed: '「{name}」を開始',
+                startGuidance: 'ワークショップと言語を選択します。エージェントや SDK の事前経験は不要です。',
+                chooseLanguageFor: '「{name}」の言語を選択します。',
+                workshopUsesLanguage: '「{name}」では {language} SDK を使用します。',
+                chooseWorkshopContinue: '続行するワークショップを選択します。',
+                introRuntimeNote: 'start-intro/{language} で作業します。事前準備では、そのランタイムと依存関係のセットアップを扱います。',
+                runtimeNotes: {
+                    dotnet: '.NET SDK と対応する C# ランタイムが必要です。',
+                    go: '対応する Go ツールチェーンとモジュールが必要です。',
+                    java: '対応する JDK と Maven または Gradle プロジェクトが必要です。',
+                    nodejs: '最新の Node.js LTS リリースが必要です。',
+                    python: 'Python と分離された仮想環境が必要です。',
+                    rust: 'rustup から入手した Rust と Cargo が必要です。'
+                },
+                lesson: {
+                    previous: '前へ',
+                    previousShort: '前へ',
+                    nextShort: '次へ',
+                    previousAria: '前へ: {title}',
+                    nextAria: '次へ: {title}',
+                    backToHub: 'ワークショップハブに戻る',
+                    beforeYouBegin: '始める前に',
+                    workshop: 'ワークショップ',
+                    skipLink: 'レッスンへスキップ',
+                    siteTitle: 'Copilot SDK ワークショップ',
+                    homeAriaLabel: 'Copilot SDK ワークショップのホーム',
+                    openSections: 'セクションを開く',
+                    closeSections: 'セクションを閉じる',
+                    lessonActions: 'レッスン操作',
+                    chooseLanguageOption: '言語を選択',
+                    progressAriaLabel: 'ワークショップの進行状況',
+                    loading: '読み込み中',
+                    stepPosition: 'ステップ {number}/{count}',
+                    preflight: '事前準備',
+                    navigationTitle: '{workshop} のステップ',
+                    navigationAriaLabel: 'ワークショップのステップ',
+                    paginationAriaLabel: 'レッスンのページ移動',
+                    loadingLesson: 'レッスンを読み込んでいます。',
+                    loadingLessonProgress: 'レッスンを読み込み中...',
+                    loadingNamed: '{title} を読み込んでいます。',
+                    loadedNamed: '{title} を読み込みました。',
+                    completeStatus: '{workshop} が完了しました。やり遂げました！リソースは以下で利用できます。',
+                    documentTitle: '{step} | {language} | Copilot SDK ワークショップ',
+                    chooseLanguageDocumentTitle: '言語を選択 | Copilot SDK ワークショップ',
+                    chooseLanguageShort: '言語を選択',
+                    chooseLanguageHeading: 'ワークショップのプログラミング言語を選択',
+                    chooseLanguageDetails:
+                        'このレッスンを読み込むには、設定を開き、対応する 6 つのプログラミング言語から 1 つを選択します。',
+                    chooseLanguageStatus: '続行するには、ワークショップのプログラミング言語を選択します。',
+                    loadErrorHeading: 'このレッスンを読み込めません',
+                    loadErrorStatus: 'このレッスンを読み込めません。',
+                    loadErrorFileGuidance:
+                        'ローカル HTTP サーバーでリポジトリを配信してください。ブラウザーは file URL からのレッスン取得をブロックします。',
+                    loadErrorGuidance:
+                        'ページを更新してください。問題が続く場合は、ワークショップ Markdown がデプロイされていることを確認してください。',
+                    copy: 'コピー',
+                    copied: 'コピー済み',
+                    copyFailed: 'コピー失敗',
+                    copyAriaLabel: 'コードブロックをコピー',
+                    times: {
+                        untimed: '時間制限なし',
+                        resources: 'リソース',
+                        minutes: '{count} 分'
+                    },
+                    workshopTitles: {},
+                    stepLabels: {
+                        'intro-00-preflight': '事前準備',
+                        'intro-01-sdk-basics': 'SDK の基本',
+                        'intro-02-hello-world': 'Hello World',
+                        'intro-03-podcast-agent': 'ポッドキャストエージェント',
+                        'intro-04-wrap-up': 'まとめ',
+                        '00-preflight': '事前準備',
+                        '01-first-session': '最初のセッション',
+                        '02-streaming': 'ストリーミング',
+                        '03-local-tool': 'アプリ所有の知識',
+                        '04-mcp-safety': '外部ツール接続',
+                        '05-combine-tools': 'ツールの組み合わせ',
+                        '06-structured-report': '構造化レポート',
+                        '07-run-explain': '実行と説明',
+                        '08-model-selection': 'モデル選択',
+                        '09-interactive-html-report': 'インタラクティブレポート',
+                        '10-complete': '達成と次のステップ',
+                        'museum-00-preflight': '事前準備',
+                        'museum-01-first-curator-session': '最初のキュレーターセッション',
+                        'museum-02-stream-the-curator': 'キュレーターのストリーミング',
+                        'museum-03-curator-voice': 'キュレーターの語り口',
+                        'museum-04-approved-facts': '承認済みの事実',
+                        'museum-06-prove-the-structure': '構造の検証',
+                        'museum-07-wikipedia-research': 'Wikipedia 調査',
+                        'museum-08-interactive-exhibit-page': '展示ページ',
+                        'museum-09-complete': '達成と次のステップ'
+                    },
+                    stepTitles: {
+                        'intro-00-preflight': '事前準備: SDK 101 の準備をする',
+                        'intro-01-sdk-basics': 'ステップ 1: SDK の基本',
+                        'intro-02-hello-world': 'ステップ 2: ストリーミングで Hello World',
+                        'intro-03-podcast-agent': 'ステップ 3: ポッドキャストエージェントを構築する',
+                        'intro-04-wrap-up': 'ステップ 4: まとめと次のステップ',
+                        '00-preflight': '事前準備: マシンをセットアップする',
+                        '01-first-session': 'ステップ 1: 最初の Copilot セッションを作成する',
+                        '02-streaming': 'ステップ 2: 応答をストリーミングする',
+                        '03-local-tool': 'ステップ 3: アプリケーションが所有する知識を追加する',
+                        '04-mcp-safety': 'ステップ 4: 外部ツールを安全に接続する',
+                        '05-combine-tools': 'ステップ 5: ローカルツールと MCP ツールを組み合わせる',
+                        '06-structured-report': 'ステップ 6: 構造化レポートを生成する',
+                        '07-run-explain': 'ステップ 7: アプリケーションを実行して説明する',
+                        '08-model-selection': 'ステップ 8: モデルを選択する',
+                        '09-interactive-html-report': 'ステップ 9: インタラクティブな HTML レポートを生成する',
+                        '10-complete': 'やり遂げました！',
+                        'museum-00-preflight': 'Museum Exhibit Studio: 事前準備',
+                        'museum-01-first-curator-session': 'ステップ 1: 最初のキュレーターセッション',
+                        'museum-02-stream-the-curator': 'ステップ 2: キュレーターの応答をストリーミングする',
+                        'museum-03-curator-voice': 'ステップ 3: キュレーターに語り口を与える',
+                        'museum-04-approved-facts': 'ステップ 4: 承認済みの事実に基づかせる',
+                        'museum-06-prove-the-structure': 'ステップ 5: 構造を検証する',
+                        'museum-07-wikipedia-research': 'ステップ 6: Wikipedia MCP で調査する',
+                        'museum-08-interactive-exhibit-page': 'ステップ 7: インタラクティブな展示ページを公開する',
+                        'museum-09-complete': 'やり遂げました！'
+                    }
+                },
+                previewAriaLabel: '選択したワークショップのプレビュー',
+                previewEmptyTitle: 'workshop-preview',
+                previewEmpty: 'ワークショップを選択するとエージェントフローをプレビューできます。',
+                outcomesTitle: 'アプリを構築し、境界を理解する。',
+                outcomes: [
+                    'Copilot セッションを作成して管理します。',
+                    '永続的なエージェントポリシーをタスクデータから分離します。',
+                    '作業に適したツールサーフェスを選択します。',
+                    '客観的な出力要件をコードで検証します。',
+                    'プロンプトのガイダンスが終わり、厳格な制御が始まる場所を説明します。'
+                ],
+                workshops: {
+                    intro: {
+                        kicker: '初級入門 · 30 分',
+                        name: 'SDK 101 を始める',
+                        shortName: 'SDK 101',
+                        description: '付属のスタータープロジェクトを使って、ストリーミング Hello World からポッドキャストエージェントまで進みます。事前にセットアップを完了します。',
+                        capabilities: 'クライアントとセッション · ストリーミング · あらかじめ用意されたローカルツール · 承認',
+                        previewTitle: 'start-intro',
+                        preview: `クライアント → ストリーミング Hello World
+             → ポッドキャストエピソードを選択
+             → RSS ツールを承認
+             → 見出しと公開投稿
+
+[ツール] get_github_podcast_episode
+
+30 分 · 6 言語
+セッション前にセットアップを完了。`,
+                        guidance: '30 分で SDK の基本を学びます。事前にインストール、認証、スターターの依存関係のダウンロードを完了します。'
+                    },
+                    sdlc: {
+                        kicker: '開発者ツール · 115 分',
+                        name: 'Web アクセシビリティをレビュー',
+                        shortName: 'アクセシビリティレビュー',
+                        description: 'ページを検査し、WCAG ガイダンスを参照して、証拠に基づくレポートを生成する SDLC エージェントを構築します。',
+                        capabilities: 'ストリーミング · ローカルツール · Playwright MCP · 権限',
+                        previewTitle: 'accessibility-reviewer',
+                        preview: `URL → Playwright 検査
+    → WCAG 参照
+    → 構造化レポート
+
+[ツール] playwright-browser_navigate
+[ツール] accessibility_rule_lookup
+
+検出事項
+名前入力にアクセシブルな名前がありません。`,
+                        guidance: '115 分のワークショップで SDLC 開発者ツールを構築し、その後は完成を祝って開発を続けます。'
+                    },
+                    museum: {
+                        kicker: '非 SDLC ツール · 90 分',
+                        name: '博物館の展示をキュレーション',
+                        shortName: '博物館展示',
+                        description: '承認済みの事実を来館者向けの展示コピーに変換する、根拠に基づいた解説エージェントを構築します。',
+                        capabilities: 'カスタムペルソナ · アプリケーション所有のツール 1 つ · 検証 · 評価',
+                        previewTitle: 'museum-exhibit-studio',
+                        preview: `承認済みの事実 → キュレーターセッション
+               → 展示の検証
+               → 来館者向けのコピー
+
+利用可能なツール: []
+システムメッセージ: replace
+
+# Journey to the Moon
+## Narrative
+## Visitor questions`,
+                        guidance: '90 分のワークショップで非 SDLC のキュレーターツールを構築し、その後は完成を祝って開発を続けます。'
+                    }
+                }
+            }),
+            demoActHeadings: Object.freeze({
+                one: '## 第 1 幕: Hello World',
+                two: '## 第 2 幕: ポッドキャストエージェントに作り変える'
+            })
         }
     ]);
 
