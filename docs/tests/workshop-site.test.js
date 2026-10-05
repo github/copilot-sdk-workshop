@@ -374,7 +374,8 @@ async function main() {
     assert.doesNotMatch(fallback.elements.get('markdownContent').innerHTML, /<!-- LIVE_DEMO -->/);
 
     const noLanguage = createPage(lessonHtml,
-        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=invalid');    await vm.runInContext(lessonScript, noLanguage.context);
+        'http://localhost:8000/docs/workshop/step.html?step=intro-01-sdk-basics&lang=invalid');
+    await vm.runInContext(lessonScript, noLanguage.context);
     assert.equal(noLanguage.requests.length, 0);
     assert.equal(noLanguage.elements.get('hubLink').href, '../index.html?workshop=intro');
     assert.equal(noLanguage.elements.get('lessonStatus').textContent,
