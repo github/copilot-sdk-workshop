@@ -48,7 +48,7 @@ python3 -m http.server 8000
 
 이 워크숍은 다음 로케일에서 여러 언어를 제공합니다.
 
-[English](../../README.md) | 한국어
+[English](../../README.md) | 한국어 | [日本語](../ja-jp/README.md) | [Português (Brasil)](../pt-br/README.md) | [Español](../es-es/README.md) | [Français](../fr-fr/README.md) | [Deutsch](../de-de/README.md)
 
 더 많은 언어 지원을 추가하려면 [`docs/locale-registry.js`](../../docs/locale-registry.js)에
 로케일을 추가한 다음 `localizations/` 디렉터리 아래에 현지화된 문서를 추가하세요.
