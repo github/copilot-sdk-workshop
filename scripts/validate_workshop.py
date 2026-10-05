@@ -58,7 +58,7 @@ INTRO_RUN_COMMANDS = {
     "nodejs": ("npm start",),
     "python": (r".\.venv\Scripts\python.exe main.py", ".venv/bin/python main.py"),
     "go": ("go run .",),
-    "java": ("mvn compile exec:java",),
+    "java": ("./mvnw compile exec:java",),
     "rust": ("cargo run --locked",),
 }
 SDLC_LESSONS = (
@@ -1905,7 +1905,7 @@ def validate_site_behavior() -> None:
     require("language-navigation.js" in index and "language-navigation.js" in step, "Homepage and lessons must share language navigation")
     require("resolveLanguage" in navigation and "lessonUrl" in navigation and "firstLessonUrl" in navigation, "Language navigation must preserve URL propagation")
     require("localStorage" in read(DOCS / "homepage.js") and "localStorage" in step, "Homepage and lessons must persist language selection")
-    require("Choose a workshop language" in step and "if (!language)" in step, "Lessons must not load without a valid language")
+    require("lessonUi.chooseLanguageHeading" in step and "if (!language)" in step, "Lessons must not load without a valid language")
     require("preprocessLanguageDirectives" in step, "Lesson viewer must filter language directives")
     require("workshopTracks" in step and "activeWorkshopId" in step,
             "Lesson viewer must scope navigation to the active workshop")
@@ -2869,7 +2869,7 @@ def validate_completion_pages() -> None:
         "Completion celebration must run only after the lesson successfully renders",
     )
     require(
-        "Back to workshop hub" in viewer and "homeUrl(getSelectedLanguage())" in viewer,
+        "lessonUi.backToHub" in viewer and "homeUrl(getSelectedLanguage())" in viewer,
         "Final pagination must offer a language-preserving workshop hub exit",
     )
 

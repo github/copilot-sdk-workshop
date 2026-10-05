@@ -135,20 +135,20 @@ See the [starter README](https://github.com/github/copilot-sdk-workshop/blob/mai
 :::language java
 ### Prepare Java
 
-Install [Java 17 or newer](https://adoptium.net/) and
-[Apache Maven 3.9 or newer](https://maven.apache.org/install.html).
-This starter uses Maven itself, not a Maven wrapper.
+Install [Java 17 or newer](https://adoptium.net/).
+No separate Maven install is needed: the starter includes the Maven Wrapper (`./mvnw`),
+which downloads the right Maven version on first use. On Windows, run `mvnw.cmd` instead of
+`./mvnw`.
 
 ```shell
 java --version
-mvn --version
 cd start-intro/java
-mvn dependency:go-offline
+./mvnw dependency:go-offline
 ```
 
 Open `start-intro/java` in your editor (`code .` for VS Code).
 Your entrypoint is `src/main/java/demo/CopilotSdkLiveDemo.java`.
-Later you will run `mvn compile exec:java` from this folder.
+Later you will run `./mvnw compile exec:java` from this folder.
 
 See the [starter README](https://github.com/github/copilot-sdk-workshop/blob/main/start-intro/java/README.md).
 :::
