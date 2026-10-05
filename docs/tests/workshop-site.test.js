@@ -402,6 +402,30 @@ async function main() {
         assert.equal(korean.elements.get('menuButton').getAttribute('aria-label'), '목차 열기');
     }
 
+    // Every locale serves its own lessons and demo guides through the same viewer.
+    for (const locale of WorkshopLocales.locales.slice(1)) {
+        const localized = createPage(lessonHtml,
+            `http://localhost:8000/docs/workshop/step.html?step=intro-02-hello-world&lang=python&locale=${locale.id}`);
+        await vm.runInContext(lessonScript, localized.context);
+        assert.equal(localized.requests[0],
+            `http://localhost:8000/${locale.contentPath}workshop/intro-02-hello-world.md`);
+        assert.equal(localized.requests[1],
+            `http://localhost:8000/${locale.contentPath}start-intro/python/LIVE_DEMO.md`);
+        assert.equal(localized.requests.length, 2, `${locale.id} must not fall back to English`);
+        assert.equal(localized.context.document.documentElement.lang, locale.htmlLang);
+        const content = localized.elements.get('markdownContent').innerHTML;
+        assert.deepEqual([...content.matchAll(/^### (\d+)\./gm)].map(match => match[1]), ['1', '2', '3', '4'],
+            `${locale.id} hello world must include the four demo edits`);
+        assert.doesNotMatch(content, /<!-- LIVE_DEMO -->/);
+        assert.equal(localized.elements.get('markdownContent').getAttribute('aria-busy'), 'false');
+        assert.equal(localized.elements.get('settingsButton').getAttribute('aria-label'),
+            locale.ui.settings.label);
+        assert.equal(localized.elements.get('headerLessonTitle').textContent,
+            locale.ui.lesson.stepTitles['intro-02-hello-world']);
+        assert.equal(localized.elements.get('homeLink').href,
+            `../index.html?lang=python&workshop=intro&locale=${locale.id}`);
+    }
+
     // The header keeps only the brand, step links, and the settings menu.
     for (const removed of ['hubLink', 'headerDocsLink']) {
         assert.doesNotMatch(lessonHtml, new RegExp(`id="${removed}"`));
