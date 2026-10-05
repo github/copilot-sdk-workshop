@@ -43,8 +43,8 @@ var isAuthenticated = (await client.GetAuthStatusAsync()).IsAuthenticated;
 
 ### 3. 세션 만들기
 
-파일 상단에 `using GitHub.Copilot.Rpc;`를 추가합니다. 다음으로 바꿉니다
-`CopilotSession session = null!;`으로 바꿉니다:
+파일 상단에 `using GitHub.Copilot.Rpc;`를 추가합니다.
+`CopilotSession session = null!;`를 다음 코드로 바꿉니다:
 
 ```csharp
 await using var session = await client.CreateSessionAsync(new SessionConfig
