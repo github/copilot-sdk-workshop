@@ -6,6 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const languages = require('../language-registry.js');
+const locales = require('../locale-registry.js');
 const navigation = require('../language-navigation.js');
 const markdown = require('../markdown-language-preprocessor.js');
 const completion = require('../workshop-completion.js');
@@ -76,6 +77,7 @@ function environment(url, reducedMotion = false) {
     let timerId = 0;
     const document = {
         body: new Element(),
+        documentElement: new Element(),
         createElement: () => new Element(),
         getElementById(id) {
             if (!elements.has(id)) elements.set(id, new Element());
@@ -125,6 +127,7 @@ async function viewer(step, language = 'nodejs', options = {}) {
         HTMLElement: Element,
         URL, URLSearchParams, console,
         WorkshopLanguages: languages,
+        WorkshopLocales: locales,
         WorkshopLanguageNavigation: navigation,
         WorkshopMarkdown: markdown,
         WorkshopCompletion: completion,

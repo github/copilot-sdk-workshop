@@ -147,6 +147,24 @@ a {
     border-radius: 6px;
 }
 
+.locale-select-label {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.locale-select {
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .home-shell {
     width: min(1180px, calc(100% - 2.5rem));
     min-height: calc(100svh - 4.5rem);
@@ -532,6 +550,10 @@ h1 {
     }
 
     .site-nav a {
+        display: none;
+    }
+
+    .locale-select-label {
         display: none;
     }
 

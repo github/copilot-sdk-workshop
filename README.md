@@ -45,6 +45,15 @@ python3 -m http.server 8000
 Open <http://localhost:8000/docs/>. Do not open `step.html` with a `file://` URL; browsers block
 the Markdown requests used by the lesson viewer.
 
+## Workshop in your language
+
+This workshop provides multiple languages in your locale:
+
+English | [한국어](./localizations/ko-kr/README.md)
+
+If you want to add more language support, add more locale to [`docs/locale-registry.js`](docs/locale-registry.js)
+then add localised documents under the `localizations/` directory.
+
 ## Prerequisites
 
 Install the runtime for your chosen language, not all six. Each track's preflight provides
@@ -83,6 +92,7 @@ copilot-sdk-workshop/
 |-- finished/rust/                Completed Rust projects
 |-- finished/java/                Completed Maven Java projects
 |-- src/BlazorApp/                Source counterpart of the deployed target
+|-- localizations/<locale>/       Translated lessons mirroring the source layout
 |-- scripts/                      Deterministic content and build validation
 `-- .github/workflows/            Validation and Pages deployment
 ```
@@ -165,7 +175,8 @@ dependency compilation.
 
 After validation passes, push to `main`. The
 [Pages workflow](.github/workflows/deploy.yml) publishes `docs/` plus the Markdown lessons in
-`workshop/`. Build and content validation run separately in the validation workflow.
+`workshop/` and their translations under `localizations/`. Build and content validation run
+separately in the validation workflow.
 
 Enable GitHub Pages in repository settings and choose **GitHub Actions** as the source. The
 deployment job reports the canonical workshop URL in its environment.

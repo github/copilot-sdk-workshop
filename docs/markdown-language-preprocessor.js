@@ -64,12 +64,17 @@
         return output.join('\n');
     }
 
-    function extractLiveDemoAct(markdown, act) {
+    const DEFAULT_DEMO_ACT_HEADINGS = Object.freeze({
+        one: '## Act One: Hello World',
+        two: '## Act Two: Turn It Into A Podcast Agent'
+    });
+
+    function extractLiveDemoAct(markdown, act, actHeadings) {
         if (typeof markdown !== 'string') {
             throw new TypeError('LIVE_DEMO Markdown must be a string.');
         }
-        const heading = act === 'one' ? '## Act One: Hello World'
-            : act === 'two' ? '## Act Two: Turn It Into A Podcast Agent' : null;
+        const headings = actHeadings ?? DEFAULT_DEMO_ACT_HEADINGS;
+        const heading = act === 'one' || act === 'two' ? headings[act] ?? null : null;
         if (!heading) {
             throw new Error(`Unknown LIVE_DEMO act: "${act}".`);
         }
@@ -101,12 +106,12 @@
         return content;
     }
 
-    function includeLiveDemoAct(lesson, guide, act) {
+    function includeLiveDemoAct(lesson, guide, act, actHeadings) {
         const marker = '<!-- LIVE_DEMO -->';
         if (lesson.split(marker).length !== 2) {
             throw new Error('The demo lesson must contain exactly one LIVE_DEMO marker.');
         }
-        return lesson.replace(marker, () => extractLiveDemoAct(guide, act));
+        return lesson.replace(marker, () => extractLiveDemoAct(guide, act, actHeadings));
     }
 
     return Object.freeze({ preprocessLanguageDirectives, extractLiveDemoAct, includeLiveDemoAct });

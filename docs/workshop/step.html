@@ -7,20 +7,22 @@
     <title>Copilot SDK Workshop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;500;600;700&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <link rel="stylesheet" href="../step.css">
     <link rel="stylesheet" href="../light-theme.css">
-    <script src="../theme-toggle.js"></script>
+    <link rel="stylesheet" href="../korean-typography.css">
+    <script src="../theme-toggle.js?v=2"></script>
     <script src="../language-registry.js"></script>
+    <script src="../locale-registry.js"></script>
     <script src="../language-navigation.js"></script>
     <script src="../markdown-language-preprocessor.js"></script>
     <script src="../workshop-completion.js"></script>
 </head>
 <body>
-    <a class="skip-link" href="#lessonContent">Skip to lesson</a>
+    <a class="skip-link" href="#lessonContent" id="skipLink">Skip to lesson</a>
 
     <header class="header">
         <div class="header-content">
@@ -38,10 +40,10 @@
                 <span class="visually-hidden" id="headerLessonTitle">Loading lesson</span>
             </a>
 
-            <nav class="header-nav" aria-label="Lesson actions">
-                <label class="language-select-label" for="languageSelector">Language</label>
+            <nav class="header-nav" id="headerNav" aria-label="Lesson actions">
+                <label class="language-select-label" id="languageSelectorLabel" for="languageSelector">Language</label>
                 <select class="language-select" id="languageSelector" aria-label="Workshop language">
-                    <option value="">Choose language</option>
+                    <option value="" id="chooseLanguageOption">Choose language</option>
                     <option value="dotnet">.NET</option>
                     <option value="go">Go</option>
                     <option value="java">Java</option>
@@ -49,6 +51,8 @@
                     <option value="python">Python</option>
                     <option value="rust">Rust</option>
                 </select>
+                <label class="language-select-label" id="localeSelectorLabel" for="localeSelector">Docs</label>
+                <select class="language-select" id="localeSelector" aria-label="Documentation language"></select>
                 <a href="../index.html" class="nav-btn" id="hubLink">🏠 Hub</a>
                 <a class="nav-btn" id="headerDocsLink" target="_blank" rel="noopener" hidden>📚 Docs ↗</a>
                 <button class="theme-toggle" type="button" onclick="toggleTheme()">☀️ Light</button>
@@ -90,15 +94,14 @@
                     type="button"
                     aria-label="Close sections">✕</button>
             </div>
-            <nav class="flyout-nav" id="workshopNavigation" aria-label="Workshop steps"></nav>
-        </aside>
+            <nav class="flyout-nav" id="workshopNavigation" aria-label="Workshop steps"></nav>        </aside>
 
         <main class="main lesson-main">
             <div class="lesson-shell">
                 <div class="lesson-content" id="lessonContent">
                     <p class="visually-hidden" id="lessonStatus" role="status" aria-live="polite">Loading lesson.</p>
                     <div id="markdownContent" aria-busy="true">
-                        <p class="loading-message">Loading lesson...</p>
+                        <p class="loading-message" id="loadingMessage">Loading lesson...</p>
                     </div>
                     <nav class="nav-footer" id="lessonFooter" aria-label="Lesson pagination"></nav>
                 </div>
@@ -383,7 +386,9 @@
         const closeNavigationButton = document.getElementById('closeNavigationButton');
         const compactNavigation = window.matchMedia('(max-width: 900px)');
         const languageSelector = document.getElementById('languageSelector');
+        const localeSelector = document.getElementById('localeSelector');
         const storageKey = 'copilot-sdk-workshop.language';
+        const localeStorageKey = 'copilot-sdk-workshop.locale';
         let currentIndex = 0;
         let focusBeforeNavigation;
         let loadSequence = 0;
@@ -407,6 +412,23 @@
                 return new URL(`../../${file}`, window.location.href);
             }
             return new URL(file, getSiteRootUrl());
+        }
+
+        function getLocalizedMarkdownUrl(file, locale) {
+            return getMarkdownUrl(WorkshopLocales.contentUrlPath(file, locale.id));
+        }
+
+        // Falls back to the canonical English source whenever a locale has no translation yet.
+        async function fetchLocalizedMarkdown(file, locale) {
+            const response = await fetch(getLocalizedMarkdownUrl(file, locale));
+            if (response.ok || locale.id === WorkshopLocales.defaultLocale.id) {
+                return { response, locale };
+            }
+            const fallbackLocale = WorkshopLocales.defaultLocale;
+            return {
+                response: await fetch(getLocalizedMarkdownUrl(file, fallbackLocale)),
+                locale: fallbackLocale
+            };
         }
 
         function getRequestedStepId() {
@@ -439,8 +461,98 @@
             );
         }
 
+        function getStoredLocaleId() {
+            try {
+                return window.localStorage.getItem(localeStorageKey);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function storeLocaleId(localeId) {
+            try {
+                window.localStorage.setItem(localeStorageKey, localeId);
+            } catch (error) {
+                // The workshop remains usable when local storage is unavailable.
+            }
+        }
+
+        function getSelectedLocale() {
+            return WorkshopLanguageNavigation.resolveLocale(
+                window.location.search,
+                getStoredLocaleId(),
+                WorkshopLocales.getLocale
+            ) ?? WorkshopLocales.defaultLocale;
+        }
+
+        function selectedLocaleQueryId() {
+            return WorkshopLocales.queryId(getSelectedLocale().id);
+        }
+
+        function getLessonUi() {
+            return getSelectedLocale().ui.lesson;
+        }
+
+        function getStepNavTitle(step) {
+            return getLessonUi().stepLabels[step.id] ?? step.navTitle;
+        }
+
+        function getStepTitle(step) {
+            return getLessonUi().stepTitles[step.id] ?? step.title;
+        }
+
+        function getWorkshopTitle() {
+            return getLessonUi().workshopTitles[activeWorkshop.title] ?? activeWorkshop.title;
+        }
+
+        // Step durations are authored in English so the registry only localizes the shape.
+        function getStepTime(step) {
+            const times = getLessonUi().times;
+            if (step.time === 'Untimed') {
+                return times.untimed;
+            }
+            if (step.time === 'Resources') {
+                return times.resources;
+            }
+            const minutes = /^(\d+) min$/.exec(step.time);
+            return minutes ? times.minutes.replace('{count}', minutes[1]) : step.time;
+        }
+
+        function applyLessonChrome() {
+            const locale = getSelectedLocale();
+            const lessonUi = locale.ui.lesson;
+            document.getElementById('skipLink').textContent = lessonUi.skipLink;
+            document.getElementById('homeLink').setAttribute('aria-label', lessonUi.homeAriaLabel);
+            document.getElementById('headerNav').setAttribute('aria-label', lessonUi.lessonActions);
+            document.getElementById('languageSelectorLabel').textContent = lessonUi.languageLabel;
+            document.getElementById('languageSelector').setAttribute(
+                'aria-label', lessonUi.languageAriaLabel);
+            document.getElementById('chooseLanguageOption').textContent =
+                lessonUi.chooseLanguageOption;
+            document.getElementById('localeSelectorLabel').textContent = locale.ui.docsLabel;
+            document.getElementById('localeSelector').setAttribute(
+                'aria-label', locale.ui.docsAriaLabel);
+            document.getElementById('hubLink').textContent = lessonUi.hub;
+            document.getElementById('progressTrack').setAttribute(
+                'aria-label', lessonUi.progressAriaLabel);
+            document.getElementById('closeNavigationButton').setAttribute(
+                'aria-label', lessonUi.closeSections);
+            document.getElementById('workshopNavigation').setAttribute(
+                'aria-label', lessonUi.navigationAriaLabel);
+            document.getElementById('lessonFooter').setAttribute(
+                'aria-label', lessonUi.paginationAriaLabel);
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.textContent = lessonUi.loadingLessonProgress;
+            }
+            if (typeof updateToggleIcon === 'function') {
+                updateToggleIcon(locale);
+            }
+        }
+
         function homeUrl(language) {
-            return WorkshopLanguageNavigation.homeUrl(language?.id, activeWorkshopId);
+            return WorkshopLanguageNavigation.homeUrl(
+                language?.id, activeWorkshopId, selectedLocaleQueryId());
         }
 
         function updateLanguageControls(language) {
@@ -449,7 +561,8 @@
             docsLink.hidden = language === null;
             if (language) {
                 docsLink.href = language.docsUrl;
-                docsLink.textContent = `📚 ${language.displayName} docs ↗`;
+                docsLink.textContent = getLessonUi().headerDocs.replace(
+                    '{language}', language.displayName);
             } else {
                 docsLink.removeAttribute('href');
             }
@@ -457,9 +570,24 @@
             document.getElementById('hubLink').href = homeUrl(language);
         }
 
+        function populateLocaleControls() {
+            WorkshopLocales.locales.forEach(locale => {
+                const option = document.createElement('option');
+                option.value = locale.id;
+                option.textContent = locale.displayName;
+                localeSelector.append(option);
+            });
+        }
+
+        function updateLocaleControls(locale) {
+            localeSelector.value = locale.id;
+            document.documentElement.lang = locale.htmlLang;
+        }
+
         function stepUrl(step) {
             const language = getSelectedLanguage();
-            return WorkshopLanguageNavigation.lessonUrl(step.id, language?.id);
+            return WorkshopLanguageNavigation.lessonUrl(
+                step.id, language?.id, selectedLocaleQueryId());
         }
 
         function setNavigationOpen(open) {
@@ -467,7 +595,9 @@
             navigationPanel.classList.toggle('open', shouldOpen);
             navigationOverlay.classList.toggle('open', shouldOpen);
             menuButton.setAttribute('aria-expanded', String(shouldOpen));
-            menuButton.setAttribute('aria-label', `${shouldOpen ? 'Close' : 'Open'} sections`);
+            menuButton.setAttribute(
+                'aria-label',
+                shouldOpen ? getLessonUi().closeSections : getLessonUi().openSections);
             document.body.classList.toggle('navigation-open', shouldOpen);
             const hideNavigation = compactNavigation.matches && !shouldOpen;
             navigationPanel.toggleAttribute('inert', hideNavigation);
@@ -520,9 +650,10 @@
         }
 
         function buildNavigation() {
+            const lessonUi = getLessonUi();
             const groups = [
-                { label: 'Before you begin', steps: steps.filter(step => step.kind === 'preflight') },
-                { label: 'Workshop', steps: steps.filter(step => step.kind !== 'preflight') }
+                { label: lessonUi.beforeYouBegin, steps: steps.filter(step => step.kind === 'preflight') },
+                { label: lessonUi.workshop, steps: steps.filter(step => step.kind !== 'preflight') }
             ];
 
             document.getElementById('workshopNavigation').innerHTML = groups.filter(group => group.steps.length > 0).map(group => `
@@ -539,8 +670,8 @@
                                 ${active ? 'aria-current="step"' : ''}>
                                 <span class="flyout-number">${marker}</span>
                                 <span>
-                                    <strong>${step.navTitle}</strong>
-                                    <small>${step.time}</small>
+                                    <strong>${getStepNavTitle(step)}</strong>
+                                    <small>${getStepTime(step)}</small>
                                 </span>
                             </a>`;
                     }).join('')}
@@ -551,6 +682,7 @@
         function updatePagination() {
             const previous = steps[currentIndex - 1];
             const next = steps[currentIndex + 1];
+            const lessonUi = getLessonUi();
             const previousHeaderLink = document.getElementById('previousHeaderLink');
             const nextHeaderLink = document.getElementById('nextHeaderLink');
 
@@ -558,23 +690,25 @@
             nextHeaderLink.hidden = !next;
             if (previous) {
                 previousHeaderLink.href = stepUrl(previous);
-                previousHeaderLink.textContent = '← Prev';
-                previousHeaderLink.setAttribute('aria-label', `Previous: ${previous.title}`);
+                previousHeaderLink.textContent = `← ${lessonUi.previousShort}`;
+                previousHeaderLink.setAttribute(
+                    'aria-label', lessonUi.previousAria.replace('{title}', getStepNavTitle(previous)));
             }
             if (next) {
                 nextHeaderLink.href = stepUrl(next);
-                nextHeaderLink.textContent = 'Next →';
-                nextHeaderLink.setAttribute('aria-label', `Next: ${next.title}`);
+                nextHeaderLink.textContent = `${lessonUi.nextShort} →`;
+                nextHeaderLink.setAttribute(
+                    'aria-label', lessonUi.nextAria.replace('{title}', getStepNavTitle(next)));
             }
 
             const footer = document.getElementById('lessonFooter');
             footer.innerHTML = `
                 ${previous
-                    ? `<a href="${stepUrl(previous)}" class="nav-footer-btn">← ${previous.navTitle}</a>`
-                    : '<span class="nav-footer-btn disabled" aria-disabled="true">← Previous</span>'}
+                    ? `<a href="${stepUrl(previous)}" class="nav-footer-btn">← ${getStepNavTitle(previous)}</a>`
+                    : `<span class="nav-footer-btn disabled" aria-disabled="true">← ${lessonUi.previous}</span>`}
                 ${next
-                    ? `<a href="${stepUrl(next)}" class="nav-footer-btn">${next.navTitle} →</a>`
-                    : `<a href="${homeUrl(getSelectedLanguage())}" class="nav-footer-btn">Back to workshop hub →</a>`}`;
+                    ? `<a href="${stepUrl(next)}" class="nav-footer-btn">${getStepNavTitle(next)} →</a>`
+                    : `<a href="${homeUrl(getSelectedLanguage())}" class="nav-footer-btn">${lessonUi.backToHub} →</a>`}`;
         }
 
         function updateProgress(step) {
@@ -583,16 +717,19 @@
             const track = document.getElementById('progressTrack');
             const fill = document.getElementById('progressFill');
             const stepCount = steps.filter(candidate => candidate.kind !== 'preflight').length;
+            const lessonUi = getLessonUi();
             let progressValue = 0;
 
             if (step.kind !== 'preflight') {
-                position.textContent = `Step ${step.number} of ${stepCount}`;
+                position.textContent = lessonUi.stepPosition
+                    .replace('{number}', step.number)
+                    .replace('{count}', stepCount);
                 progressValue = step.number;
             } else {
-                position.textContent = 'Preflight';
+                position.textContent = lessonUi.preflight;
             }
 
-            estimate.textContent = step.time;
+            estimate.textContent = getStepTime(step);
             track.setAttribute('aria-valuemax', String(stepCount));
             track.setAttribute('aria-valuenow', String(progressValue));
             fill.style.transform = `scaleX(${progressValue / stepCount})`;
@@ -632,21 +769,22 @@
                     }
                 }
 
-                button.textContent = 'Copied';
+                button.textContent = getLessonUi().copied;
                 button.classList.add('copied');
             } catch (error) {
-                button.textContent = 'Copy failed';
+                button.textContent = getLessonUi().copyFailed;
                 button.classList.add('copy-error');
                 console.error('Unable to copy code:', error);
             }
 
             window.setTimeout(() => {
-                button.textContent = 'Copy';
+                button.textContent = getLessonUi().copy;
                 button.classList.remove('copied', 'copy-error');
             }, 1800);
         }
 
         function addCopyButtons() {
+            const lessonUi = getLessonUi();
             document.querySelectorAll('#markdownContent pre').forEach(pre => {
                 const codeBlock = pre.querySelector('code');
                 if (!codeBlock || pre.querySelector('.copy-code-button')) {
@@ -656,8 +794,8 @@
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'copy-code-button';
-                button.textContent = 'Copy';
-                button.setAttribute('aria-label', 'Copy code block');
+                button.textContent = lessonUi.copy;
+                button.setAttribute('aria-label', lessonUi.copyAriaLabel);
                 button.addEventListener('click', () => copyCode(button, codeBlock));
                 pre.append(button);
             });
@@ -732,28 +870,30 @@
         }
 
         function showLoadError(error) {
+            const lessonUi = getLessonUi();
             const container = document.getElementById('markdownContent');
             const status = document.getElementById('lessonStatus');
             const message = document.createElement('div');
             message.className = 'load-error';
             const heading = document.createElement('h1');
-            heading.textContent = 'Unable to load this lesson';
+            heading.textContent = lessonUi.loadErrorHeading;
             const details = document.createElement('p');
             details.textContent = error.message;
             const guidance = document.createElement('p');
             guidance.textContent = window.location.protocol === 'file:'
-                ? 'Serve the repository with a local HTTP server; browsers block lesson fetches from file URLs.'
-                : 'Refresh the page. If the problem continues, verify that the workshop Markdown was deployed.';
+                ? lessonUi.loadErrorFileGuidance
+                : lessonUi.loadErrorGuidance;
             message.append(heading, details, guidance);
             container.replaceChildren(message);
             container.setAttribute('aria-busy', 'false');
-            status.textContent = 'Unable to load this lesson.';
+            status.textContent = lessonUi.loadErrorStatus;
         }
 
         async function loadStep() {
             const requestId = ++loadSequence;
             celebration.clear();
             const language = getSelectedLanguage();
+            const locale = getSelectedLocale();
             const stepId = getRequestedStepId();
             currentIndex = steps.findIndex(step => step.id === stepId);
             const step = steps[currentIndex];
@@ -761,59 +901,69 @@
             const status = document.getElementById('lessonStatus');
 
             updateLanguageControls(language);
-            document.querySelector('.header-title').textContent = activeWorkshop.title;
-            document.getElementById('navigationTitle').textContent = `${activeWorkshop.title} steps`;
+            updateLocaleControls(locale);
+            applyLessonChrome();
+            const lessonUi = getLessonUi();
+            const workshopTitle = getWorkshopTitle();
+            document.querySelector('.header-title').textContent = workshopTitle;
+            document.getElementById('navigationTitle').textContent =
+                lessonUi.navigationTitle.replace('{workshop}', workshopTitle);
             if (!language) {
-                document.title = 'Choose a language | Copilot SDK Workshop';
-                document.getElementById('headerLessonTitle').textContent = 'Choose a language';
+                document.title = lessonUi.chooseLanguageDocumentTitle;
+                document.getElementById('headerLessonTitle').textContent =
+                    lessonUi.chooseLanguageShort;
                 buildNavigation();
                 updatePagination();
                 const message = document.createElement('section');
                 message.className = 'load-error language-choice';
                 const heading = document.createElement('h1');
-                heading.textContent = 'Choose a workshop language';
+                heading.textContent = lessonUi.chooseLanguageHeading;
                 const details = document.createElement('p');
-                details.textContent = 'Select one of the six supported languages above before loading a lesson.';
+                details.textContent = lessonUi.chooseLanguageDetails;
                 message.append(heading, details);
                 container.replaceChildren(message);
                 container.setAttribute('aria-busy', 'false');
-                status.textContent = 'Choose a workshop language to continue.';
+                status.textContent = lessonUi.chooseLanguageStatus;
                 return;
             }
 
-            document.title = `${step.title} | ${language.displayName} | Copilot SDK Workshop`;
-            document.getElementById('headerLessonTitle').textContent = step.title;
+            const stepTitle = getStepTitle(step);
+            document.title = lessonUi.documentTitle
+                .replace('{step}', stepTitle)
+                .replace('{language}', language.displayName);
+            document.getElementById('headerLessonTitle').textContent = stepTitle;
             updateProgress(step);
             buildNavigation();
             updatePagination();
             container.setAttribute('aria-busy', 'true');
-            status.textContent = `Loading ${step.title}.`;
+            status.textContent = lessonUi.loadingNamed.replace('{title}', stepTitle);
 
             try {
                 const demoFile = `start-intro/${language.id}/LIVE_DEMO.md`;
-                const [response, demoResponse] = await Promise.all([
-                    fetch(getMarkdownUrl(step.file)),
-                    step.demoAct ? fetch(getMarkdownUrl(demoFile)) : Promise.resolve(null)
+                const [lesson, demo] = await Promise.all([
+                    fetchLocalizedMarkdown(step.file, locale),
+                    step.demoAct ? fetchLocalizedMarkdown(demoFile, locale) : Promise.resolve(null)
                 ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
-                if (!response.ok) {
-                    throw new Error(`Lesson request failed with HTTP ${response.status}.`);
+                if (!lesson.response.ok) {
+                    throw new Error(`Lesson request failed with HTTP ${lesson.response.status}.`);
                 }
-                if (demoResponse && !demoResponse.ok) {
-                    throw new Error(`${demoFile} request failed with HTTP ${demoResponse.status}.`);
+                if (demo && !demo.response.ok) {
+                    throw new Error(`${demoFile} request failed with HTTP ${demo.response.status}.`);
                 }
 
                 const [source, demoSource] = await Promise.all([
-                    response.text(),
-                    demoResponse ? demoResponse.text() : Promise.resolve(null)
+                    lesson.response.text(),
+                    demo ? demo.response.text() : Promise.resolve(null)
                 ]);
                 if (requestId !== loadSequence) {
                     return;
                 }
                 const combined = step.demoAct
-                    ? WorkshopMarkdown.includeLiveDemoAct(source, demoSource, step.demoAct)
+                    ? WorkshopMarkdown.includeLiveDemoAct(
+                        source, demoSource, step.demoAct, demo.locale.demoActHeadings)
                     : source;
                 const markdown = processMarkdown(combined);
                 container.innerHTML =
@@ -821,8 +971,8 @@
                 prepareRenderedLesson();
                 container.setAttribute('aria-busy', 'false');
                 status.textContent = step.kind === 'completion'
-                    ? `${activeWorkshop.title} complete. You did it! Resources are ready below.`
-                    : `Loaded ${step.title}.`;
+                    ? lessonUi.completeStatus.replace('{workshop}', workshopTitle)
+                    : lessonUi.loadedNamed.replace('{title}', stepTitle);
                 celebration.show(step);
             } catch (error) {
                 if (requestId === loadSequence) {
@@ -848,8 +998,23 @@
             window.history.replaceState({}, '', url);
             loadStep();
         });
-        window.addEventListener('popstate', loadStep);
-        document.addEventListener('keydown', event => {
+        localeSelector.addEventListener('change', () => {
+            const locale = WorkshopLocales.getLocale(localeSelector.value);
+            if (!locale) {
+                return;
+            }
+            storeLocaleId(locale.id);
+            const url = new URL(window.location.href);
+            const queryId = WorkshopLocales.queryId(locale.id);
+            if (queryId) {
+                url.searchParams.set('locale', queryId);
+            } else {
+                url.searchParams.delete('locale');
+            }
+            window.history.replaceState({}, '', url);
+            loadStep();
+        });
+        window.addEventListener('popstate', loadStep);        document.addEventListener('keydown', event => {
             if (navigationPanel.classList.contains('open') && event.key === 'Escape') {
                 event.preventDefault();
                 setNavigationOpen(false);
@@ -859,6 +1024,7 @@
         });
 
         setNavigationOpen(false);
+        populateLocaleControls();
         loadStep();
     </script>
 </body>
