@@ -33,7 +33,9 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 ## 검증기 연결하기
 
 :::language dotnet
-`Program.cs`를 엽니다. 반환된 전시 설명문을 받아 보고서를 출력합니다.
+`Program.cs`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`Program.cs`의 `generate` 영역을 **REPLACE**합니다.
 
 ```csharp
     Console.WriteLine();
@@ -41,14 +43,18 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
         GenerationConfig(approvedFacts),
         BuildExhibitPrompt(),
         CuratorStreamer.GenerationTimeout);
-
-    Console.WriteLine();
-    Console.WriteLine(CuratorValidation.FormatValidation(CuratorValidation.ValidateExhibit(exhibit)));
-
-    return 0;
 ```
 
-`CuratorValidation`은 2단계에서 가져온 `MuseumExhibitStudio.Helpers` 네임스페이스 안에 이미
+`generate`에서 한 가지가 바뀝니다. `RunSessionAsync`가 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
+
+`Program.cs`의 `validate` 영역에 **INSERT**합니다.
+
+```csharp
+    Console.WriteLine();
+    Console.WriteLine(CuratorValidation.FormatValidation(CuratorValidation.ValidateExhibit(exhibit)));
+```
+
+`CuratorValidation`은 `imports` 영역이 가져오는 `MuseumExhibitStudio.Helpers` 네임스페이스 안에 이미
 있으므로, 파일 상단에 새로 추가할 것은 없습니다.
 
 **내부 살펴보기:** `Helpers/CuratorValidation.cs`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는
@@ -61,8 +67,29 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 :::
 
 :::language nodejs
-`src/index.ts`를 엽니다. 헬퍼 import에 `formatValidation`과 `validateExhibit`를 추가한 뒤,
-반환된 전시 설명문을 받아 보고서를 출력합니다.
+`src/index.ts`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`src/index.ts`의 `imports` 영역을 **REPLACE**합니다.
+
+```typescript
+import { approveAll, CopilotClient, type SessionConfig } from "@github/copilot-sdk";
+import {
+  approvedFactLookupName,
+  chooseApprovedFacts,
+  closeTerminal,
+  createApprovedFactLookup,
+  describeFailure,
+  exhibitStructure,
+  formatValidation,
+  generationTimeoutMs,
+  selectedModel,
+  streamExhibit,
+  validateExhibit,
+} from "./curator.js";
+import { curatorSystemMessage } from "./system-messages.js";
+```
+
+`src/index.ts`의 `generate` 영역을 **REPLACE**합니다.
 
 ```typescript
     console.log();
@@ -71,10 +98,18 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
       buildExhibitPrompt(),
       generationTimeoutMs,
     );
+```
 
+`generate`에서 한 가지가 바뀝니다. `runSession`이 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
+
+`src/index.ts`의 `validate` 영역에 **INSERT**합니다.
+
+```typescript
     console.log();
     console.log(formatValidation(validateExhibit(exhibit)));
 ```
+
+검증 헬퍼는 `src/curator.ts`에서 오므로, 파일 상단의 유일한 변경은 헬퍼 import입니다.
 
 **내부 살펴보기:** `src/curator.ts`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는 말의
 구체적인 답입니다. `validateExhibit`는 텍스트를 줄 단위로 나누고, `titlePattern` 일치를 세며,
@@ -86,22 +121,56 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 :::
 
 :::language python
-`main.py`를 엽니다. 헬퍼 import에 `format_validation`과 `validate_exhibit`를 추가한 뒤,
-반환된 전시 설명문을 받아 보고서를 출력합니다.
+`main.py`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`main.py`의 `imports` 영역을 **REPLACE**합니다.
 
 ```python
-    try:
+from __future__ import annotations
+
+import asyncio
+import sys
+from collections.abc import Iterable
+from typing import Any
+
+from copilot import CopilotClient, PermissionHandler
+
+from curator import (
+    APPROVED_FACT_LOOKUP_NAME,
+    EXHIBIT_STRUCTURE,
+    GENERATION_TIMEOUT_SECONDS,
+    choose_approved_facts,
+    create_approved_fact_lookup,
+    describe_failure,
+    format_validation,
+    selected_model,
+    stream_exhibit,
+    validate_exhibit,
+)
+from system_messages import CURATOR_SYSTEM_MESSAGE
+```
+
+`main.py`의 `generate` 영역을 **REPLACE**합니다.
+
+```python
         print()
         exhibit = await run_session(
             generation_config(facts),
             build_exhibit_prompt(),
             GENERATION_TIMEOUT_SECONDS,
         )
+```
 
+`generate`에서 한 가지가 바뀝니다. `run_session`이 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
+
+`main.py`의 `validate` 영역에 **INSERT**합니다.
+
+```python
         print()
         print(format_validation(validate_exhibit(exhibit)))
-        return 0
 ```
+
+`format_validation`과 `validate_exhibit`는 `curator.py`에서 오므로, imports 영역은 이제 두 헬퍼를 모두 명시합니다.
 
 **내부 살펴보기:** `curator.py`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는 말의 구체적인
 답입니다. `validate_exhibit`는 텍스트를 줄 단위로 나누고, `_TITLE_PATTERN` 일치를 세며,
@@ -113,18 +182,36 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 :::
 
 :::language go
-`main.go`를 엽니다. 반환된 전시 설명문을 받아 보고서를 출력합니다.
+`main.go`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`main.go`의 `generate` 영역을 **REPLACE**합니다.
 
 ```go
-	fmt.Println()
-	exhibit, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout)
+	ctx := context.Background()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	exhibitConfig, err := generationConfig(workingDirectory, facts)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println()
+	exhibit, err := runSession(ctx, exhibitConfig, buildExhibitPrompt(), GenerationTimeout)
+	if err != nil {
+		return err
+	}
+```
+
+`generate`에서 한 가지가 바뀝니다. `runSession`이 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
+
+`main.go`의 `validate` 영역에 **INSERT**합니다.
+
+```go
+	fmt.Println()
 	fmt.Println(FormatValidation(ValidateExhibit(exhibit)))
-	return nil
 ```
 
 `FormatValidation`과 `ValidateExhibit`는 같은 패키지의 `curator.go`에 있으므로, 추가할 import는
@@ -139,8 +226,24 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 :::
 
 :::language rust
-`src/main.rs`를 엽니다. 크레이트 import에 `format_validation`과 `validate_exhibit`를 추가한 뒤,
-반환된 전시 설명문을 받아 보고서를 출력합니다.
+`src/main.rs`를 엽니다. 이 단계에서는 영역 세 개가 바뀝니다.
+
+`src/main.rs`의 `imports` 영역을 **REPLACE**합니다.
+
+```rust
+use std::time::Duration;
+
+use github_copilot_sdk::permission;
+use github_copilot_sdk::types::{SessionConfig, SystemMessageConfig};
+use github_copilot_sdk::{Client, ClientOptions};
+use museum_exhibit_studio::{
+    APPROVED_FACT_LOOKUP_NAME, CURATOR_SYSTEM_MESSAGE, EXHIBIT_STRUCTURE, GENERATION_TIMEOUT,
+    RuntimeError, approved_fact_lookup, choose_approved_facts, describe_failure, format_validation,
+    selected_model, stream_exhibit, validate_exhibit,
+};
+```
+
+`src/main.rs`의 `generate` 영역을 **REPLACE**합니다.
 
 ```rust
     println!();
@@ -150,12 +253,19 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
         GENERATION_TIMEOUT,
     )
     .await?;
+```
 
+`generate`에서 한 가지가 바뀝니다. `run_session`이 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
+
+`src/main.rs`의 `validate` 영역에 **INSERT**합니다.
+
+```rust
     println!();
     println!("{}", format_validation(&validate_exhibit(&exhibit)));
-
-    Ok(())
 ```
+
+`format_validation`과 `validate_exhibit`는 `src/lib.rs`에서 오므로, `imports` 영역이 보고서를
+출력하기 전에 이를 가져옵니다.
 
 **내부 살펴보기:** `src/lib.rs`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는 말의 구체적인
 답입니다. `validate_exhibit`는 텍스트를 줄 단위로 나누고, 제목 패턴 일치를 세며,
@@ -166,29 +276,27 @@ Structural checks do not prove factual grounding. Unsupported claims require hum
 :::
 
 :::language java
-`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 반환된 전시 설명문을 받아 보고서를
-출력합니다.
+`src/main/java/workshop/MuseumExhibitStudio.java`를 엽니다. 이 단계에서는 영역 두 개가 바뀝니다.
+
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `generate` 영역을 **REPLACE**합니다.
 
 ```java
-            System.out.println();
-            String exhibit = runSession(
-                    generationConfig(facts),
-                    buildExhibitPrompt(),
-                    CuratorStreamer.GENERATION_TIMEOUT);
-
-            System.out.println();
-            System.out.println(CuratorValidation.formatValidation(CuratorValidation.validateExhibit(exhibit)));
+        System.out.println();
+        String exhibit = runSession(generationConfig(facts), buildExhibitPrompt(), CuratorStreamer.GENERATION_TIMEOUT);
 ```
 
-`CuratorValidation`은 같은 `workshop` 패키지에 있으므로 import를 추가할 필요가 없습니다.
+`generate`에서 한 가지가 바뀝니다. `runSession`이 이미 반환한 텍스트가 이제 `exhibit`에 보관됩니다.
 
-**내부 살펴보기:** `CuratorValidation.java`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는
-말의 구체적인 답입니다. `validateExhibit`는 텍스트를 줄 단위로 나누고, `TITLE_PATTERN` 일치를
-세며, `## Narrative`와 `## Visitor questions` 제목을 찾고, `WORD_PATTERN`으로 narrative
-단어 수를 세고, `QUESTION_PATTERN`으로 번호 매긴 항목을 수집하며, 소문자로 바꾼 텍스트에서
-`PROHIBITED_VOCABULARY`의 다섯 용어를 검사합니다. 규칙이 실패할 때마다 평문 문장이 `errors`에
-추가되고, `formatValidation`이 이를 여러분이 출력하는 보고서로 렌더링합니다. 어느 지점에도 모델은
-관여하지 않습니다.
+`src/main/java/workshop/MuseumExhibitStudio.java`의 `validate` 영역에 **INSERT**합니다.
+
+```java
+        System.out.println();
+        System.out.println(CuratorValidation.formatValidation(CuratorValidation.validateExhibit(exhibit)));
+```
+
+`CuratorValidation`은 같은 `workshop` 패키지에 있으므로, 파일 상단에 새로 추가할 것은 없습니다.
+
+**내부 살펴보기:** `CuratorValidation.java`는 "이것은 모델이 아니라 애플리케이션이 입증한다"는 말의 구체적인 답입니다. `validateExhibit`는 텍스트를 줄 단위로 나누고, `TITLE_PATTERN` 일치를 세며, `## Narrative`와 `## Visitor questions` 제목을 찾고, `WORD_PATTERN`으로 narrative 단어 수를 세고, `QUESTION_PATTERN`으로 번호 매긴 항목을 수집하며, 소문자로 바꾼 텍스트에서 `PROHIBITED_VOCABULARY`의 다섯 용어를 검사합니다. 규칙이 실패할 때마다 평문 문장이 `errors`에 추가되고, `formatValidation`이 이를 여러분이 출력하는 보고서로 렌더링합니다. 어느 지점에도 모델은 관여하지 않습니다.
 :::
 
 ## 실행하기

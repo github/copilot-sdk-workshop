@@ -2,39 +2,39 @@
   "version": 1,
   "files": {
     "finished/dotnet/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "92a3a865a7d716a258a67ac86f2ce591b45b39056ee5715ffb220ccd7b563dec",
-      "localized_sha256": "58cdbab22fe218555720978411da1045e2718fafc662ecf8368940d273ec824c"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "b1e563c9e4ae77c229c8462a879760788c5d17a6bbff76b750ba66f56276f4eb",
+      "localized_sha256": "98d4e4cc4637e374d6874c6e37798cecf60c2fa2c18cac488440f311e6ec3be2"
     },
     "finished/go/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "3f752313417f588c0098522d0c24cca03c4e62346998a208495c0491b2b5f3d0",
-      "localized_sha256": "8328a8a356bfdf2b4650fbddb78e0cda39dd4b7f96fd02e358a7a978bf8a53b6"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "0b09612ee2aac84f226cf577b158db62ea1cafa2116b4b40c9e9605436976f99",
+      "localized_sha256": "4a708ca2468d02cbe4b4b645e115a347417e73c5f8caba9fe2a9ac45cf8cae93"
     },
     "finished/java/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "7a7ad8adda838e5ad4d669ec85c7e9b9fac028640c2dffbfcaaac9da7df33cdc",
-      "localized_sha256": "6266a4a3068c8830029a01015f1624594bcbe5f974cfea5fce0915743ca2a600"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "8298b736c4219933ff6a1428d82086dff2bb2f05fc7b45b044ac9b5f4afea0f6",
+      "localized_sha256": "d57155e168ffd5c9caa9b54e543c6d53ca6bf351593d24c1c6653c615a966797"
     },
     "finished/nodejs/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "c30d5a7c133ac08a59b45d6379ca218bf32d499bb6ec0fb11b126e76da377cac",
-      "localized_sha256": "d1072dc6079ee210d2a826de8c3ff5802ec7063a34dafc21aed953860758b47f"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "2798fe4b7d13c78b09ce7921d6e5fbf04ca2ed645065c02fc5170017e9a887a4",
+      "localized_sha256": "c458d70e70d49b9317d522204a7b476feef3b430c2aa2415c98826b9503eb8ee"
     },
     "finished/python/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "f61f169c36cccbc080e2ae09679f81c7d1193049c6b9790935eb77bd352c441b",
-      "localized_sha256": "52c807bf451a8503ee202cf117a219ab3dce144f565925691d677e841ee9b33c"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "64906fe60830dd7a6241fb29603e64bc6e476733986aee845f7743e6bcf3205e",
+      "localized_sha256": "b8a85c6c7b5f0a7b7cf464b9ee0839a9e203d1e8ca7e55afdbc4a25dda40a834"
     },
     "finished/rust/museum-exhibit-studio/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "aece4fd6ecafed833feed3abdad151621b7b2725f74b021ef3d8edb31781573f",
-      "localized_sha256": "c1742e808e67286455db8b19814f1aca1ac4054d2c2cf03f0da436f916f46506"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "d662c5aee6b9e9897d11bba63e00ecdf09bad76021e29d60468212ae4e043323",
+      "localized_sha256": "27a9b337720f9ec719c6938884a2d1db86d53395f72787dde06e8c63e2bf5d30"
     },
     "README.md": {
-      "source_commit": "dbc62263b7baa8f8c9bbe3504dbdfb5b32834ff0",
-      "source_sha256": "b043ff40516cfd249bc29cdf8e2eef34b80fd7fb85aecf966a19ca75c89e1eca",
-      "localized_sha256": "b73feb710ecc4239b84c070463be5893220bed69d20b9bd47a1a4358898b80c1"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "28495aeab1e26d9800b173da3eabd6aec84e95e49a0c20faa05efd919057c312",
+      "localized_sha256": "21f2b35d0aeb6ddbfb61f02e7953a28d37925bb319c95bf1b93522cac9a9f806"
     },
     "start-accessibility/README.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -107,9 +107,9 @@
       "localized_sha256": "9d07cc6244e6f1dd79932e69fb99fdd0d31ea93d8ea4e0c4f6834e274bbeeef9"
     },
     "start-museum/README.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "32ac1ea3ecdf75961736c8932630244883bfbfb81f16926c7bc1bdab12b3a7d6",
-      "localized_sha256": "5d222190bf7b4838004a17d0e9c45c21dc4647b27b2e2aa637185239417b726b"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "1fe0ddaf7bd4c3d2502efed64861b2552ec991968be9b15b3d03faf23df6b635",
+      "localized_sha256": "251ea2e8c5286808d1183faf3b76e364224d6e2e2a1a1ce9ab1c6510bcb16dbc"
     },
     "workshop/00-preflight.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
@@ -192,44 +192,44 @@
       "localized_sha256": "ef91b8635b53d07f712f13d10433e87cc0ba62a3c5a47dd5c56d980be53e3ffa"
     },
     "workshop/museum-00-preflight.md": {
-      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
-      "source_sha256": "ed800141333156739757e46c9251974ea06ac1bc1a8143a7d896b519bbc346b3",
-      "localized_sha256": "a4061539daf8f183ef30a0d303f256304e70dec17fb3bc0751ee443767bab023"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "8d41926d95e7500617170f683ccf65397a231dbca50b6b790a5b2ad07cd3796d",
+      "localized_sha256": "0c02a7aa9abea1d3510ff17ae0f57f2eaf8959ab9d35abd573a3bd2caef07368"
     },
     "workshop/museum-01-first-curator-session.md": {
-      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
-      "source_sha256": "afe8570dbe5a09e1ca837deac3b9ea12ab133555f7472c5a18fda5bfe66da113",
-      "localized_sha256": "e6f388507608e1532a2cc92420e13eda8caf08117f3ad47566dbc21b1738f42d"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "50fbde32b1b417a2849bb2dd870df316edd707184e467036cd7efd2716709269",
+      "localized_sha256": "c2d6cf315de233e1ae245b79fce12ad6ef41f51ca15dedb304b89c83b6885cac"
     },
     "workshop/museum-02-stream-the-curator.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "51323c50aa7d907a2e14ee00c8032785c441262b142e4b6e9bdd560c6007c21a",
-      "localized_sha256": "834d403d94b75d1936190f8725deb46b06b8d68c65ecdb7f669d2ee893516c0f"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "8703bb8b48534365a5766e8efbe3ff329e0f73593c0a2f957c8ed7a84e5a1fed",
+      "localized_sha256": "11d542e16a3b35ed4c5b5bf81dd08ad00425f3c09bbb250e86d689945ad5bef8"
     },
     "workshop/museum-03-curator-voice.md": {
-      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
-      "source_sha256": "4953b2c169bbdd7c82857306a29d9bb0b1c45d34a2fe91a35331588fdea282b9",
-      "localized_sha256": "191a4b1ca66119f5b06def2a4fc712194041ece1bb51aed8991294c599bb171f"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "1cee4ac972426a4e6d149504ae419fb93fa79a13a4894c53c746843a888d8885",
+      "localized_sha256": "2f7cf7480b577553169e55e347a2b3851cdf0ea6ed3a361f892b11963725a518"
     },
     "workshop/museum-04-approved-facts.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "28a9b1895f2eaef30bc0d03f2b6b2e52b8ea942ad87c6fbed80add4ab9023072",
-      "localized_sha256": "8133b181b7553b7b269d582dc31436351e9bb9e8aba9c8035421688914dacd08"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "ba43f5122b509bf78cea0539879fc58ff225b18984a1c91eedf67c67c7a4dca1",
+      "localized_sha256": "75be25c5995cc5ff71f9c6cf243719c428e5bfe98ed65ca2fc4c4fcc97bd906d"
     },
     "workshop/museum-06-prove-the-structure.md": {
-      "source_commit": "d4c0ccd0716e464b685cef1355917e1d1764046c",
-      "source_sha256": "2d70c2588b5c6963a4fd4ccfc8789a93de6ea94b96b229a6d852433515023418",
-      "localized_sha256": "073f065f394201afd3ed4472f5715a1bf81dab1dff483fc3b042ea4be8e44dde"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "b9d8937e865f1e419c2e24fe4f269f568b890eaddfa9e43af602b10a1fa1dd8f",
+      "localized_sha256": "5d1745f6f2a482156268ead80c399b87624ae6045586296e80c1a8e646e14987"
     },
     "workshop/museum-07-wikipedia-research.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "9152f8de12778bf75ec423f5c532fa5e3798d7844c8d6a908c4c1bf9a1d395f8",
-      "localized_sha256": "a6c3742cf6011d9c96225968bc4d775a7c96ee8bcc26d65c21bd9b58b4553667"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "6bdb7bf41fb25455832e5b85d34dcff88b6ccc61ac04d4f49d9f0cd683eca251",
+      "localized_sha256": "36610fc8974d392e581e17efa4ef5723474530a113bf7a39d9715b046dc16efb"
     },
     "workshop/museum-08-interactive-exhibit-page.md": {
-      "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
-      "source_sha256": "67af68a9c40d19348c41b5b15d243a63bdde31faed0776a8e59630d02eb75b1e",
-      "localized_sha256": "525e6951bba66a9bab6a67588f74b2146818c894430530f2f260074819689810"
+      "source_commit": "1681da5061901f9f725bc0de4823f67252f381fb",
+      "source_sha256": "1b1b2a56f01464eb19faa4b5e86637e3b9e6ae19c146cb11df77ea669c083a68",
+      "localized_sha256": "59ca259da8232fccd430d3e83011cc09c5bc0a00d377a11c20bb6c47f205b446"
     },
     "workshop/museum-09-complete.md": {
       "source_commit": "e4115f2fb1cd4e42f2e152ece334928d9799744c",
