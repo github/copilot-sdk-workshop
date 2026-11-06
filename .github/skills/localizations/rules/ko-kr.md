@@ -29,7 +29,6 @@ English-to-Korean translation quality is best evaluated by checking for natural 
 
 | Evaluation Metric | What to Look For (English to Korean Context) |
 | :--- | :--- |
-| **Fluency (유창성)** | Does a native Korean speaker understand the text instantly without re-reading sentences? |
 | **Style Guide (스타일)** | Does the text follow Korean spelling, spacing (띄어쓰기), and punctuation rules? |
 
 ## Markdown Syntaxes
