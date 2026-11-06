@@ -28,12 +28,6 @@ English-to-French translation quality is best evaluated by checking grammatical 
 - **Possessive Overuse:** English repeats "your" and "its" more often than French. Use the definite article when the referent is clear, but preserve ownership where it affects meaning.
 - **Title Case:** Flag English-style capitalization of every word in headings and labels.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to French Context) |
-| :--- | :--- |
-| **Style Guide (style)** | Are agreement, accents, typography, capitalization, and regional conventions correct? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters attached to the text they format, while placing French punctuation outside or inside the formatted span according to what is semantically emphasized. Do not allow translated punctuation, articles, or the non-breaking space to enter URLs, code spans, or link targets.
