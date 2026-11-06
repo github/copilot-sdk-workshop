@@ -4,9 +4,6 @@ These rules apply to **both roles**: the `translator` agent uses them as generat
 
 In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, without additions, distortions, or omissions.
 - **Fluency:** Follow German grammar, spelling, punctuation, and idiom so the text reads as native German from Germany.
 - **Terminology & Consistency:** Use specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Adapt idioms, examples, register, and regional vocabulary for readers in Germany.
