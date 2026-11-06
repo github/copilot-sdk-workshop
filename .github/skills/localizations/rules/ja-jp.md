@@ -27,12 +27,6 @@ English-to-Japanese quality is best evaluated by checking subject omission, topi
 - **Long Modifiers:** Do not stack clauses before a noun until the referent is difficult to identify. Split or reorder the sentence.
 - **Inconsistent Loanwords:** Flag inconsistent spelling or long-vowel treatment for the same term, such as mixing **ユーザー** and **ユーザ** without a glossary reason.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Japanese Context) |
-| :--- | :--- |
-| **Style Guide (スタイル)** | Are register, particles, script choice, punctuation, and loanword spelling correct and consistent? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters and code spans intact. Japanese particles and punctuation normally belong outside a link or code span unless they are part of the linked phrase.
