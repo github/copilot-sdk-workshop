@@ -32,7 +32,6 @@ English-to-Portuguese quality is best evaluated by checking agreement, pronoun p
 
 | Evaluation Metric | What to Look For (English to Brazilian Portuguese Context) |
 | :--- | :--- |
-| **Fluency (fluência)** | Would a Brazilian reader understand each sentence immediately without detecting English syntax? |
 | **Style Guide (estilo)** | Are spelling, accents, agreement, punctuation, pronouns, and regional conventions correct? |
 
 ## Markdown Syntaxes
