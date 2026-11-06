@@ -31,7 +31,6 @@ English-to-Chinese quality is best evaluated by checking concise clause structur
 
 | Evaluation Metric | What to Look For (English to Simplified Chinese Context) |
 | :--- | :--- |
-| **Accuracy (准确性)** | Are facts, conditions, names, numbers, and modality preserved exactly? |
 | **Fluency (流畅性)** | Can a Mainland Chinese reader understand each sentence immediately without reconstructing English syntax? |
 | **Style Guide (风格)** | Are Simplified characters, punctuation, terminology, and spacing conventions correct and consistent? |
 
