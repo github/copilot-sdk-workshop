@@ -4,9 +4,6 @@ These rules apply to **both roles**: the `translator` agent uses them as generat
 
 Translation quality requires exact meaning and natural Brazilian Portuguese.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, with no additions, distortions, or omissions.
 - **Fluency:** Follow Brazilian Portuguese grammar, spelling, punctuation, and idiom.
 - **Terminology & Consistency:** Apply specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Use register, idioms, examples, and regional vocabulary suitable for Brazil.
