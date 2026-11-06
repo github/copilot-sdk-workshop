@@ -6,7 +6,6 @@ Translation quality requires both exact meaning and natural Japanese.
 
 - **Fluency:** Use natural Japanese grammar, particles, punctuation, and sentence structure.
 - **Terminology & Consistency:** Apply approved Japanese terminology and loanword forms uniformly.
-- **Cultural Appropriateness:** Use a register and level of directness suitable for Japanese readers.
 
 ## English to Japanese Localization Scenario
 
