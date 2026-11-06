@@ -122,7 +122,6 @@ Use the `evaluator` agent to assess the quality of the localized content. The ev
 
 The evaluator scores the localized document against the locale's **Evaluator Scoring Rubric** (defined in the locale's `rules/<locale>.md`).
 
-## DOs and DON'Ts
+## Output layout
 
 - **Do** mirror the source directory layout under `localizations/<locale>/`.
-- **Don't** translate code, commands, identifiers, or string literals; translate explanatory prose and non-machine-significant code comments only.
