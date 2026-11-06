@@ -5,7 +5,6 @@ These rules apply to **both roles**: the `translator` agent uses them as generat
 Translation quality requires exact meaning and natural Mainland Chinese usage.
 
 - **Fluency:** Use concise, grammatical Simplified Chinese with natural information order and punctuation.
-- **Terminology & Consistency:** Follow established Mainland Chinese technical terminology and the product glossary.
 - **Cultural Appropriateness:** Adapt idiom, tone, examples, and regional language for readers in Mainland China.
 
 ## English to Simplified Chinese Localization Scenario
