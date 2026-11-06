@@ -32,7 +32,6 @@ English-to-French translation quality is best evaluated by checking grammatical 
 
 | Evaluation Metric | What to Look For (English to French Context) |
 | :--- | :--- |
-| **Accuracy (exactitude)** | Are every fact, condition, number, name, and logical relationship preserved? |
 | **Fluency (fluidité)** | Would a reader in France understand each sentence immediately without detecting English syntax? |
 | **Style Guide (style)** | Are agreement, accents, typography, capitalization, and regional conventions correct? |
 
