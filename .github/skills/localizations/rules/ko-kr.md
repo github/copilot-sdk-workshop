@@ -4,9 +4,6 @@ These rules apply to **both roles**: the `translator` agent uses them as generat
 
 In general, producing and evaluating translation quality requires both the accuracy of the meaning and the natural flow of the language.
 
-Here are the 4 core pillars:
-
-- **Accuracy:** Ensure the meaning matches the source text exactly, with no information added, distorted, or omitted.
 - **Fluency:** Check that grammar, punctuation, and spelling adhere to the conventions of the target language so that the text reads naturally.
 - **Terminology & Consistency:** Verify that specialized terms, names, and key phrases are used uniformly throughout the document.
 - **Cultural Appropriateness:** Confirm that idioms, metaphors, and the overall tone are culturally sensitive and suited to the target audience.
