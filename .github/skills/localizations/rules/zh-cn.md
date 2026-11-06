@@ -27,12 +27,6 @@ English-to-Chinese quality is best evaluated by checking concise clause structur
 - **Literal Connectors:** Do not overuse **关于**, **在……方面**, or **当……的时候** as direct English calques when a shorter topic or conditional construction works.
 - **Locale Mixing:** Flag Traditional characters and inconsistent pairs such as **文件/檔案**, **软件/軟體**, **登录/登入**, or **默认/預設**.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Simplified Chinese Context) |
-| :--- | :--- |
-| **Style Guide (风格)** | Are Simplified characters, punctuation, terminology, and spacing conventions correct and consistent? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters, URLs, and code spans intact. Chinese punctuation and grammatical particles must not be absorbed into a link target or code span.
