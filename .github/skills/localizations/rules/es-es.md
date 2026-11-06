@@ -32,7 +32,6 @@ English-to-Spanish translation quality is best evaluated by checking grammatical
 
 | Evaluation Metric | What to Look For (English to Spanish Context) |
 | :--- | :--- |
-| **Fluency (fluidez)** | Would a reader in Spain understand each sentence immediately without detecting English syntax? |
 | **Style Guide (estilo)** | Are agreement, accents, punctuation, capitalization, and regional conventions correct? |
 
 ## Markdown Syntaxes
