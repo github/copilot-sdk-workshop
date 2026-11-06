@@ -2,7 +2,7 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the Japanese text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-Translation quality requires both exact meaning and natural Japanese. Verify accuracy, fluency, consistency, and cultural appropriateness rather than preserving English word order.
+Translation quality requires both exact meaning and natural Japanese.
 
 The four core pillars are:
 
