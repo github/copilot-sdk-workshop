@@ -33,7 +33,6 @@ English-to-German translation quality is best evaluated by checking case, gender
 
 | Evaluation Metric | What to Look For (English to German Context) |
 | :--- | :--- |
-| **Accuracy (Genauigkeit)** | Are every fact, condition, number, name, and logical relationship preserved? |
 | **Fluency (Sprachfluss)** | Would a reader in Germany understand each sentence immediately without detecting English syntax? |
 | **Style Guide (Stil)** | Are agreement, capitalization, compounds, punctuation, and regional conventions correct? |
 
