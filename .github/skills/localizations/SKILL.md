@@ -125,5 +125,4 @@ The evaluator scores the localized document against the locale's **Evaluator Sco
 ## DOs and DON'Ts
 
 - **Do** mirror the source directory layout under `localizations/<locale>/`.
-- **Don't** reorder or restructure content; keep headings and their order stable.
 - **Don't** translate code, commands, identifiers, or string literals; translate explanatory prose and non-machine-significant code comments only.
