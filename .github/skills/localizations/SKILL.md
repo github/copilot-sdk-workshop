@@ -124,7 +124,6 @@ The evaluator scores the localized document against the locale's **Evaluator Sco
 
 ## DOs and DON'Ts
 
-- **Do** let heading anchors follow the localized heading text, and update same-document anchor links to match the new slugs so they keep resolving (see *Markdown and formatting preservation*).
 - **Do** point image and asset paths at the original assets (rewriting the relative path as needed so it resolves from `localizations/<locale>/`), unless a corresponding localized asset exists (see *Markdown and formatting preservation*).
 - **Do** mirror the source directory layout under `localizations/<locale>/`.
 - **Don't** treat files under `localizations/` as source input.
