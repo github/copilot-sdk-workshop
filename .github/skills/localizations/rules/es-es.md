@@ -28,12 +28,6 @@ English-to-Spanish translation quality is best evaluated by checking grammatical
 - **Possessive Overuse:** English repeats "your" and "its" more often than Spanish. Omit possessives when the referent is clear, but preserve ownership where it affects meaning.
 - **Regional Mixing:** Flag unexplained switching between Spain-specific and other regional forms, such as **ordenador/computadora** or **vosotros/ustedes**, when it makes the voice inconsistent.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Spanish Context) |
-| :--- | :--- |
-| **Style Guide (estilo)** | Are agreement, accents, punctuation, capitalization, and regional conventions correct? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters attached to the text they format, while placing Spanish punctuation outside or inside the formatted span according to what is semantically emphasized. Do not allow translated punctuation or articles to enter URLs, code spans, or link targets.
