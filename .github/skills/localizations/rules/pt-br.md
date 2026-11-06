@@ -28,12 +28,6 @@ English-to-Portuguese quality is best evaluated by checking agreement, pronoun p
 - **European Portuguese Leakage:** Flag forms such as **ficheiro**, **ecrã**, **palavra-passe**, **utilizador**, or **guardar** when the intended `pt-BR` term differs.
 - **Unnatural Passive Voice:** Prefer active or reflexive constructions when they are clearer, without changing responsibility or emphasis.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Brazilian Portuguese Context) |
-| :--- | :--- |
-| **Style Guide (estilo)** | Are spelling, accents, agreement, punctuation, pronouns, and regional conventions correct? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters attached to the intended text. Articles, prepositions, and punctuation must not enter URLs or code spans accidentally.
