@@ -4,9 +4,6 @@ These rules apply to **both roles**: the `translator` agent uses them as generat
 
 Translation quality requires both exact meaning and natural Japanese.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve every source fact, condition, number, name, and degree of obligation.
 - **Fluency:** Use natural Japanese grammar, particles, punctuation, and sentence structure.
 - **Terminology & Consistency:** Apply approved Japanese terminology and loanword forms uniformly.
 - **Cultural Appropriateness:** Use a register and level of directness suitable for Japanese readers.
