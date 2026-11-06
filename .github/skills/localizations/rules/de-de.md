@@ -29,12 +29,6 @@ English-to-German translation quality is best evaluated by checking case, gender
 - **Anglicism Overuse:** Do not keep an English word when an established German term is normal developer usage (**Datei**, not *File*; **Abhängigkeit**, not *Dependency*). Conversely, do not force a German term on an established loanword such as **Prompt** or **Streaming**.
 - **Possessive Overuse:** English repeats "your" and "its" more often than German. Use the definite article when the referent is clear, but preserve ownership where it affects meaning.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to German Context) |
-| :--- | :--- |
-| **Style Guide (Stil)** | Are agreement, capitalization, compounds, punctuation, and regional conventions correct? |
-
 ## Markdown Syntaxes
 
 Keep Markdown delimiters attached to the text they format, while placing German punctuation outside or inside the formatted span according to what is semantically emphasized. Do not allow translated punctuation, articles, or hyphens to enter URLs, code spans, or link targets.
