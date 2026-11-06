@@ -31,7 +31,6 @@ English-to-Japanese quality is best evaluated by checking subject omission, topi
 
 | Evaluation Metric | What to Look For (English to Japanese Context) |
 | :--- | :--- |
-| **Fluency (流暢さ)** | Can a native reader understand the sentence immediately without reconstructing English syntax? |
 | **Style Guide (スタイル)** | Are register, particles, script choice, punctuation, and loanword spelling correct and consistent? |
 
 ## Markdown Syntaxes
