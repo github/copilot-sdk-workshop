@@ -25,12 +25,6 @@ English-to-Korean translation quality is best evaluated by checking for natural 
 - **Literal Phrase Translations:** Watch out for expressions like "in terms of" translated literally to "~의 관점에서" instead of natural Korean particles.
 - **Plural Marker Overuse:** English strictly tracks plurals, but adding the Korean plural marker "~들" to every noun sounds highly unnatural.
 
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Korean Context) |
-| :--- | :--- |
-| **Style Guide (스타일)** | Does the text follow Korean spelling, spacing (띄어쓰기), and punctuation rules? |
-
 ## Markdown Syntaxes
 
 Here are some examples when using combination of markdown syntaxes:
