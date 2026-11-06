@@ -37,7 +37,7 @@ Here are the list of contents for localization:
 - `README.md`: The main documentation file for the project.
 - All markdown files in the `docs` directory **and its subdirectories** (`docs/**/*.md`): The main content files for the project documentation.
 
-Both `README.md` and the `docs` tree are in scope. The **`docs`** directory is the default location for content files, but `README.md` at the project root is always included as well.
+The **`docs`** directory is the default location for content files, but `README.md` at the project root is always included as well.
 
 Files already under `localizations/` are **outputs**, not inputs—never treat them as source content to be localized again.
 
