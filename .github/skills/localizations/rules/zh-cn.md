@@ -2,13 +2,9 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write Simplified Chinese), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-Translation quality requires exact meaning and natural Mainland Chinese usage. Verify accuracy, fluency, consistency, and cultural appropriateness without preserving English syntax mechanically.
+Translation quality requires exact meaning and natural Mainland Chinese usage.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve every source fact, condition, number, name, and degree of obligation.
 - **Fluency:** Use concise, grammatical Simplified Chinese with natural information order and punctuation.
-- **Terminology & Consistency:** Follow established Mainland Chinese technical terminology and the product glossary.
 - **Cultural Appropriateness:** Adapt idiom, tone, examples, and regional language for readers in Mainland China.
 
 ## English to Simplified Chinese Localization Scenario
@@ -30,14 +26,6 @@ English-to-Chinese quality is best evaluated by checking concise clause structur
 - **Redundant Phrases:** Flag padding such as **进行配置操作**, **可以能够**, and repeated **的** chains when **配置**, **可以**, or a restructured sentence is clearer.
 - **Literal Connectors:** Do not overuse **关于**, **在……方面**, or **当……的时候** as direct English calques when a shorter topic or conditional construction works.
 - **Locale Mixing:** Flag Traditional characters and inconsistent pairs such as **文件/檔案**, **软件/軟體**, **登录/登入**, or **默认/預設**.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Simplified Chinese Context) |
-| :--- | :--- |
-| **Accuracy (准确性)** | Are facts, conditions, names, numbers, and modality preserved exactly? |
-| **Fluency (流畅性)** | Can a Mainland Chinese reader understand each sentence immediately without reconstructing English syntax? |
-| **Style Guide (风格)** | Are Simplified characters, punctuation, terminology, and spacing conventions correct and consistent? |
 
 ## Markdown Syntaxes
 

@@ -2,11 +2,8 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the Spanish text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow. Verify that the text passes core tests for accuracy, fluency, consistency, and cultural appropriateness.
+In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, without additions, distortions, or omissions.
 - **Fluency:** Follow Spanish grammar, spelling, punctuation, and idiom so the text reads as native European Spanish.
 - **Terminology & Consistency:** Use specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Adapt idioms, examples, register, and regional vocabulary for readers in Spain.
@@ -30,14 +27,6 @@ English-to-Spanish translation quality is best evaluated by checking grammatical
 - **Gerund Misuse:** Do not use the gerund to express a later result or as an English-style adjective. Use a finite verb or relative clause.
 - **Possessive Overuse:** English repeats "your" and "its" more often than Spanish. Omit possessives when the referent is clear, but preserve ownership where it affects meaning.
 - **Regional Mixing:** Flag unexplained switching between Spain-specific and other regional forms, such as **ordenador/computadora** or **vosotros/ustedes**, when it makes the voice inconsistent.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Spanish Context) |
-| :--- | :--- |
-| **Accuracy (exactitud)** | Are every fact, condition, number, name, and logical relationship preserved? |
-| **Fluency (fluidez)** | Would a reader in Spain understand each sentence immediately without detecting English syntax? |
-| **Style Guide (estilo)** | Are agreement, accents, punctuation, capitalization, and regional conventions correct? |
 
 ## Markdown Syntaxes
 

@@ -2,11 +2,8 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the French text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow. Verify that the text passes core tests for accuracy, fluency, consistency, and cultural appropriateness.
+In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, without additions, distortions, or omissions.
 - **Fluency:** Follow French grammar, spelling, typography, and idiom so the text reads as native French from France.
 - **Terminology & Consistency:** Use specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Adapt idioms, examples, register, and regional vocabulary for readers in France.
@@ -30,14 +27,6 @@ English-to-French translation quality is best evaluated by checking grammatical 
 - **Present Participle and Passive Overuse:** Do not copy English `-ing` forms and passives mechanically. Prefer an infinitive, a relative clause, an active verb, or a construction with **on** or the reflexive when it reads more naturally and responsibility is unchanged.
 - **Possessive Overuse:** English repeats "your" and "its" more often than French. Use the definite article when the referent is clear, but preserve ownership where it affects meaning.
 - **Title Case:** Flag English-style capitalization of every word in headings and labels.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to French Context) |
-| :--- | :--- |
-| **Accuracy (exactitude)** | Are every fact, condition, number, name, and logical relationship preserved? |
-| **Fluency (fluidité)** | Would a reader in France understand each sentence immediately without detecting English syntax? |
-| **Style Guide (style)** | Are agreement, accents, typography, capitalization, and regional conventions correct? |
 
 ## Markdown Syntaxes
 

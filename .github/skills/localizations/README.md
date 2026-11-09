@@ -17,8 +17,6 @@ copilot plugin install localizations@justinyoo-skills
 
 If you already registered the marketplace, skip the first command. If you installed the complete collection, this skill is already included.
 
-For other agents, installation methods, and local checkouts, see the [Skills installation guide](../../docs/skills-installation-guide.md).
-
 ## Usage
 
 In a GitHub Copilot CLI session, try:

@@ -2,11 +2,8 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the Korean text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-In general, producing and evaluating translation quality requires both the accuracy of the meaning and the natural flow of the language. To do this, verify that the text passes core tests for accuracy, fluency, consistency, and cultural appropriateness.
+In general, producing and evaluating translation quality requires both the accuracy of the meaning and the natural flow of the language.
 
-Here are the 4 core pillars:
-
-- **Accuracy:** Ensure the meaning matches the source text exactly, with no information added, distorted, or omitted.
 - **Fluency:** Check that grammar, punctuation, and spelling adhere to the conventions of the target language so that the text reads naturally.
 - **Terminology & Consistency:** Verify that specialized terms, names, and key phrases are used uniformly throughout the document.
 - **Cultural Appropriateness:** Confirm that idioms, metaphors, and the overall tone are culturally sensitive and suited to the target audience.
@@ -27,14 +24,6 @@ English-to-Korean translation quality is best evaluated by checking for natural 
 - **Passive Voice Overuse:** English frequently uses passive voice, but natural Korean heavily favors active verbs; overusing passive forms makes Korean text feel robotic. For example, "코드 작성이 포함됩니다" should be "코드 작성을 포함합니다".
 - **Literal Phrase Translations:** Watch out for expressions like "in terms of" translated literally to "~의 관점에서" instead of natural Korean particles.
 - **Plural Marker Overuse:** English strictly tracks plurals, but adding the Korean plural marker "~들" to every noun sounds highly unnatural.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Korean Context) |
-| :--- | :--- |
-| **Accuracy (정확성)** | Are critical numbers, names, and core English meanings preserved without distortion? |
-| **Fluency (유창성)** | Does a native Korean speaker understand the text instantly without re-reading sentences? |
-| **Style Guide (스타일)** | Does the text follow Korean spelling, spacing (띄어쓰기), and punctuation rules? |
 
 ## Markdown Syntaxes
 

@@ -2,11 +2,8 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write Brazilian Portuguese), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-Translation quality requires exact meaning and natural Brazilian Portuguese. Verify accuracy, fluency, consistency, and cultural appropriateness rather than preserving English syntax.
+Translation quality requires exact meaning and natural Brazilian Portuguese.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, with no additions, distortions, or omissions.
 - **Fluency:** Follow Brazilian Portuguese grammar, spelling, punctuation, and idiom.
 - **Terminology & Consistency:** Apply specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Use register, idioms, examples, and regional vocabulary suitable for Brazil.
@@ -30,14 +27,6 @@ English-to-Portuguese quality is best evaluated by checking agreement, pronoun p
 - **Possessive and Pronoun Overuse:** Omit repeated **seu/sua** and **você** when context is clear, but rewrite ambiguous possessives instead of guessing their referent.
 - **European Portuguese Leakage:** Flag forms such as **ficheiro**, **ecrã**, **palavra-passe**, **utilizador**, or **guardar** when the intended `pt-BR` term differs.
 - **Unnatural Passive Voice:** Prefer active or reflexive constructions when they are clearer, without changing responsibility or emphasis.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Brazilian Portuguese Context) |
-| :--- | :--- |
-| **Accuracy (precisão)** | Are facts, logical relationships, numbers, names, and modality preserved exactly? |
-| **Fluency (fluência)** | Would a Brazilian reader understand each sentence immediately without detecting English syntax? |
-| **Style Guide (estilo)** | Are spelling, accents, agreement, punctuation, pronouns, and regional conventions correct? |
 
 ## Markdown Syntaxes
 

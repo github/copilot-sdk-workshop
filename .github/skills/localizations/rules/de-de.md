@@ -2,11 +2,8 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the German text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow. Verify that the text passes core tests for accuracy, fluency, consistency, and cultural appropriateness.
+In general, producing and evaluating translation quality requires both accuracy of meaning and natural flow.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve the source meaning exactly, without additions, distortions, or omissions.
 - **Fluency:** Follow German grammar, spelling, punctuation, and idiom so the text reads as native German from Germany.
 - **Terminology & Consistency:** Use specialized terms, names, and recurring phrases uniformly.
 - **Cultural Appropriateness:** Adapt idioms, examples, register, and regional vocabulary for readers in Germany.
@@ -31,14 +28,6 @@ English-to-German translation quality is best evaluated by checking case, gender
 - **Nominal Style and Passive Overuse:** Avoid chains of nouns ending in **-ung** and stacked genitives. Prefer a verb, and prefer active voice or a construction with **lässt sich** when responsibility is unchanged.
 - **Anglicism Overuse:** Do not keep an English word when an established German term is normal developer usage (**Datei**, not *File*; **Abhängigkeit**, not *Dependency*). Conversely, do not force a German term on an established loanword such as **Prompt** or **Streaming**.
 - **Possessive Overuse:** English repeats "your" and "its" more often than German. Use the definite article when the referent is clear, but preserve ownership where it affects meaning.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to German Context) |
-| :--- | :--- |
-| **Accuracy (Genauigkeit)** | Are every fact, condition, number, name, and logical relationship preserved? |
-| **Fluency (Sprachfluss)** | Would a reader in Germany understand each sentence immediately without detecting English syntax? |
-| **Style Guide (Stil)** | Are agreement, capitalization, compounds, punctuation, and regional conventions correct? |
 
 ## Markdown Syntaxes
 

@@ -2,14 +2,10 @@
 
 These rules apply to **both roles**: the `translator` agent uses them as generation directives (how to write the Japanese text), and the `evaluator` agent uses them as review criteria (what to check and flag). Wherever a rule says "flag" or "look for", the translator should read it as "produce text that satisfies this".
 
-Translation quality requires both exact meaning and natural Japanese. Verify accuracy, fluency, consistency, and cultural appropriateness rather than preserving English word order.
+Translation quality requires both exact meaning and natural Japanese.
 
-The four core pillars are:
-
-- **Accuracy:** Preserve every source fact, condition, number, name, and degree of obligation.
 - **Fluency:** Use natural Japanese grammar, particles, punctuation, and sentence structure.
 - **Terminology & Consistency:** Apply approved Japanese terminology and loanword forms uniformly.
-- **Cultural Appropriateness:** Use a register and level of directness suitable for Japanese readers.
 
 ## English to Japanese Localization Scenario
 
@@ -30,14 +26,6 @@ English-to-Japanese quality is best evaluated by checking subject omission, topi
 - **Passive Overuse:** English passive voice often becomes a natural active, intransitive, or subjectless Japanese sentence. Retain passive meaning only when the affected party or responsibility matters.
 - **Long Modifiers:** Do not stack clauses before a noun until the referent is difficult to identify. Split or reorder the sentence.
 - **Inconsistent Loanwords:** Flag inconsistent spelling or long-vowel treatment for the same term, such as mixing **ユーザー** and **ユーザ** without a glossary reason.
-
-### Practical Evaluation Framework
-
-| Evaluation Metric | What to Look For (English to Japanese Context) |
-| :--- | :--- |
-| **Accuracy (正確性)** | Are facts, logical relationships, names, numbers, and modality unchanged? |
-| **Fluency (流暢さ)** | Can a native reader understand the sentence immediately without reconstructing English syntax? |
-| **Style Guide (スタイル)** | Are register, particles, script choice, punctuation, and loanword spelling correct and consistent? |
 
 ## Markdown Syntaxes
 
