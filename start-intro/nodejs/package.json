@@ -15,7 +15,7 @@
     "@github/copilot": "1.0.71",
     "@github/copilot-sdk": "1.0.7",
     "htmlparser2": "12.0.0",
-    "zod": "4.4.3"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "22.18.12",
